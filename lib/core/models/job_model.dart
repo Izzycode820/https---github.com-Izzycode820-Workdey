@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:workdey_frontend/core/models/post_job_model.dart';
 
 part 'job_model.freezed.dart';
 part 'job_model.g.dart';
@@ -35,4 +36,22 @@ class Job with _$Job {
   }) = _Job;
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
+}
+
+  extension JobX on Job {
+  PostJob toPostJob() {
+    return PostJob(
+      jobType: jobType,
+      title: title,
+      job_nature: jobNature ?? 'Full time',
+      category: category,
+      location: location,
+      description: description,
+      rolesDescription: rolesDescription,
+      dueDate: dueDate?.toIso8601String(),
+      typeSpecific: Map<String, dynamic>.from(typeSpecific),
+      requirements: requirements ?? [],
+      workingDays: workingDays ?? [],
+    );
+  }
 }

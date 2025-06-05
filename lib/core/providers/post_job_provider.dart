@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workdey_frontend/core/enums/form_mode.dart';
 import 'package:workdey_frontend/core/models/job_model.dart';
 import 'package:workdey_frontend/core/models/paginated_response.dart';
 import 'package:workdey_frontend/core/models/post_job_model.dart';
@@ -59,24 +60,22 @@ class PostJobNotifier extends StateNotifier<PostJob> {
     state = state.copyWith(typeSpecific: newTypeSpecific);
   }
 
-  Future<bool> submitJob() async {
-     final errors = state.validate();
-    if (errors != null) {
-      throw Exception('Validation failed: ${errors.values.join(', ')}');
-    }
-
-   try {
+  Future<bool> submitJob({required FormMode mode, int? jobId}) async {
+  final errors = state.validate();
+  if (errors != null) throw Exception(errors.values.join(', '));
+  
+  try {
+    if (mode == FormMode.edit) {
+      await _postJobService.updateJob(jobId!, state);
+    } else {
       await _postJobService.postJob(state);
-      // On success, let the posted jobs list refresh from API
-      _ref.read(postedJobsProvider.notifier).refreshJobs();
-      return true;
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 403) {
-        throw Exception('Verification level too low for this job type');
-      }
-      throw Exception(e.response?.data['error'] ?? 'Failed to post job');
     }
+    _ref.read(postedJobsProvider.notifier).refreshJobs();
+    return true;
+  } on DioException catch (e) {
+    throw Exception(e.response?.data['error'] ?? 'Submission failed');
   }
+}
 }
 
 final postedJobsProvider = StateNotifierProvider<PostedJobsNotifier, AsyncValue<PaginatedResponse<Job>>>((ref) {
@@ -147,7 +146,7 @@ class PostedJobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>
     await loadInitialJobs(forceRefresh: true);
   }
 
-  Future<void> removeJob(String jobId) async {
+  Future<void> removeJob(int jobId) async {
     try {
       await _service.deleteJob(jobId);
       if (state.value != null) {

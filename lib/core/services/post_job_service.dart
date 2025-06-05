@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:workdey_frontend/core/models/job_model.dart';
 import 'package:workdey_frontend/core/models/paginated_response.dart';
 import 'package:workdey_frontend/core/models/post_job_model.dart';
+import 'package:workdey_frontend/core/services/dio_exceptions.dart';
 
 class PostJobService {
   final Dio _dio;
@@ -71,7 +72,24 @@ class PostJobService {
     }
   }
 
-  Future<void> deleteJob(String jobId) async {
+Future<void> updateJob(int jobId, PostJob job) async {
+  try {
+    await _dio.put(
+      '/api/v1/jobs/$jobId/',
+      data: job.toJson(),
+      options: Options(
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+  } on DioException catch (e) {
+    throw DioExceptions.fromDioError(e);
+  }
+}
+
+  Future<void> deleteJob(int jobId) async {
     await _dio.delete('/api/v1/jobs/$jobId/');
   }
 }

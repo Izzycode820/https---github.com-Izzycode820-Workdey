@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:workdey_frontend/core/enums/form_mode.dart';
 import 'package:workdey_frontend/core/models/post_job_model.dart';
 import 'package:workdey_frontend/core/providers/post_job_provider.dart';
 
+
 class PostJobForm extends ConsumerStatefulWidget {
-  const PostJobForm({super.key});
+  final FormMode mode;
+  final PostJob? initialData;
+  const PostJobForm({
+    super.key,
+    this.mode = FormMode.create,
+    this.initialData,
+  });
 
   @override
   ConsumerState<PostJobForm> createState() => _PostJobFormState();
@@ -20,12 +28,71 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
   final _requirementController = TextEditingController();
   final _dueDateController = TextEditingController();
   Map<String, String> _errors = {};
+  bool _initialized = false;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
     _setupControllers();
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized && widget.mode == FormMode.edit && widget.initialData != null) {
+      _initializeWithPostJobData(widget.initialData!);
+      _initialized = true;
+    }
+  }
+
+  Future<void>  _initializeWithPostJobData(PostJob postjob) async{
+    try{ 
+    final notifier = ref.read(postJobNotifierProvider.notifier);
+    
+    // Reset to default state first
+    notifier.updateJobType(postjob.jobType);
+
+    // Batch updates to minimize rebuilds
+    notifier.updateField('title', postjob.title);
+    notifier.updateField('location', postjob.location);
+    notifier.updateField('job_nature', postjob.job_nature ?? 'Full time');
+    notifier.updateField('category', postjob.category);
+    notifier.updateField('description', postjob.description);
+    notifier.updateField('rolesDescription', postjob.rolesDescription ?? '');
+    notifier.updateField('requirements', postjob.requirements);
+    notifier.updateField('dueDate', postjob.dueDate?.toString());
+    notifier.updateField('workingDays', postjob.workingDays);
+
+
+    // Update type-specific fields
+    postjob.typeSpecific.forEach((key, value) {
+      notifier.updateTypeSpecific(key, value);
+    });
+
+    // Update controllers
+    _titleController.text = postjob.title;
+    _descriptionController.text = postjob.description;
+    _rolesController.text = postjob.rolesDescription ?? '';
+    _locationController.text = postjob.location;
+    _dueDateController.text = postjob.dueDate ?? 'Select deadline (yyyy-mm-dd)';
+  } catch (e, stack) {
+      debugPrint('Initialization error: $e\n$stack');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to load job data'),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () => _initializeWithPostJobData(postjob),
+            ),
+          ),
+        );
+      }
+    }
+  }
+   
 
   void _setupControllers() {
     final job = ref.read(postJobNotifierProvider);
@@ -37,7 +104,9 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
   }
 
   void _clearError(String field) {
-    setState(() => _errors.remove(field));
+    if (_errors.containsKey(field)) {
+      setState(() => _errors.remove(field));
+    }
   }
 
   @override
@@ -48,8 +117,54 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
     _locationController.dispose();
     _requirementController.dispose();
     _dueDateController.dispose();
+    if (widget.mode == FormMode.edit) {
+      Future.microtask(() => ref.invalidate(postJobNotifierProvider));
+    }
     super.dispose();
   }
+
+  Future<void> _submitForm() async {
+    if (_isSubmitting) return;
+    
+    setState(() => _isSubmitting = true);
+    
+    try {
+      final notifier = ref.read(postJobNotifierProvider.notifier);
+      final success = await notifier.submitJob(
+        mode: widget.mode,
+        jobId: widget.initialData?.id,
+      );
+      
+      if (success && mounted) {
+        Navigator.pop(context, true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(widget.mode == FormMode.edit
+                ? 'Job updated successfully!'
+                : 'Job posted successfully!'),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Submission error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.toString().replaceAll('Exception: ', ''),
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +173,13 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Post a Job'),
+        title: Text(widget.mode == FormMode.edit ? 'Edit Job' : 'Post a Job'),
         actions: [
           TextButton(
-            onPressed: _submitForm,
-            child: const Text('Post'),
+            onPressed: _isSubmitting ? null : _submitForm,
+            child: _isSubmitting
+                ? const CircularProgressIndicator()
+                : Text(widget.mode == FormMode.edit ? 'Update' : 'Post'),
           ),
         ],
       ),
@@ -387,28 +504,6 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
       ],
     );
   }
-
- Future<void> _submitForm() async {
-  try {
-    final success = await ref.read(postJobNotifierProvider.notifier).submitJob();
-    if (success && context.mounted) {
-      Navigator.pop(context, true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Job posted successfully!')),
-      );
-    }
-  } catch (e) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    }
-  }
-}
 }
 
 class _JobTypeChip extends StatelessWidget {

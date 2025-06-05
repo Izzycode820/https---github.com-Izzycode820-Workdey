@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:workdey_frontend/core/interceptors/auth_interceptor.dart';
 import 'package:workdey_frontend/core/interceptors/job_interceptor.dart';
+import 'package:workdey_frontend/core/models/applicant_model.dart';
+import 'package:workdey_frontend/core/services/applicant_service.dart';
 import 'package:workdey_frontend/core/services/auth_service.dart';
 import 'package:workdey_frontend/core/services/connectivity_service.dart';
 import 'package:workdey_frontend/core/services/get_job_service.dart';
@@ -97,13 +99,14 @@ final dioProvider = Provider<Dio>((ref) {
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref.read(dioProvider));
 });
-
+//7. Get JObs service provider
 final jobServiceProvider = Provider<JobService>((ref) {
   return JobService(ref.read(dioProvider),
     ref.read(localCacheProvider), // Now properly provided
   );
 });
 
+//8. connectivity service provider
 final connectivityServiceProvider = Provider<ConnectivityService>((ref) {
   return ConnectivityService();
 });
@@ -111,4 +114,14 @@ final connectivityServiceProvider = Provider<ConnectivityService>((ref) {
 // 9. Post Job provider
 final postJobServiceProvider = Provider<PostJobService>((ref) {
   return PostJobService(ref.read(dioProvider));
+});
+
+//applicants service provider
+final applicantServiceProvider = Provider<ApplicantService>((ref) {
+  return ApplicantService(ref.read(dioProvider));
+});
+
+//applicant provider
+final jobApplicantsProvider = FutureProvider.family<List<Applicant>, int>((ref, jobId) {
+  return ref.read(applicantServiceProvider).getJobApplicants(jobId);
 });
