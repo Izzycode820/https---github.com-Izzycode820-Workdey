@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:workdey_frontend/core/models/job_model.dart';
+import 'package:workdey_frontend/core/models/paginated_response.dart';
 import 'package:workdey_frontend/core/models/post_job_model.dart';
 
 class PostJobService {
@@ -6,7 +9,7 @@ class PostJobService {
 
   PostJobService(this._dio);
 
-   Future<void> postJob(PostJob job) async {
+   Future<Map<String, dynamic>> postJob(PostJob job) async {
   try {
     final response = await _dio.post(
       '/api/v1/jobs/',
@@ -36,15 +39,40 @@ class PostJobService {
   }
 }
 
- Future<List<PostJob>> getPostedJobs() async {
+ Future<PaginatedResponse<Job>> getPostedJobs({int page = 1}) async {
     try {
-      final response = await _dio.get('/api/v1/jobs/');
-      return (response.data as List)
-          .map((json) => PostJob.fromJson(json))
-          .toList();
-    } on DioException {
-      return []; // Return empty list on error
+      final response = await _dio.get(
+        '/api/v1/jobs/',
+        queryParameters: {
+          'posted_by_me': true,
+          'page': page,
+        },
+        options: Options(
+        validateStatus: (status) => status! < 500, // Accept 404 as valid
+      ),
+    );
+
+    // Handle empty or invalid response structure
+    if (response.statusCode == 404) {
+      return PaginatedResponse<Job>(
+        count: 0,
+        results: [],
+        next: null,
+        previous: null,
+      );
+    } 
+      return PaginatedResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => Job.fromJson(json as Map<String, dynamic>),
+      );
+    } on DioException catch (e) {
+      debugPrint('Error fetching posted jobs: ${e.message}');
+      rethrow;
     }
+  }
+
+  Future<void> deleteJob(String jobId) async {
+    await _dio.delete('/api/v1/jobs/$jobId/');
   }
 }
 

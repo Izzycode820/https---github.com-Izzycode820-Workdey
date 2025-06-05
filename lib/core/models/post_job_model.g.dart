@@ -13,7 +13,7 @@ _$PostJobImpl _$$PostJobImplFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       category: json['category'] as String,
       location: json['location'] as String,
-      jobNature: json['Job nature'] as String?,
+      job_nature: json['job_nature'] as String?,
       description: json['description'] as String,
       rolesDescription: json['roles_description'] as String?,
       requirements: (json['requirements'] as List<dynamic>?)
@@ -35,7 +35,7 @@ Map<String, dynamic> _$$PostJobImplToJson(_$PostJobImpl instance) =>
       'title': instance.title,
       'category': instance.category,
       'location': instance.location,
-      'Job nature': instance.jobNature,
+      'job_nature': instance.job_nature,
       'description': instance.description,
       'roles_description': instance.rolesDescription,
       'requirements': instance.requirements,

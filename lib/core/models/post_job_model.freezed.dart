@@ -26,8 +26,8 @@ mixin _$PostJob {
   String get title => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
   String get location => throw _privateConstructorUsedError;
-  @JsonKey(name: 'Job nature')
-  String? get jobNature => throw _privateConstructorUsedError; // Match backend
+  @JsonKey(name: 'job_nature')
+  String? get job_nature => throw _privateConstructorUsedError; // Match backend
   String get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'roles_description')
   String? get rolesDescription =>
@@ -61,7 +61,7 @@ abstract class $PostJobCopyWith<$Res> {
       String title,
       String category,
       String location,
-      @JsonKey(name: 'Job nature') String? jobNature,
+      @JsonKey(name: 'job_nature') String? job_nature,
       String description,
       @JsonKey(name: 'roles_description') String? rolesDescription,
       @JsonKey(name: 'requirements') List<String> requirements,
@@ -90,7 +90,7 @@ class _$PostJobCopyWithImpl<$Res, $Val extends PostJob>
     Object? title = null,
     Object? category = null,
     Object? location = null,
-    Object? jobNature = freezed,
+    Object? job_nature = freezed,
     Object? description = null,
     Object? rolesDescription = freezed,
     Object? requirements = null,
@@ -119,9 +119,9 @@ class _$PostJobCopyWithImpl<$Res, $Val extends PostJob>
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
-      jobNature: freezed == jobNature
-          ? _value.jobNature
-          : jobNature // ignore: cast_nullable_to_non_nullable
+      job_nature: freezed == job_nature
+          ? _value.job_nature
+          : job_nature // ignore: cast_nullable_to_non_nullable
               as String?,
       description: null == description
           ? _value.description
@@ -164,7 +164,7 @@ abstract class _$$PostJobImplCopyWith<$Res> implements $PostJobCopyWith<$Res> {
       String title,
       String category,
       String location,
-      @JsonKey(name: 'Job nature') String? jobNature,
+      @JsonKey(name: 'job_nature') String? job_nature,
       String description,
       @JsonKey(name: 'roles_description') String? rolesDescription,
       @JsonKey(name: 'requirements') List<String> requirements,
@@ -191,7 +191,7 @@ class __$$PostJobImplCopyWithImpl<$Res>
     Object? title = null,
     Object? category = null,
     Object? location = null,
-    Object? jobNature = freezed,
+    Object? job_nature = freezed,
     Object? description = null,
     Object? rolesDescription = freezed,
     Object? requirements = null,
@@ -220,9 +220,9 @@ class __$$PostJobImplCopyWithImpl<$Res>
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
-      jobNature: freezed == jobNature
-          ? _value.jobNature
-          : jobNature // ignore: cast_nullable_to_non_nullable
+      job_nature: freezed == job_nature
+          ? _value.job_nature
+          : job_nature // ignore: cast_nullable_to_non_nullable
               as String?,
       description: null == description
           ? _value.description
@@ -262,7 +262,7 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       required this.title,
       required this.category,
       required this.location,
-      @JsonKey(name: 'Job nature') this.jobNature,
+      @JsonKey(name: 'job_nature') this.job_nature,
       required this.description,
       @JsonKey(name: 'roles_description') this.rolesDescription,
       @JsonKey(name: 'requirements') final List<String> requirements = const [],
@@ -290,8 +290,8 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
   @override
   final String location;
   @override
-  @JsonKey(name: 'Job nature')
-  final String? jobNature;
+  @JsonKey(name: 'job_nature')
+  final String? job_nature;
 // Match backend
   @override
   final String description;
@@ -334,7 +334,7 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PostJob(id: $id, jobType: $jobType, title: $title, category: $category, location: $location, jobNature: $jobNature, description: $description, rolesDescription: $rolesDescription, requirements: $requirements, workingDays: $workingDays, dueDate: $dueDate, typeSpecific: $typeSpecific)';
+    return 'PostJob(id: $id, jobType: $jobType, title: $title, category: $category, location: $location, job_nature: $job_nature, description: $description, rolesDescription: $rolesDescription, requirements: $requirements, workingDays: $workingDays, dueDate: $dueDate, typeSpecific: $typeSpecific)';
   }
 
   @override
@@ -347,7 +347,7 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('category', category))
       ..add(DiagnosticsProperty('location', location))
-      ..add(DiagnosticsProperty('jobNature', jobNature))
+      ..add(DiagnosticsProperty('job_nature', job_nature))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('rolesDescription', rolesDescription))
       ..add(DiagnosticsProperty('requirements', requirements))
@@ -368,8 +368,8 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
                 other.category == category) &&
             (identical(other.location, location) ||
                 other.location == location) &&
-            (identical(other.jobNature, jobNature) ||
-                other.jobNature == jobNature) &&
+            (identical(other.job_nature, job_nature) ||
+                other.job_nature == job_nature) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.rolesDescription, rolesDescription) ||
@@ -392,7 +392,7 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       title,
       category,
       location,
-      jobNature,
+      job_nature,
       description,
       rolesDescription,
       const DeepCollectionEquality().hash(_requirements),
@@ -423,7 +423,7 @@ abstract class _PostJob implements PostJob {
       required final String title,
       required final String category,
       required final String location,
-      @JsonKey(name: 'Job nature') final String? jobNature,
+      @JsonKey(name: 'job_nature') final String? job_nature,
       required final String description,
       @JsonKey(name: 'roles_description') final String? rolesDescription,
       @JsonKey(name: 'requirements') final List<String> requirements,
@@ -446,8 +446,8 @@ abstract class _PostJob implements PostJob {
   @override
   String get location;
   @override
-  @JsonKey(name: 'Job nature')
-  String? get jobNature; // Match backend
+  @JsonKey(name: 'job_nature')
+  String? get job_nature; // Match backend
   @override
   String get description;
   @override

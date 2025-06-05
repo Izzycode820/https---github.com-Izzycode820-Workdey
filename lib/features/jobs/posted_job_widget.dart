@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:workdey_frontend/core/models/post_job_model.dart';
+import 'package:workdey_frontend/core/models/job_model.dart';
 
 class PostedJobItem extends StatelessWidget {
-  final PostJob job;
+  final Job job;
   final VoidCallback onTap;
 
   const PostedJobItem({
@@ -15,7 +15,7 @@ class PostedJobItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Extract salary data from typeSpecific
-    final salary = job.jobType == 'PRO' || job.jobType == 'LOC'
+    final salary = (job.jobType == 'PRO' || job.jobType == 'LOC')
         ? job.typeSpecific['salary']?.toString()
         : null;
     final salaryPeriod = job.typeSpecific['salary_period']?.toString();
@@ -69,10 +69,10 @@ class PostedJobItem extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.attach_money, size: 16),
+                        const Text('FCFA', style: TextStyle(fontSize: 16)),
                         const SizedBox(width: 4),
                         Text(
-                          '${NumberFormat().format(double.parse(salary))} ${_getSalaryPeriodText(salaryPeriod)}',
+                          '${NumberFormat().format(double.tryParse(salary) ?? 0)} ${_getSalaryPeriodText(salaryPeriod)}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -100,7 +100,10 @@ class PostedJobItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildMetadataItem('Due Date', job.dueDate ?? 'Not specified'),
+                  _buildMetadataItem('Due Date', 
+                    job.dueDate != null 
+                      ? DateFormat('MMM d, y').format(job.dueDate!)
+                      : 'Not specified'),
                   _buildMetadataItem('Nature', job.jobNature ?? 'Flexible'),
                 ],
               ),

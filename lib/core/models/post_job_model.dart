@@ -13,7 +13,7 @@ class PostJob with _$PostJob{
     required String title,
     required String category,
     required String location,
-    @JsonKey(name: 'Job nature') String? jobNature,  // Match backend
+    @JsonKey(name: 'job_nature') String? job_nature,  // Match backend
     required String description,
     @JsonKey(name: 'roles_description') String? rolesDescription,  // Match backend
     @Default([]) @JsonKey(name: 'requirements') List<String> requirements,

@@ -167,20 +167,38 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
-          value: job.jobNature ?? 'FT',
+          value: job.job_nature ?? 'Full time',
           decoration: const InputDecoration(
             labelText: 'Job Nature',
             border: OutlineInputBorder(),
           ),
           items: const [
-            DropdownMenuItem(value: 'FT', child: Text('Full-time')),
-            DropdownMenuItem(value: 'PT', child: Text('Part-time')),
-            DropdownMenuItem(value: 'CN', child: Text('Contract')),
-            DropdownMenuItem(value: 'FL', child: Text('Freelance')),
+            DropdownMenuItem(value: 'Full time', child: Text('Full-time')),
+            DropdownMenuItem(value: 'Part time', child: Text('Part-time')),
+            DropdownMenuItem(value: 'Contract', child: Text('Contract')),
+            DropdownMenuItem(value: 'Freelance', child: Text('Freelance')),
           ],
           onChanged: (value) {
-            if (value != null) notifier.updateField('jobNature', value);
+            if (value != null) notifier.updateField('job_nature', value);
           },
+        ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<String>(
+          value: job.category,
+          decoration: const InputDecoration(
+            labelText: 'Category',
+            border: OutlineInputBorder(),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'IT', child: Text('Information Technology')),
+            DropdownMenuItem(value: 'HEALTH', child: Text('Health')),
+            DropdownMenuItem(value: 'FINANCE', child: Text('Finance')),
+            //DropdownMenuItem(value: 'Freelance', child: Text('Freelance')),
+          //add more
+          ],
+          onChanged: (value) {
+            if (value != null) { notifier.updateField('category', value);
+          }},
         ),
         const SizedBox(height: 16),
         TextFormField(
@@ -222,7 +240,7 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
             decoration: InputDecoration(
               labelText: 'Salary Amount',
               border: const OutlineInputBorder(),
-              prefixText: '₦',
+              prefixText: 'FCFA',
               errorText: _errors['salary'],
             ),
             onChanged: (value) {
@@ -370,35 +388,27 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
     );
   }
 
-  Future<void> _submitForm() async {
-    final errors = ref.read(postJobNotifierProvider.notifier).state.validate();
-    if (errors != null) {
-      setState(() => _errors = errors);
+ Future<void> _submitForm() async {
+  try {
+    final success = await ref.read(postJobNotifierProvider.notifier).submitJob();
+    if (success && context.mounted) {
+      Navigator.pop(context, true);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fix the errors')),
+        const SnackBar(content: Text('Job posted successfully!')),
       );
-      return;
     }
-
-    try {
-      final success = await ref.read(postJobNotifierProvider.notifier).submitJob();
-      if (success && context.mounted) {
-        Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Job posted successfully!')),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
     }
   }
+}
 }
 
 class _JobTypeChip extends StatelessWidget {

@@ -1,24 +1,31 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workdey_frontend/core/models/job_model.dart';
+import 'package:workdey_frontend/core/models/paginated_response.dart';
 import 'package:workdey_frontend/core/models/post_job_model.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/services/post_job_service.dart';
 
 //Post job form
 final postJobNotifierProvider = StateNotifierProvider.autoDispose<PostJobNotifier, PostJob>((ref) {
-    return PostJobNotifier(ref.read(postJobServiceProvider));
+    return PostJobNotifier(ref.read(postJobServiceProvider),
+    ref,
+    );
 });
 
 class PostJobNotifier extends StateNotifier<PostJob> {
   final PostJobService _postJobService;
+  final Ref _ref;
   
-  PostJobNotifier(this._postJobService) : super(PostJob(
+  PostJobNotifier(this._postJobService, this._ref) : super(PostJob(
     jobType: 'LOC',
     title: '',
+    job_nature: 'Full time',
     category: 'IT',
     location: '',
     description: '',
-    typeSpecific: {'salary_period': 'd', 'compensation_toggle': false},
+    typeSpecific: {'salary_period': 'm', 'compensation_toggle': false},
   ));
 
   void updateJobType(String type) {
@@ -42,7 +49,7 @@ class PostJobNotifier extends StateNotifier<PostJob> {
       requirements: field == 'requirements' ? value : state.requirements,
       workingDays: field == 'workingDays' ? value : state.workingDays,
       dueDate: field == 'dueDate' ? value : state.dueDate,
-      jobNature: field == 'jobNature' ? value : state.jobNature,
+      job_nature: field == 'job_nature' ? value : state.job_nature,
     );
   }
 
@@ -58,11 +65,11 @@ class PostJobNotifier extends StateNotifier<PostJob> {
       throw Exception('Validation failed: ${errors.values.join(', ')}');
     }
 
-  try {
-    final ref = ProviderContainer();
-    await _postJobService.postJob(state);
-    ref.read(postedJobsProvider.notifier).addJob(state);
-    return true;
+   try {
+      await _postJobService.postJob(state);
+      // On success, let the posted jobs list refresh from API
+      _ref.read(postedJobsProvider.notifier).refreshJobs();
+      return true;
     } on DioException catch (e) {
       if (e.response?.statusCode == 403) {
         throw Exception('Verification level too low for this job type');
@@ -72,32 +79,90 @@ class PostJobNotifier extends StateNotifier<PostJob> {
   }
 }
 
-final postedJobsProvider = StateNotifierProvider<PostedJobsNotifier, List<PostJob>>((ref) {
+final postedJobsProvider = StateNotifierProvider<PostedJobsNotifier, AsyncValue<PaginatedResponse<Job>>>((ref) {
   return PostedJobsNotifier(ref.read(postJobServiceProvider));
 });
 
-class PostedJobsNotifier extends StateNotifier<List<PostJob>> {
+class PostedJobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
   final PostJobService _service;
+  int _currentPage = 1;
+  bool _hasMore = true;
 
-  PostedJobsNotifier(this._service) : super([]) {
-    loadJobs();
+    PostedJobsNotifier(this._service) : super(const AsyncValue.loading()) {
+    loadInitialJobs();
   }
 
-  Future<void> loadJobs() async {
+  bool get hasMore => _hasMore;
+
+  Future<void> loadInitialJobs({bool forceRefresh = false}) async {
+    _currentPage = 1;
+    _hasMore = true;
+    state = const AsyncValue.loading();
+    
     try {
-      // Implement this method in your PostJobService
-      final jobs = await _service.getPostedJobs();
-      state = jobs;
-    } catch (e) {
-      state = []; // Fallback to empty list
+      final jobs = await _service.getPostedJobs(page: _currentPage);
+      state = AsyncValue.data(jobs);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
     }
   }
 
-  void addJob(PostJob job) {
-    state = [job, ...state]; // Add new job at beginning
+  Future<void> loadNextPage() async {
+    if (!_hasMore || state.isLoading || state.value == null) return;
+    
+    final currentData = state.value;
+    if (currentData == null) return;
+
+    try {
+      state = AsyncValue<PaginatedResponse<Job>>.loading()
+          .copyWithPrevious(state);
+      final newJobs = await _service.getPostedJobs(page: _currentPage + 1);
+      
+      if (newJobs.results.isEmpty) {
+        _hasMore = false;
+        state = AsyncValue<PaginatedResponse<Job>>.data(currentData);
+        return;
+      }
+
+      _currentPage++;
+      _hasMore = newJobs.next != null;
+      
+      state = AsyncValue<PaginatedResponse<Job>>.data(
+        PaginatedResponse<Job>(
+          count: newJobs.count,
+          results: [...currentData.results, ...newJobs.results],
+          next: newJobs.next,
+          previous: newJobs.previous,
+        ),
+      );
+    } catch (e, stack) {
+    debugPrint('Error loading next page: $e');
+    // On error, revert to previous state but keep hasMore false
+    _hasMore = false;
+    state = AsyncValue<PaginatedResponse<Job>>.error(e, stack).copyWithPrevious(state);
+  }
+}
+
+  Future<void> refreshJobs() async {
+    await loadInitialJobs(forceRefresh: true);
   }
 
-  void removeJob(String jobId) {
-    state = state.where((job) => job.id != jobId).toList();
+  Future<void> removeJob(String jobId) async {
+    try {
+      await _service.deleteJob(jobId);
+      if (state.value != null) {
+        final currentData = state.value!;
+        state = AsyncValue<PaginatedResponse<Job>>.data(
+          PaginatedResponse<Job>(
+            count: currentData.count - 1,
+            results: currentData.results.where((job) => job.id != jobId).toList(),
+            next: currentData.next,
+            previous: currentData.previous,
+          ),
+        );
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to delete job: ${e.message}');
+    }
   }
 }
