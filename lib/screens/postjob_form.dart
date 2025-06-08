@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:workdey_frontend/core/enums/form_mode.dart';
-import 'package:workdey_frontend/core/models/post_job_model.dart';
+import 'package:workdey_frontend/core/models/postjob/post_job_model.dart';
 import 'package:workdey_frontend/core/providers/post_job_provider.dart';
 
 
@@ -37,14 +37,16 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
     _setupControllers();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized && widget.mode == FormMode.edit && widget.initialData != null) {
+ @override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  if (!_initialized && widget.mode == FormMode.edit && widget.initialData != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeWithPostJobData(widget.initialData!);
-      _initialized = true;
-    }
+    });
+    _initialized = true;
   }
+}
 
   Future<void>  _initializeWithPostJobData(PostJob postjob) async{
     try{ 
@@ -61,14 +63,17 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
     notifier.updateField('description', postjob.description);
     notifier.updateField('rolesDescription', postjob.rolesDescription ?? '');
     notifier.updateField('requirements', postjob.requirements);
-    notifier.updateField('dueDate', postjob.dueDate?.toString());
     notifier.updateField('workingDays', postjob.workingDays);
+    notifier.updateField('dueDate', postjob.dueDate?.toString());
 
 
-    // Update type-specific fields
-    postjob.typeSpecific.forEach((key, value) {
-      notifier.updateTypeSpecific(key, value);
-    });
+
+      // Special handling for salary fields
+    if (postjob.jobType == 'PRO' || postjob.jobType == 'LOC') {
+      notifier.updateTypeSpecific('salary', postjob.typeSpecific['salary']);
+      notifier.updateTypeSpecific('salary_period', 
+          postjob.typeSpecific['salary_period'] ?? 'd');}
+    
 
     // Update controllers
     _titleController.text = postjob.title;
@@ -124,46 +129,38 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
   }
 
   Future<void> _submitForm() async {
-    if (_isSubmitting) return;
+  if (_isSubmitting) return;
+  
+  setState(() => _isSubmitting = true);
+  
+  try {
+    final notifier = ref.read(postJobNotifierProvider.notifier);
+    debugPrint('Submitting with ID: ${widget.initialData?.id}'); // Debug
     
-    setState(() => _isSubmitting = true);
+    final success = await notifier.submitJob(
+      mode: widget.mode,
+      jobId: widget.initialData?.id, // Now properly passed
+    );
     
-    try {
-      final notifier = ref.read(postJobNotifierProvider.notifier);
-      final success = await notifier.submitJob(
-        mode: widget.mode,
-        jobId: widget.initialData?.id,
+    if (mounted && success) {
+      Navigator.pop(context, true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Job ${widget.mode == FormMode.edit ? 'updated' : 'posted'} successfully!')),
       );
-      
-      if (success && mounted) {
-        Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(widget.mode == FormMode.edit
-                ? 'Job updated successfully!'
-                : 'Job posted successfully!'),
-          ),
-        );
-      }
-    } catch (e) {
-      debugPrint('Submission error: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString().replaceAll('Exception: ', ''),
-            ),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-      }
     }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } finally {
+    if (mounted) setState(() => _isSubmitting = false);
   }
+}
 
 
   @override

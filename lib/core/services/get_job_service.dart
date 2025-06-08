@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:workdey_frontend/core/models/job_model.dart';
-import 'package:workdey_frontend/core/models/paginated_response.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
 import 'package:workdey_frontend/core/services/dio_exceptions.dart';
 import 'package:workdey_frontend/core/storage/local_cache.dart';
-import 'package:workdey_frontend/features/auth/auth_utils.dart';
+import 'package:workdey_frontend/features/auth/login/login_utils.dart';
 
 class JobService {
   final Dio _dio;

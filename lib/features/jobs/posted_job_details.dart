@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:workdey_frontend/core/models/job_model.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/providers/post_job_provider.dart';
 import 'package:workdey_frontend/features/jobs/confirmation_dialog.dart';
 import 'package:workdey_frontend/screens/applicants_screen.dart';

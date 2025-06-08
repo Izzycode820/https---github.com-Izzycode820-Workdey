@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:workdey_frontend/core/models/auth_model.dart';
+import 'package:workdey_frontend/core/models/login/login_model.dart';
 
-part 'auth_state.freezed.dart';
-part 'auth_state.g.dart';
+part 'login_state.freezed.dart';
+part 'login_state.g.dart';
 
 @freezed
 class AuthState with _$AuthState {

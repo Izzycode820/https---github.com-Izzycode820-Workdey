@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:workdey_frontend/core/models/job_model.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 
 class PostedJobItem extends StatelessWidget {
   final Job job;

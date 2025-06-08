@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workdey_frontend/core/models/job_model.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   final Job job;

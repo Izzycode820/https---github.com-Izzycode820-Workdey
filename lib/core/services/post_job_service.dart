@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:workdey_frontend/core/models/job_model.dart';
-import 'package:workdey_frontend/core/models/paginated_response.dart';
-import 'package:workdey_frontend/core/models/post_job_model.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
+import 'package:workdey_frontend/core/models/postjob/post_job_model.dart';
 import 'package:workdey_frontend/core/services/dio_exceptions.dart';
 
 class PostJobService {

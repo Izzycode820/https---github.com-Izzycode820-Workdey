@@ -1,4 +1,4 @@
-import 'package:workdey_frontend/core/models/job_model.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 
 abstract class LocalCache {
   Future<List<Job>?> getJobs({

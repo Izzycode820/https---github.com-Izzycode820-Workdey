@@ -1,9 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:workdey_frontend/core/models/post_job_model.dart';
+import 'package:workdey_frontend/core/models/postjob/post_job_model.dart';
 
-part 'job_model.freezed.dart';
-part 'job_model.g.dart';
+part 'getjob_model.freezed.dart';
+part 'getjob_model.g.dart';
 
 @freezed
 class Job with _$Job {
@@ -41,6 +41,7 @@ class Job with _$Job {
   extension JobX on Job {
   PostJob toPostJob() {
     return PostJob(
+      id: id,
       jobType: jobType,
       title: title,
       job_nature: jobNature ?? 'Full time',
@@ -48,7 +49,7 @@ class Job with _$Job {
       location: location,
       description: description,
       rolesDescription: rolesDescription,
-      dueDate: dueDate?.toIso8601String(),
+      dueDate: dueDate?.toIso8601String().substring(0, 10),
       typeSpecific: Map<String, dynamic>.from(typeSpecific),
       requirements: requirements ?? [],
       workingDays: workingDays ?? [],

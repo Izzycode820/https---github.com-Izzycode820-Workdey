@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workdey_frontend/core/models/job_model.dart';
-import 'package:workdey_frontend/core/models/paginated_response.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
 import 'package:workdey_frontend/core/services/connectivity_service.dart';
 import 'package:workdey_frontend/core/services/get_job_service.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';

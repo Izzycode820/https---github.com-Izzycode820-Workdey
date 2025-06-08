@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
-import 'package:workdey_frontend/core/services/auth_service.dart';
-import 'auth_state.dart';
+import 'package:workdey_frontend/core/services/login_service.dart';
+import '../../features/auth/login/login_state.dart';
 
 final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(ref.read(authServiceProvider));

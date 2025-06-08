@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/enums/form_mode.dart';
-import 'package:workdey_frontend/core/models/job_model.dart';
-import 'package:workdey_frontend/core/models/paginated_response.dart';
-import 'package:workdey_frontend/core/models/post_job_model.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
+import 'package:workdey_frontend/core/models/postjob/post_job_model.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/services/post_job_service.dart';
 
@@ -29,14 +29,19 @@ class PostJobNotifier extends StateNotifier<PostJob> {
     typeSpecific: {'salary_period': 'm', 'compensation_toggle': false},
   ));
 
-  void updateJobType(String type) {
-  final Map<String, dynamic> newTypeSpecific = {}; // Explicitly typed
+ void updateJobType(String type) {
+  final newTypeSpecific = Map<String, dynamic>.from(state.typeSpecific);
+  
   if (type == 'PRO' || type == 'LOC') {
-    newTypeSpecific['salary'] = null;
-    newTypeSpecific['salary_period'] = 'd';
+    newTypeSpecific.remove('compensation_toggle');
+    newTypeSpecific['salary'] = newTypeSpecific['salary'] ?? null;
+    newTypeSpecific['salary_period'] = newTypeSpecific['salary_period'] ?? 'd';
   } else {
-    newTypeSpecific['compensation_toggle'] = false;
+    newTypeSpecific.remove('salary');
+    newTypeSpecific.remove('salary_period');
+    newTypeSpecific['compensation_toggle'] = newTypeSpecific['compensation_toggle'] ?? false;
   }
+  
   state = state.copyWith(jobType: type, typeSpecific: newTypeSpecific);
 }
 
@@ -65,10 +70,22 @@ class PostJobNotifier extends StateNotifier<PostJob> {
   if (errors != null) throw Exception(errors.values.join(', '));
   
   try {
+    // Clean the type_specific based on job type
+    final cleanedTypeSpecific = Map<String, dynamic>.from(state.typeSpecific);
+    
+    if (state.jobType == 'INT' || state.jobType == 'VOL') {
+      cleanedTypeSpecific.remove('salary');
+      cleanedTypeSpecific.remove('salary_period');
+    } else {
+      cleanedTypeSpecific.remove('compensation_toggle');
+    }
+
+    final cleanedState = state.copyWith(typeSpecific: cleanedTypeSpecific);
+
     if (mode == FormMode.edit) {
       await _postJobService.updateJob(jobId!, state);
     } else {
-      await _postJobService.postJob(state);
+      await _postJobService.postJob(cleanedState);
     }
     _ref.read(postedJobsProvider.notifier).refreshJobs();
     return true;

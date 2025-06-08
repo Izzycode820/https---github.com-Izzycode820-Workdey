@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:workdey_frontend/core/models/applicant_model.dart';
+import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 
 class ApplicantsScreen extends ConsumerWidget {

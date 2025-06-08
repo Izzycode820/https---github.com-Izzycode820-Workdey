@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:workdey_frontend/core/models/auth_model.dart';
+import 'package:workdey_frontend/core/models/login/login_model.dart';
 
 class AuthService {
   final Dio _dio;

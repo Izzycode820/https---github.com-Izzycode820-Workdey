@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workdey_frontend/features/auth/auth_provider.dart';
-import 'package:workdey_frontend/features/auth/auth_state.dart';
-import 'package:workdey_frontend/features/auth/auth_text_field_widget.dart';
-import 'package:workdey_frontend/features/auth/auth_utils.dart';
+import 'package:workdey_frontend/core/providers/login_provider.dart';
+import 'package:workdey_frontend/core/routes/routes.dart';
+import 'package:workdey_frontend/features/auth/login/login_state.dart';
+import 'package:workdey_frontend/shared/components/text_field_widget.dart';
+import 'package:workdey_frontend/features/auth/login/login_utils.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -92,7 +93,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: theme.textTheme.bodyMedium),
               const SizedBox(height: 32),
               
-              AuthTextField(
+              CustomTextField(
                 controller: _emailController,
                 label: 'Email',
                 icon: Icons.email,
@@ -104,7 +105,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: 16),
               
-              AuthTextField(
+              CustomTextField(
                 controller: _passwordController,
                 label: 'Password',
                 obscureText: _obscurePassword,
@@ -136,6 +137,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: _isLoading 
                     ? const CircularProgressIndicator()
                     : const Text('Login'),
+              ),
+
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Don't have an account?"),
+                  TextButton(
+                    onPressed: () => Navigator.pushNamed(context, AppRoutes.signup),
+                    child: const Text('Sign Up'),
+                  ),
+                ],
               ),
             ],
           ),

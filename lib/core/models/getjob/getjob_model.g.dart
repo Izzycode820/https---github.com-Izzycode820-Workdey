@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'job_model.dart';
+part of 'getjob_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

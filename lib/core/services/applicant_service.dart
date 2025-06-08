@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:workdey_frontend/core/models/applicant_model.dart';
+import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
 import 'package:workdey_frontend/core/services/dio_exceptions.dart';
 
 class ApplicantService {

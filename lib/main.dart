@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:workdey_frontend/app.dart';
+import 'package:workdey_frontend/core/routes/route_generator.dart';
 
 void main() async {
   // Ensure Flutter binding is initialized
@@ -36,6 +37,7 @@ class WorkdeyApp extends StatelessWidget {
     return MaterialApp(
       useInheritedMediaQuery: true,
       locale: DevicePreview.locale(context),
+      onGenerateRoute: RouteGenerator.generateRoute,
       builder: DevicePreview.appBuilder,
       title: 'Workdey',
       debugShowCheckedModeBanner: false,
