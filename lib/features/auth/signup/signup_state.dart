@@ -7,5 +7,10 @@ class SignupState with _$SignupState {
   const factory SignupState.initial() = _Initial;
   const factory SignupState.loading() = _Loading;
   const factory SignupState.success() = _Success;
-  const factory SignupState.error(String message) = _Error;
+  const factory SignupState.error({
+    required String? errorMessage
+  }) = _Error;
+
+ //bool get isLoading => this is _Loading;
+  //bool get isError => this is _Error;
 }

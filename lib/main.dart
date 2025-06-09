@@ -88,6 +88,25 @@ ThemeData _buildWorkdeyTheme() {
       bodyColor: textDark,
       displayColor: textDark,
     ),
+    //for errors
+    /*inputDecorationTheme: InputDecorationTheme(
+      errorStyle: TextStyle(color: Colors.red[700]), // Error text style
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red),
+      ),
+      // Add these if you want more customization:
+      labelStyle: TextStyle(color: const Color.fromARGB(255, 14, 12, 12)),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: const Color(0xFF3E8728)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+    ),*/
+    //for card
     cardTheme: CardThemeData(
       elevation: 4,
       margin: const EdgeInsets.all(8),

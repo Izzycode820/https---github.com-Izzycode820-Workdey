@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/signup/signup_model.dart';
 import 'package:workdey_frontend/core/providers/signup_provider.dart';
+import 'package:workdey_frontend/features/auth/signup/signup_state.dart';
 import 'package:workdey_frontend/shared/components/text_field_widget.dart';
 import 'package:workdey_frontend/shared/utils/phone_formatter.dart';
 
@@ -40,6 +41,40 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final signupState = ref.watch(signupProvider);
+
+ ref.listen<SignupState>(signupProvider, (previous, current) {
+    current.maybeWhen(
+       success: () {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Signup successful!', style: TextStyle(color: Colors.white)),
+      backgroundColor: Colors.green,
+    ),
+  );
+  Future.delayed(Duration(seconds: 1), () => Navigator.pop(context));
+},
+      error: (errorMessage) {
+        final message = errorMessage ?? 'Registration failed';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message, style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.red[700],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 100,
+              left: 20,
+              right: 20,
+            ),
+            duration: Duration(seconds: 3),
+          )
+        );
+      },
+      orElse: () {},
+    );
+  });
 
     return Scaffold(
       appBar: AppBar(
@@ -94,7 +129,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               CustomTextField(
                   controller: _phoneController,
                   label: 'Phone Number',
-                  icon: Icons.phone,
+                  icon: Icons.phone, 
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
                     CameroonPhoneFormatter(),
@@ -149,11 +184,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               
               const SizedBox(height: 24),
               FilledButton(
-                onPressed: signupState.isLoading ? null : _submit,
-                child: signupState.isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Sign Up'),
+                onPressed: signupState.maybeWhen(
+                loading: () => null,
+                orElse: () => _submit,
               ),
+              child: signupState.maybeWhen(
+                loading: () => const CircularProgressIndicator(),
+                orElse: () => const Text('Sign Up'),
+              ),
+            ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -175,8 +214,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
       );
-      await ref.read(signupProvider.notifier).signup(signup);
-      if (mounted) Navigator.pop(context);
+      await ref.read(signupProvider.notifier).register(signup);
     }
   }
 }

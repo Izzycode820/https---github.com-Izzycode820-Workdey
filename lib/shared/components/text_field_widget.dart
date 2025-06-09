@@ -11,6 +11,7 @@ class CustomTextField extends StatelessWidget {
   final String? helperText;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final void Function(String)? onChanged;
   final FocusNode? focusNode;
   final TextCapitalization textCapitalization;
   final Iterable<String>? autofillHints;
@@ -19,6 +20,7 @@ class CustomTextField extends StatelessWidget {
   final bool autocorrect;
   final int? maxLines;
   final String? prefixText;
+  final String? errorText;
 
   const CustomTextField({
     super.key,
@@ -27,6 +29,7 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.icon,
     this.suffixIcon,
+    this.onChanged,
     this.validator,
     this.helperText,
     this.keyboardType,
@@ -39,6 +42,7 @@ class CustomTextField extends StatelessWidget {
     this.autocorrect = true,
     this.maxLines = 1,
     this.prefixText,
+    this.errorText,
   });
 
   @override
@@ -49,6 +53,7 @@ class CustomTextField extends StatelessWidget {
       validator: validator,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
+      onChanged: onChanged,
       focusNode: focusNode,
       textCapitalization: textCapitalization,
       autofillHints: autofillHints,
@@ -61,6 +66,7 @@ class CustomTextField extends StatelessWidget {
         helperText: helperText,
         prefixText: prefixText,
         helperMaxLines: 2,
+        errorText: errorText,
         prefixIcon: icon != null ? Icon(icon) : null,
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
