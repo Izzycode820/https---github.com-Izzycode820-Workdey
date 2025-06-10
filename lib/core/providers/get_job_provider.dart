@@ -79,49 +79,6 @@ class JobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
   }
 }
 
-  Future<void> toggleSave(String jobId) async {
-    final currentData = state.value?.results ?? [];
-    
-    // Find the job to update
-    final jobIndex = currentData.indexWhere((j) => j.id == jobId);
-    if (jobIndex == -1) return;
-
-    final currentJob = currentData[jobIndex];
-    final newSavedState = !currentJob.isSaved;
-
-    // Optimistic update
-    state = AsyncValue<PaginatedResponse<Job>>.data(
-      PaginatedResponse<Job>(
-        count: state.value?.count ?? 0,
-        results: [
-          ...currentData.take(jobIndex),
-          currentJob.copyWith(isSaved: newSavedState),
-          ...currentData.skip(jobIndex + 1),
-        ],
-        next: state.value?.next,
-        previous: state.value?.previous,
-      ),
-    );
-
-    try {
-      await _service.toggleSavedJob(
-        jobId,
-        save: newSavedState,
-      );
-    } catch (e) {
-      // Revert on error
-      state = AsyncValue<PaginatedResponse<Job>>.data(
-        PaginatedResponse<Job>(
-          count: state.value?.count ?? 0,
-          results: currentData,
-          next: state.value?.next,
-          previous: state.value?.previous,
-        ),
-      );
-      rethrow;
-    }
-  }
-
   Future<void> refreshJobs() async {
     await loadInitialJobs(forceRefresh: true);
   }
@@ -162,11 +119,6 @@ class JobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
 
 final jobsNotifierProvider = StateNotifierProvider<JobsNotifier, AsyncValue<PaginatedResponse<Job>>>((ref) {
   return JobsNotifier(ref.read(jobServiceProvider));
-});
-
-// Additional providers for saved jobs and job details
-final savedJobsProvider = FutureProvider<List<Job>>((ref) async {
-  return ref.read(jobServiceProvider).getSavedJobs();
 });
 
 final jobDetailsProvider = FutureProvider.family<Job, String>((ref, jobId) async {

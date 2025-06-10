@@ -23,4 +23,8 @@ abstract class LocalCache {
   Future<List<Job>?> getCachedJobs();
   Future<void> clearJobsCache();
   Future<DateTime?> getLastUpdatedTime();
+  
+  Future<void> write<T>(String key, T value);
+  Future<T?> read<T>(String key);
+  Future<void> delete(String key);
 }

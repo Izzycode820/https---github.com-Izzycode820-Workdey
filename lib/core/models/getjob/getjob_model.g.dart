@@ -15,6 +15,7 @@ _$JobImpl _$$JobImplFromJson(Map<String, dynamic> json) => _$JobImpl(
       location: json['location'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       jobNature: json['job_nature'] as String?,
+      posterName: json['poster_name'] as String?,
       workingDays: (json['working_days'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -46,6 +47,7 @@ Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
       'location': instance.location,
       'created_at': instance.createdAt.toIso8601String(),
       'job_nature': instance.jobNature,
+      'poster_name': instance.posterName,
       'working_days': instance.workingDays,
       'due_date': instance.dueDate?.toIso8601String(),
       'requirements': instance.requirements,

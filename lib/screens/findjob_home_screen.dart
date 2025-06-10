@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_job_provider.dart';
+import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 import 'package:workdey_frontend/screens/postjob_home_screen.dart';
@@ -137,7 +138,10 @@ Widget build(BuildContext context) {
                     return JobCard(
                       job: paginated.results[index],
                       onBookmarkPressed: (jobId) {
-                        ref.read(jobsNotifierProvider.notifier).toggleSave(jobId);
+                        // Get the current saved status
+                        final isCurrentlySaved = paginated.results[index].isSaved;
+                        // Use the savedJobsProvider instead
+                        ref.read(savedJobsProvider.notifier).toggleSave(jobId, isCurrentlySaved);
                       },
                     );
                   },

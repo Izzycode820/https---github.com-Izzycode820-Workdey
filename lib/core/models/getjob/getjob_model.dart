@@ -17,6 +17,7 @@ class Job with _$Job {
     required String location,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'job_nature') String? jobNature,
+    @JsonKey(name: 'poster_name') String? posterName,
     @JsonKey(name: 'working_days') List<String>? workingDays,
     @JsonKey(name: 'due_date') DateTime? dueDate,
     List<String>? requirements,

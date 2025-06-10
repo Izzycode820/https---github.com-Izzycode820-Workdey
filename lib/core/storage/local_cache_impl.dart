@@ -15,6 +15,33 @@ class LocalCacheImpl implements LocalCache {
   LocalCacheImpl(this._storage);
 
   @override
+  Future<void> write<T>(String key, T value) async {
+    if (value is String || value is List<int>) {
+      await _storage.write(key: key, value: jsonEncode(value));
+    } else {
+      throw UnsupportedError('Type not supported');
+    }
+  }
+
+  @override
+  Future<T?> read<T>(String key) async {
+    final value = await _storage.read(key: key);
+    if (value == null) return null;
+    
+    if (T == List<int>) {
+      return jsonDecode(value) as T;
+    }else if (T == String) {
+      return value as T;
+    }
+    throw UnsupportedError('Type not supported');
+  }
+
+   @override
+  Future<void> delete(String key) async {
+    await _storage.delete(key: key);
+  }
+
+  @override
   Future<List<Job>?> getJobs({
     String? searchQuery,
     Map<String, dynamic>? filters,

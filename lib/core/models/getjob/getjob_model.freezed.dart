@@ -32,6 +32,8 @@ mixin _$Job {
   DateTime get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'job_nature')
   String? get jobNature => throw _privateConstructorUsedError;
+  @JsonKey(name: 'poster_name')
+  String? get posterName => throw _privateConstructorUsedError;
   @JsonKey(name: 'working_days')
   List<String>? get workingDays => throw _privateConstructorUsedError;
   @JsonKey(name: 'due_date')
@@ -84,6 +86,7 @@ abstract class $JobCopyWith<$Res> {
       String location,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'job_nature') String? jobNature,
+      @JsonKey(name: 'poster_name') String? posterName,
       @JsonKey(name: 'working_days') List<String>? workingDays,
       @JsonKey(name: 'due_date') DateTime? dueDate,
       List<String>? requirements,
@@ -123,6 +126,7 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
     Object? location = null,
     Object? createdAt = null,
     Object? jobNature = freezed,
+    Object? posterName = freezed,
     Object? workingDays = freezed,
     Object? dueDate = freezed,
     Object? requirements = freezed,
@@ -170,6 +174,10 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
       jobNature: freezed == jobNature
           ? _value.jobNature
           : jobNature // ignore: cast_nullable_to_non_nullable
+              as String?,
+      posterName: freezed == posterName
+          ? _value.posterName
+          : posterName // ignore: cast_nullable_to_non_nullable
               as String?,
       workingDays: freezed == workingDays
           ? _value.workingDays
@@ -246,6 +254,7 @@ abstract class _$$JobImplCopyWith<$Res> implements $JobCopyWith<$Res> {
       String location,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'job_nature') String? jobNature,
+      @JsonKey(name: 'poster_name') String? posterName,
       @JsonKey(name: 'working_days') List<String>? workingDays,
       @JsonKey(name: 'due_date') DateTime? dueDate,
       List<String>? requirements,
@@ -282,6 +291,7 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
     Object? location = null,
     Object? createdAt = null,
     Object? jobNature = freezed,
+    Object? posterName = freezed,
     Object? workingDays = freezed,
     Object? dueDate = freezed,
     Object? requirements = freezed,
@@ -329,6 +339,10 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
       jobNature: freezed == jobNature
           ? _value.jobNature
           : jobNature // ignore: cast_nullable_to_non_nullable
+              as String?,
+      posterName: freezed == posterName
+          ? _value.posterName
+          : posterName // ignore: cast_nullable_to_non_nullable
               as String?,
       workingDays: freezed == workingDays
           ? _value._workingDays
@@ -403,6 +417,7 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       required this.location,
       @JsonKey(name: 'created_at') required this.createdAt,
       @JsonKey(name: 'job_nature') this.jobNature,
+      @JsonKey(name: 'poster_name') this.posterName,
       @JsonKey(name: 'working_days') final List<String>? workingDays,
       @JsonKey(name: 'due_date') this.dueDate,
       final List<String>? requirements,
@@ -447,6 +462,9 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
   @override
   @JsonKey(name: 'job_nature')
   final String? jobNature;
+  @override
+  @JsonKey(name: 'poster_name')
+  final String? posterName;
   final List<String>? _workingDays;
   @override
   @JsonKey(name: 'working_days')
@@ -522,7 +540,7 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, createdAt: $createdAt, jobNature: $jobNature, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture)';
+    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, createdAt: $createdAt, jobNature: $jobNature, posterName: $posterName, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture)';
   }
 
   @override
@@ -538,6 +556,7 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       ..add(DiagnosticsProperty('location', location))
       ..add(DiagnosticsProperty('createdAt', createdAt))
       ..add(DiagnosticsProperty('jobNature', jobNature))
+      ..add(DiagnosticsProperty('posterName', posterName))
       ..add(DiagnosticsProperty('workingDays', workingDays))
       ..add(DiagnosticsProperty('dueDate', dueDate))
       ..add(DiagnosticsProperty('requirements', requirements))
@@ -571,6 +590,8 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
                 other.createdAt == createdAt) &&
             (identical(other.jobNature, jobNature) ||
                 other.jobNature == jobNature) &&
+            (identical(other.posterName, posterName) ||
+                other.posterName == posterName) &&
             const DeepCollectionEquality()
                 .equals(other._workingDays, _workingDays) &&
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
@@ -611,6 +632,7 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
         location,
         createdAt,
         jobNature,
+        posterName,
         const DeepCollectionEquality().hash(_workingDays),
         dueDate,
         const DeepCollectionEquality().hash(_requirements),
@@ -653,6 +675,7 @@ abstract class _Job implements Job {
           required final String location,
           @JsonKey(name: 'created_at') required final DateTime createdAt,
           @JsonKey(name: 'job_nature') final String? jobNature,
+          @JsonKey(name: 'poster_name') final String? posterName,
           @JsonKey(name: 'working_days') final List<String>? workingDays,
           @JsonKey(name: 'due_date') final DateTime? dueDate,
           final List<String>? requirements,
@@ -692,6 +715,9 @@ abstract class _Job implements Job {
   @override
   @JsonKey(name: 'job_nature')
   String? get jobNature;
+  @override
+  @JsonKey(name: 'poster_name')
+  String? get posterName;
   @override
   @JsonKey(name: 'working_days')
   List<String>? get workingDays;

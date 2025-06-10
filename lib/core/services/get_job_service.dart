@@ -162,50 +162,6 @@ class JobService {
     }
   }
 
-  Future<void> toggleSavedJob(String jobId, {required bool save}) async {
-    debugPrint('${save ? '🔖 Saving' : '❌ Unsaving'} job $jobId');
-    try {
-      final endpoint = '/api/v1/jobs/$jobId/${save ? 'save' : 'unsave'}/';
-      await _dio.post(
-        endpoint,
-        options: Options(
-          headers: {
-            'Accept': 'application/json',
-          },
-        ),
-      );
-      debugPrint('✅ ${save ? 'Saved' : 'Unsaved'} job successfully');
-      await _cache.invalidateSavedJobs();
-      debugPrint('♻️ Invalidated saved jobs cache');
-    } on DioException catch (e) {
-      debugPrint('❌ Error ${save ? 'saving' : 'unsaving'} job: ${e.message}');
-      throw DioExceptions.fromDioError(e);
-    }
-  }
-
-  Future<List<Job>> getSavedJobs() async {
-    debugPrint('📚 Fetching saved jobs');
-    try {
-      final response = await _dio.get(
-        '/api/v1/jobs/saved/',
-        options: Options(
-          headers: {
-            'Accept': 'application/json',
-          },
-        ),
-      );
-      
-      final jobs = (response.data as List)
-          .map((json) => Job.fromJson(json))
-          .toList();
-      
-      debugPrint('✅ Retrieved ${jobs.length} saved jobs');
-      return jobs;
-    } on DioException catch (e) {
-      debugPrint('❌ Error fetching saved jobs: ${e.message}');
-      throw DioExceptions.fromDioError(e);
-    }
-  }
 
   Future<List<Job>?> getCachedJobs() async {
     debugPrint('🔍 Checking for cached jobs');

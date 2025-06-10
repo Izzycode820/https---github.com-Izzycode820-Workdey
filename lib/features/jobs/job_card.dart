@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
-import 'package:workdey_frontend/core/providers/get_job_provider.dart';
+import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
+import 'package:workdey_frontend/features/jobs/job_bookmark.dart';
 import 'package:workdey_frontend/features/jobs/job_detailes.dart';
 
 class JobCard extends ConsumerWidget {
   final Job job;
-  final Function(String)? onBookmarkPressed;
+  final Function(int)? onBookmarkPressed;
 
   const JobCard({
     super.key,
@@ -16,6 +17,12 @@ class JobCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+     // Get the current saved status from provider
+    final isSaved = ref.watch(savedJobsProvider).maybeWhen(
+      data: (data) => data.results.any((j) => j.id == job.id),
+      orElse: () => job.isSaved,
+    );
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
@@ -47,20 +54,10 @@ class JobCard extends ConsumerWidget {
                   ),
                   const Spacer(),
                   // Bookmark Icon
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      job.isSaved ? Icons.bookmark : Icons.bookmark_outline,
-                      size: 30,
-                      color: job.isSaved ? const Color.fromARGB(255, 219, 219, 25) : Colors.grey,
-                    ),
-                    onPressed: () {
-                      final jobId = job.id.toString();
-                      onBookmarkPressed?.call(jobId) ?? // Ensures ID is string
-                      ref.read(jobsNotifierProvider.notifier).toggleSave(jobId);
-                    },
-                  ),
+                  JobBookmarkWidget(
+                    jobId: job.id,
+                    isSaved: isSaved,
+                  )
                 ],
               ),
               const SizedBox(height: 1),
@@ -101,7 +98,7 @@ class JobCard extends ConsumerWidget {
                 child: Row(
                   children: [
                     Text(
-                      'Posted by: ${job.poster}',
+                      'Posted by: ${job.posterName}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -276,7 +273,6 @@ class JobCard extends ConsumerWidget {
     }
   }
 }
-
 class _InfoChip extends StatelessWidget {
   final String label;
   final Color color;

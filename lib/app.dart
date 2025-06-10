@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/login_provider.dart';
 import 'package:workdey_frontend/screens/findjob_home_screen.dart';
 import 'package:workdey_frontend/screens/login_screen.dart';
+import 'package:workdey_frontend/screens/saves_screen.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -20,7 +21,7 @@ class _AppState extends ConsumerState<App> {
     const HomeScreen(),
     // const MessagesScreen(),
     // const WorkHubScreen(),
-    // const SavedJobsScreen(),
+    const SavedJobsPage(),
     // const ProfileScreen(),
   ];
 

@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:workdey_frontend/core/interceptors/auth_interceptor.dart';
 import 'package:workdey_frontend/core/interceptors/job_interceptor.dart';
 import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/core/services/applicant_service.dart';
 import 'package:workdey_frontend/core/services/login_service.dart';
 import 'package:workdey_frontend/core/services/connectivity_service.dart';
@@ -131,3 +133,5 @@ final jobApplicantsProvider = FutureProvider.family<List<Applicant>, int>((ref, 
 final signupServiceProvider = Provider<SignupService>((ref) {
   return SignupService(ref.read(dioProvider));
 });
+
+//13. saved job provider

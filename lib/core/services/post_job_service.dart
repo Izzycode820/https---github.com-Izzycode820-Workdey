@@ -43,11 +43,7 @@ class PostJobService {
  Future<PaginatedResponse<Job>> getPostedJobs({int page = 1}) async {
     try {
       final response = await _dio.get(
-        '/api/v1/jobs/',
-        queryParameters: {
-          'posted_by_me': true,
-          'page': page,
-        },
+        '/api/v1/me/jobs/',
         options: Options(
         validateStatus: (status) => status! < 500, // Accept 404 as valid
       ),
