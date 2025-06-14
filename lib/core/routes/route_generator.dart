@@ -1,8 +1,13 @@
-// lib/core/routes/route_generator.dart
 import 'package:flutter/material.dart';
+import 'package:workdey_frontend/app.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/screens/login_screen.dart';
+import 'package:workdey_frontend/screens/messaging_screen.dart';
+import 'package:workdey_frontend/screens/profile_screen.dart';
+import 'package:workdey_frontend/screens/saves_screen.dart';
 import 'package:workdey_frontend/screens/signup_screen.dart';
+import 'package:workdey_frontend/screens/workers_screen.dart';
+
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -11,7 +16,16 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case AppRoutes.signup:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
-      // ... other cases
+      case AppRoutes.home:
+        return MaterialPageRoute(builder: (_) => const MainApp());
+      case AppRoutes.messages:
+        return MaterialPageRoute(builder: (_) => const MessagesScreen());
+      case AppRoutes.workers:
+        return MaterialPageRoute(builder: (_) => const WorkersScreen());
+      case AppRoutes.savedJobs:
+        return MaterialPageRoute(builder: (_) => const SavedJobsPage());
+      case AppRoutes.profile:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

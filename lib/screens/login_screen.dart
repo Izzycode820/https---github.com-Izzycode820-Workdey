@@ -55,12 +55,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           await Future.delayed(const Duration(milliseconds: 100));
 
           if (mounted) {
-            debugPrint("🏠 Navigating to home screen");
-            Navigator.pushReplacementNamed(context, '/home').then((_) {
-              debugPrint("🏠 Home screen navigation complete");
+            debugPrint("🏠 closing Login Screen");
+            Navigator.pop(context);              debugPrint("🏠 Home screen navigation complete");
               // Verify token after navigation
               AuthUtils.verifyToken();
-            });
           }
         },
         error: (message) {

@@ -1,32 +1,106 @@
-// app.dart
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/login_provider.dart';
+import 'package:workdey_frontend/core/routes/route_generator.dart';
+import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/screens/findjob_home_screen.dart';
 import 'package:workdey_frontend/screens/login_screen.dart';
+import 'package:workdey_frontend/screens/messaging_screen.dart';
+import 'package:workdey_frontend/screens/profile_screen.dart';
 import 'package:workdey_frontend/screens/saves_screen.dart';
+import 'package:workdey_frontend/screens/workers_screen.dart';
+import 'package:workdey_frontend/shared/components/bottom_navbar.dart';
 
-class App extends ConsumerStatefulWidget {
-  const App({super.key});
-
-  @override
-  ConsumerState<App> createState() => _AppState();
-}
-
-class _AppState extends ConsumerState<App> {
-  int _currentIndex = 0;
-  final PageController _pageController = PageController();
-
-  final List<Widget> _pages = [
-    const HomeScreen(),
-    // const MessagesScreen(),
-    // const WorkHubScreen(),
-    const SavedJobsPage(),
-    // const ProfileScreen(),
-  ];
+class WorkdeyApp extends StatelessWidget {
+  const WorkdeyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      useInheritedMediaQuery: true,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
+      title: 'Workdey',
+      debugShowCheckedModeBanner: false,
+      theme: _buildWorkdeyTheme(),
+      darkTheme: _buildDarkTheme(),
+      onGenerateRoute: RouteGenerator.generateRoute,
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (_) => const Scaffold(
+          body: Center(child: Text("Route not found!")),
+        ),
+      ),
+    home: const App(), // This is the key change - use the App widget as home
+    );
+  }
+
+  ThemeData _buildWorkdeyTheme() {
+    const primaryGreen = Color(0xFF3E8728);
+    const secondaryGreen = Color(0xFF07864B);
+    const textDark = Color(0xFF181A1F);
+
+    return ThemeData(
+      colorScheme: ColorScheme.light(
+        primary: primaryGreen,
+        secondary: secondaryGreen,
+        surface: Colors.white,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: textDark),
+        titleTextStyle: TextStyle(
+          color: textDark,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Inter',
+        ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: Colors.black.withOpacity(0.9),
+        selectedItemColor: const Color(0xFF3E8728),
+        unselectedItemColor: Colors.grey.shade400,
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(fontFamily: 'Poppins'),
+        bodyLarge: TextStyle(fontFamily: 'Inter'),
+        bodyMedium: TextStyle(fontFamily: 'Inter'),
+      ).apply(
+        bodyColor: textDark,
+        displayColor: textDark,
+      ),
+      //for card
+    cardTheme: CardThemeData(
+      elevation: 4,
+      margin: const EdgeInsets.all(8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      shadowColor: secondaryGreen.withOpacity(0.2),
+      surfaceTintColor: Colors.transparent,
+      clipBehavior: Clip.none,
+    ),
+    useMaterial3: true,
+  );
+  }
+
+  ThemeData _buildDarkTheme() {
+    return _buildWorkdeyTheme().copyWith(
+      colorScheme: const ColorScheme.dark(
+        primary: Color(0xFF3E8728),
+        secondary: Color(0xFF07864B),
+        surface: Color(0xFF121212),
+      ),
+    );
+  }
+}
+
+class App extends ConsumerWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
 
     return authState.when(
@@ -37,11 +111,10 @@ class _AppState extends ConsumerState<App> {
         ),
       ),
       authenticated: (response) {
-      debugPrint("✅ User authenticated, building main app");
-      return _buildMainApp();},
-      
+        debugPrint("✅ User authenticated, building main app");
+        return const MainApp();
+      },
       error: (message) {
-        // Optionally show error message before login
         Future.delayed(Duration.zero, () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message)),
@@ -51,91 +124,36 @@ class _AppState extends ConsumerState<App> {
       },
     );
   }
+}
 
-  Widget _buildMainApp() {
+class MainApp extends ConsumerStatefulWidget {
+  const MainApp({super.key});
+
+  @override
+  ConsumerState<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends ConsumerState<MainApp> {
+
+  final List<Widget> _pages = [
+    const HomeScreen(),
+    const MessagesScreen(),
+    const WorkersScreen(),
+    const SavedJobsPage(),
+    const ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final currentIndex = ref.watch(currentIndexProvider);
+
     return Scaffold(
       extendBody: true,
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
+      body: IndexedStack(
+        index: currentIndex,
         children: _pages,
       ),
-      bottomNavigationBar: _buildWorkdeyNavBar(context),
+      bottomNavigationBar: const BottomNavBar(),
     );
-  }
-
-  Widget _buildWorkdeyNavBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-        border: Border(top: BorderSide(color: Colors.grey.shade800)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 1),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavIcon(context, Icons.home_filled, 'Home', 0),
-              _buildNavIcon(context, Icons.message_rounded, 'Messages', 1),
-              _buildNavIcon(context, Icons.work_rounded, 'Work', 2),
-              _buildNavIcon(context, Icons.bookmark_rounded, 'Saved', 3),
-              _buildNavIcon(context, Icons.person_rounded, 'Profile', 4),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavIcon(BuildContext context, IconData icon, String label, int index) {
-    final isActive = _currentIndex == index;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onTap: () => _onTabTapped(index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) => ScaleTransition(
-              scale: animation,
-              child: child,
-            ),
-            child: Icon(
-              icon,
-              key: ValueKey<int>(index),
-              color: isActive ? colorScheme.primary : Colors.grey.shade400,
-              size: isActive ? 28 : 26,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? colorScheme.primary : Colors.grey.shade400,
-              fontSize: isActive ? 12 : 11,
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onTabTapped(int index) {
-    if (_currentIndex != index) {
-      setState(() => _currentIndex = index);
-      _pageController.jumpToPage(index);
-      Feedback.forTap(context);
-    }
   }
 }
