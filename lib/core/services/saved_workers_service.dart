@@ -2,20 +2,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/core/models/getworkers/get_workers_model.dart';
 import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/services/dio_exceptions.dart';
 
-class SavedJobsService {
+class SavedWorkersService {
   final Dio _dio;
 
-  SavedJobsService(this._dio);
+  SavedWorkersService(this._dio);
 
-  Future<PaginatedResponse<Job>> getSavedJobs({int page = 1}) async {
+  Future<PaginatedResponse<Worker>> getSavedWorkers({int page = 1}) async {
     try {
       final response = await _dio.get(
-        '/api/v1/saved-jobs/',
+        '/api/v1/workers/saved-workers/',
         queryParameters: {'page': page},
         options: Options(
           headers: {
@@ -29,7 +29,7 @@ class SavedJobsService {
     final responseData = response.data as Map<String, dynamic>;
     if (responseData['results'] == null || !(responseData['results'] is List)) {
       debugPrint('⚠️ Invalid response structure - returning empty results');
-      return PaginatedResponse<Job>(
+      return PaginatedResponse<Worker>(
         count: 0,
         results: [],
         next: null,
@@ -39,7 +39,7 @@ class SavedJobsService {
       
       final paginatedResponse = PaginatedResponse.fromJson(
         response.data as Map<String, dynamic>,
-        (json) => Job.fromJson(json as Map<String, dynamic>),
+        (json) => Worker.fromJson(json as Map<String, dynamic>),
       );
     return paginatedResponse;
     } on DioException catch (e) {
@@ -48,7 +48,7 @@ class SavedJobsService {
        // Handle 404 specifically
     if (e.response?.statusCode == 404) {
       debugPrint('🔍 Page $page not found - returning empty results');
-      return PaginatedResponse<Job>(
+      return PaginatedResponse<Worker>(
         count: 0,
         results: [],
         next: null,
@@ -59,10 +59,10 @@ class SavedJobsService {
     }
   }
 
-  Future<void> saveJob(int jobId) async {
+  Future<void> saveworker(int workerId) async {
     try {
       await _dio.post(
-        '/api/v1/jobs/$jobId/save/',
+        '/api/v1/workers/$workerId/save/',
         options: Options(
           headers: {'Content-Type': 'application/json'},
         ),
@@ -72,10 +72,10 @@ class SavedJobsService {
     }
   }
 
-  Future<void> unsaveJob(int jobId) async {
+  Future<void> unsaveworker(int workerId) async {
     try {
       await _dio.delete(
-        '/api/v1/jobs/$jobId/save/',
+        '/api/v1/workers/$workerId/save/',
         options: Options(
           headers: {'Content-Type': 'application/json'},
         ),
@@ -86,6 +86,6 @@ class SavedJobsService {
   }
 }
 
-final savedJobsServiceProvider = Provider<SavedJobsService>((ref) {
-  return SavedJobsService(ref.read(dioProvider));
+final savedWorkersServiceProvider = Provider<SavedWorkersService>((ref) {
+  return SavedWorkersService(ref.read(dioProvider));
 });

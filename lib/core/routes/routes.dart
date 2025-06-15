@@ -6,4 +6,6 @@ class AppRoutes {
   static const String workers = '/workers';      // Add this
   static const String savedJobs = '/saved-jobs';
   static const String profile = '/profile';
+  static const String findJobs = '/find-jobs';
+  static const String postJobs = '/post-jobs';
 }

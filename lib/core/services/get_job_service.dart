@@ -79,7 +79,7 @@ class JobService {
       
       
       return paginatedResponse;
-    } on DioException catch (e) {
+     } on DioException catch (e) {
       debugPrint('❌ Error fetching jobs: ${e.message}');
 
        // Handle 404 specifically

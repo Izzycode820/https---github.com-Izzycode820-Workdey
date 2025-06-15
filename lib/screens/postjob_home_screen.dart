@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/providers/post_job_provider.dart';
+import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/features/jobs/posted_job_details.dart';
 import 'package:workdey_frontend/features/jobs/posted_job_widget.dart';
 import 'package:workdey_frontend/screens/postjob_form.dart';
@@ -24,7 +25,12 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
     super.initState();
     _scrollController.addListener(_scrollListener);
     // Load initial jobs when screen first loads
-    Future.microtask(() => ref.read(postedJobsProvider.notifier).loadInitialJobs());
+    Future.microtask(() {
+      ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
+      if (ref.read(postedJobsProvider) is! AsyncData) {
+      ref.read(postedJobsProvider.notifier).loadInitialJobs();
+    }
+  });
   }
 
   void _scrollListener() {
@@ -38,6 +44,12 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
         notifier.loadNextPage();
       }
     }
+  }
+
+@override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
   }
 
   @override
@@ -54,11 +66,7 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  JobSectionSelector(
-                    isFindJobsSelected: false,
-                    onFindJobsTap: () => Navigator.pop(context),
-                    onPostJobTap: () {},
-                  ),
+                  const JobSectionSelector(),
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0, top: 8.0),
                     child: Align(

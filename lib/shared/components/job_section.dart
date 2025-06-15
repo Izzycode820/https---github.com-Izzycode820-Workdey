@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 
-class JobSectionSelector extends StatelessWidget {
-  final bool isFindJobsSelected;
-  final VoidCallback onFindJobsTap;
-  final VoidCallback onPostJobTap;
-  
-  const JobSectionSelector({
-    super.key,
-    required this.isFindJobsSelected,
-    required this.onFindJobsTap,
-    required this.onPostJobTap,
-  });
+class JobSectionSelector extends ConsumerWidget {
+  const JobSectionSelector({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentSection = ref.watch(appSectionProvider);
+    final navigator = ref.read(sectionNavigationProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
@@ -33,7 +30,7 @@ class JobSectionSelector extends StatelessWidget {
           children: [
             Expanded(
               child: GestureDetector(
-                onTap: onFindJobsTap,
+                onTap: () => navigator.navigateToFindJobs(context),
                 child: Center(
                   child: Text(
                     'Find Jobs',
@@ -41,7 +38,7 @@ class JobSectionSelector extends StatelessWidget {
                       fontFamily: 'Poppins',
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: isFindJobsSelected 
+                      color: currentSection == AppSection.findJobs
                         ? const Color(0xFF07864B) 
                         : const Color(0xFF1E1E1E),
                     ),
@@ -56,7 +53,7 @@ class JobSectionSelector extends StatelessWidget {
             ),
             Expanded(
               child: GestureDetector(
-                onTap: onPostJobTap,
+                onTap: () => navigator.navigateToPostJobs(context),
                 child: Center(
                   child: Text(
                     'Post Job',
@@ -64,7 +61,7 @@ class JobSectionSelector extends StatelessWidget {
                       fontFamily: 'Poppins',
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: !isFindJobsSelected 
+                      color: currentSection == AppSection.postJobs
                         ? const Color(0xFF07864B) 
                         : const Color(0xFF1E1E1E),
                     ),

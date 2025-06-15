@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_job_provider.dart';
+import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
@@ -25,8 +26,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _scrollController.addListener(_scrollListener);
     // Load initial jobs
-    Future.microtask(() => 
-      ref.read(jobsNotifierProvider.notifier).loadInitialJobs());
+    // Initialize with correct selector state
+    Future.microtask(() {
+      ref.read(appSectionProvider.notifier).state = AppSection.findJobs;
+      if (ref.read(jobsNotifierProvider) is! AsyncData) {
+        ref.read(jobsNotifierProvider.notifier).loadInitialJobs();
+        ref.read(lastRefreshTimeProvider.notifier).state = DateTime.now();
+      }
+    });
   }
 
   void _scrollListener() {
@@ -42,39 +49,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
+// Add this method to handle route changes
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+    if (currentRoute == '/post-jobs') {
+      ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
+    } else {
+      ref.read(appSectionProvider.notifier).state = AppSection.findJobs;
+    }
+  }
+
   @override
 Widget build(BuildContext context) {
   final jobsState = ref.watch(jobsNotifierProvider);
+  final currentSection = ref.watch(appSectionProvider);
 
   return Scaffold(
     appBar: const CustomAppBar(),
     body: RefreshIndicator(
-      onRefresh: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
+      onRefresh: () async {
+          await ref.read(jobsNotifierProvider.notifier).refreshJobs();
+          ref.read(lastRefreshTimeProvider.notifier).state = DateTime.now();
+        },
       child: CustomScrollView(
         controller: _scrollController,
         slivers: [
           SliverToBoxAdapter(
             child: Column(
               children: [
-                JobSectionSelector(
-                  isFindJobsSelected: _isFindJobsSelected,
-                  onFindJobsTap: () {
-                    if (!_isFindJobsSelected) {
-                      setState(() => _isFindJobsSelected = true);
-                    }
-                  },
-                  onPostJobTap: () {
-                    if (_isFindJobsSelected) {
-                      setState(() => _isFindJobsSelected = false);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PostedJobsScreen(),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                const JobSectionSelector(),
           
           // Search Bar
           const Padding(
