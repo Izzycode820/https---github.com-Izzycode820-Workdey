@@ -4,9 +4,11 @@ import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/screens/findjob_home_screen.dart';
 import 'package:workdey_frontend/screens/login_screen.dart';
 import 'package:workdey_frontend/screens/messaging_screen.dart';
+import 'package:workdey_frontend/screens/post_woker_screen.dart';
 import 'package:workdey_frontend/screens/postjob_home_screen.dart';
 import 'package:workdey_frontend/screens/profile_screen.dart';
 import 'package:workdey_frontend/screens/saves_screen.dart';
+import 'package:workdey_frontend/screens/settings_screen.dart';
 import 'package:workdey_frontend/screens/signup_screen.dart';
 import 'package:workdey_frontend/screens/workers_screen.dart';
 
@@ -18,6 +20,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case AppRoutes.postJobs:
         return MaterialPageRoute(builder: (_) => const PostedJobsScreen());
+      case AppRoutes.postWorker:
+        return MaterialPageRoute(builder: (_) => const PostWorkerScreen());
       case AppRoutes.login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case AppRoutes.signup:
@@ -32,6 +36,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SavedJobsPage());
       case AppRoutes.profile:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case AppRoutes.settings:
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

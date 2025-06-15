@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onNotificationPressed;
-  
+  final Widget? actionButton;
+
   const CustomAppBar({
     super.key,
     this.onNotificationPressed,
+    this.actionButton,
   });
 
   @override
@@ -19,6 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
+        if (actionButton != null) actionButton!,
         IconButton(
           icon: const Icon(Icons.notifications_none),
           onPressed: onNotificationPressed,

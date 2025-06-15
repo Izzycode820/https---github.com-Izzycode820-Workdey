@@ -44,8 +44,25 @@ class AuthService {
 }
 
   Future<void> logout() async {
-    await _dio.post('/api/auth/logout/');
+  try {
+    // The interceptor will add the refresh token to the body
+    await _dio.post(
+      '/api/auth/logout/',
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
+    
+    // Clear tokens after successful logout
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: 'access_token');
+    await storage.delete(key: 'refresh_token');
+    debugPrint('✅ Logout successful - tokens cleared');
+  } on DioException catch (e) {
+    debugPrint('❌ Logout failed: ${e.message}');
+    rethrow;
   }
+}
 
   Future<AuthResponse> refreshToken(String refreshToken) async {
     final response = await _dio.post(

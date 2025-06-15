@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_job_provider.dart';
 import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
+import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
-import 'package:workdey_frontend/screens/postjob_home_screen.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 import 'package:workdey_frontend/shared/components/job_section.dart';
 
@@ -18,23 +18,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  bool _isFindJobsSelected = true;
   bool _isRefreshing = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_scrollListener);
-    // Load initial jobs
-    // Initialize with correct selector state
-    Future.microtask(() {
-      ref.read(appSectionProvider.notifier).state = AppSection.findJobs;
-      if (ref.read(jobsNotifierProvider) is! AsyncData) {
-        ref.read(jobsNotifierProvider.notifier).loadInitialJobs();
-        ref.read(lastRefreshTimeProvider.notifier).state = DateTime.now();
-      }
-    });
-  }
+ @override
+void initState() {
+  super.initState();
+  _scrollController.addListener(_scrollListener);
+  
+  // Load jobs if not already loaded
+ WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (ref.read(jobsNotifierProvider) is! AsyncData) {
+      ref.read(jobsNotifierProvider.notifier).loadInitialJobs();
+    }
+  });
+}
 
   void _scrollListener() {
   final double maxScroll = _scrollController.position.maxScrollExtent;
@@ -49,25 +46,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-// Add this method to handle route changes
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final currentRoute = ModalRoute.of(context)?.settings.name;
-    if (currentRoute == '/post-jobs') {
-      ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
-    } else {
-      ref.read(appSectionProvider.notifier).state = AppSection.findJobs;
-    }
-  }
 
   @override
 Widget build(BuildContext context) {
   final jobsState = ref.watch(jobsNotifierProvider);
-  final currentSection = ref.watch(appSectionProvider);
 
   return Scaffold(
-    appBar: const CustomAppBar(),
+    appBar: CustomAppBar(
+      actionButton: TextButton(
+    onPressed: () => Navigator.pushNamed(context, AppRoutes.postJobs),
+    child: const Text(
+      'Post Job',
+      style: TextStyle(color: Color(0xFF3E8728)),
+    ),
+  ),
+    ),
     body: RefreshIndicator(
       onRefresh: () async {
           await ref.read(jobsNotifierProvider.notifier).refreshJobs();
@@ -79,7 +72,7 @@ Widget build(BuildContext context) {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                const JobSectionSelector(),
+              //  const JobSectionSelector(),
           
           // Search Bar
           const Padding(

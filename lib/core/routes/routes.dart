@@ -8,4 +8,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String findJobs = '/find-jobs';
   static const String postJobs = '/post-jobs';
+  static const String postWorker = '/post-worker';
+  static const String settings = '/settings';
+
 }

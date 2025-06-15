@@ -51,7 +51,7 @@ class _SavedJobsPageState extends ConsumerState<SavedJobsPage> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  const JobSectionSelector(),
+                  //const JobSectionSelector(),
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0, top: 8.0),
                     child: Align(

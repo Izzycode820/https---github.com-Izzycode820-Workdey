@@ -25,8 +25,7 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
     super.initState();
     _scrollController.addListener(_scrollListener);
     // Load initial jobs when screen first loads
-    Future.microtask(() {
-      ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.read(postedJobsProvider) is! AsyncData) {
       ref.read(postedJobsProvider.notifier).loadInitialJobs();
     }
@@ -66,7 +65,7 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  const JobSectionSelector(),
+                 // const JobSectionSelector(),
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0, top: 8.0),
                     child: Align(

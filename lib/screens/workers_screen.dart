@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_workers_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_worker_provider.dart';
+import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 import 'package:workdey_frontend/features/search_filter/search_filter_provider.dart';
 import 'package:workdey_frontend/features/workers/wokers_card.dart';
@@ -62,7 +63,15 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
     final filterState = ref.watch(searchFilterProvider);
 
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(
+        actionButton: TextButton(
+    onPressed: () => Navigator.pushNamed(context, AppRoutes.postWorker),
+    child: const Text(
+      'Workers Card',
+      style: TextStyle(color: Color(0xFF3E8728)),
+    ),
+  ),
+      ),
       body: Column(
         children: [
           const Padding(

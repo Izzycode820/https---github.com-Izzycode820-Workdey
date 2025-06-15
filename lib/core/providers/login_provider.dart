@@ -11,6 +11,7 @@ final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthService _authService;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(); 
   
   AuthNotifier(this._authService) : super(const AuthState.initial());
 
@@ -40,12 +41,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> logout() async {
+   Future<void> logout() async {
     try {
+      state = const AuthState.loading();
       await _authService.logout();
-      state = const AuthState.initial();
-    } catch (e) {
-      state = AuthState.error(e.toString());
-    }
+      
+     state = const AuthState.initial();
+  } catch (e) {
+    state = AuthState.error(e.toString());
+    // Even if logout fails, clear local tokens
+    await _storage.delete(key: 'access_token');
+    await _storage.delete(key: 'refresh_token');
+    rethrow;
   }
+}
 }
