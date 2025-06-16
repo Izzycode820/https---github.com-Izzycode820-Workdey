@@ -7,11 +7,13 @@ import 'package:workdey_frontend/features/workers/workers_bookmark.dart';
 
 class WorkerCard extends ConsumerWidget {
   final Worker worker;
+  final VoidCallback? onTap;
   final Function(int)? onBookmarkPressed;
 
   const WorkerCard({
     super.key,
     required this.worker,
+    this.onTap,
     this.onBookmarkPressed,
   });
 
@@ -31,10 +33,7 @@ class WorkerCard extends ConsumerWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => WorkerDetailsScreen(worker: worker)),
-        ),
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

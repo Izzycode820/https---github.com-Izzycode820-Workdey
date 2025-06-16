@@ -1,6 +1,7 @@
 // lib/core/models/getworker/getworker_model.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:workdey_frontend/core/models/postworker/post_worker_model.dart';
 
 part 'get_workers_model.freezed.dart';
 part 'get_workers_model.g.dart';
@@ -31,4 +32,25 @@ class Worker with _$Worker {
   }) = _Worker;
 
   factory Worker.fromJson(Map<String, dynamic> json) => _$WorkerFromJson(json);
+}
+
+extension WorkerX on Worker {
+  PostWorker toPostWorker() {
+    if (title == null || category == null || location == null || 
+        skills == null || bio == null || availability == null || 
+        experienceYears == null) {
+      throw ArgumentError('Required worker fields cannot be null');
+    }
+
+    return PostWorker(
+      title: title!,
+      category: category!,
+      location: location!,
+      skills: skills!,
+      bio: bio!,
+      availability: availability!,
+      experienceYears: experienceYears!,
+      portfolioLink: portfolioLink,
+    );
+  }
 }

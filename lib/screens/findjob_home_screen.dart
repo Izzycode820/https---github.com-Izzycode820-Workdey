@@ -7,7 +7,6 @@ import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
-import 'package:workdey_frontend/shared/components/job_section.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

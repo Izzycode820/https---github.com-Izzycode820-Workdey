@@ -21,7 +21,7 @@ class RouteGenerator {
       case AppRoutes.postJobs:
         return MaterialPageRoute(builder: (_) => const PostedJobsScreen());
       case AppRoutes.postWorker:
-        return MaterialPageRoute(builder: (_) => const PostWorkerScreen());
+        return MaterialPageRoute(builder: (_) => const PostedWorkersScreen());
       case AppRoutes.login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case AppRoutes.signup:

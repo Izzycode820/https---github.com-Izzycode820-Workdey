@@ -7,7 +7,6 @@ import 'package:workdey_frontend/features/jobs/posted_job_details.dart';
 import 'package:workdey_frontend/features/jobs/posted_job_widget.dart';
 import 'package:workdey_frontend/screens/postjob_form.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
-import 'package:workdey_frontend/shared/components/job_section.dart';
 
 class PostedJobsScreen extends ConsumerStatefulWidget {
   const PostedJobsScreen({super.key});
