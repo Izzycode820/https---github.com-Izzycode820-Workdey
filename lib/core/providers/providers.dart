@@ -38,7 +38,7 @@ final localCacheProvider = Provider<LocalCache>((ref) {
 // 4. Base Dio provider without auth dependencies
 final baseDioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.1.64:8000',
+    baseUrl: 'http://192.168.98.64:8000',
     headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
     connectTimeout: const Duration(seconds: 20),
     receiveTimeout: const Duration(seconds: 20),

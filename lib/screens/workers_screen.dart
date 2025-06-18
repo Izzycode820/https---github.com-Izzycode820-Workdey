@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_workers_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_worker_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
-import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 import 'package:workdey_frontend/features/search_filter/search_filter_provider.dart';
+import 'package:workdey_frontend/features/search_filter/worker/searchwidget/workers_search_bar.dart';
 import 'package:workdey_frontend/features/workers/wokers_card.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 
@@ -76,7 +76,7 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
         children: [
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: SearchBarWidget(),
+            child: WorkerSearchBar(),
           ),
           Expanded(
             child: RefreshIndicator(
