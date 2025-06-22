@@ -4,7 +4,6 @@ import 'package:workdey_frontend/features/search_filter/job/searchwidgets/job_se
 import 'package:workdey_frontend/features/search_filter/search_context.dart';
 import 'package:workdey_frontend/features/search_filter/worker/searchwidget/workers_search_bar.dart';
 
-
 class SearchBarWidget extends ConsumerWidget {
   const SearchBarWidget({super.key});
 

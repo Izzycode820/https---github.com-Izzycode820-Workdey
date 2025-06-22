@@ -1,92 +1,52 @@
-// worker_category_bottom_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workdey_frontend/features/search_filter/job/filterwidgets/job_filter_enum.dart';
-import 'package:workdey_frontend/features/search_filter/job/searchwidgets/job_search_provider.dart';
-import 'package:workdey_frontend/features/search_filter/worker/filterwidget/worker_filters_enums.dart';
-import 'package:workdey_frontend/features/search_filter/worker/searchwidget/worker_search_provider.dart';
+import 'package:workdey_frontend/features/search_filter/generic_filter_bottom_sheet.dart' as worker_sheets;
+import 'package:workdey_frontend/features/search_filter/generic_filter_bottom_sheet.dart' as job_sheets;
 
-// worker category bottom sheet
+//  bottom sheet decoration
+const _bottomSheetDecoration = BoxDecoration(
+  color: Colors.white,
+  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black,
+      blurRadius: 4,
+      offset: Offset(0, -4),
+    ),
+  ],
+);
+
+const _headerTextStyle = TextStyle(
+  fontSize: 18,
+  fontWeight: FontWeight.w600,
+  color: Colors.black87,
+);
+
+const _categoryTextStyle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+);
+
+const _buttonTextStyle = TextStyle(
+  fontSize: 16,
+  fontWeight: FontWeight.w600,
+  color: Colors.white,
+);
+
+// Worker filter sheets
 void showWorkerCategoryBottomSheet(BuildContext context, WidgetRef ref) {
-  final currentCategory = ref.watch(workerSearchProvider).category;
-  
-  showModalBottomSheet(
-    context: context,
-    builder: (ctx) {
-      return ListView(
-        children: WorkerCategory.values.map((category) {
-          final isSelected = currentCategory == category;
-          return ListTile(
-            leading: Icon(
-              isSelected ? Icons.check_circle : Icons.circle_outlined,
-              color: isSelected ? Colors.green : Colors.grey,
-            ),
-            title: Text(category.displayName),
-            onTap: () {
-              ref.read(workerSearchProvider.notifier)
-                .setCategory(isSelected ? null : category);
-              Navigator.pop(ctx);
-            },
-          );
-        }).toList(),
-      );
-    },
-  );
+  worker_sheets.showWorkerCategoryBottomSheet(context, ref);
 }
 
-// job category
-// Job Category Bottom Sheet
+void showWorkerAvailabilityBottomSheet(BuildContext context, WidgetRef ref) {
+  worker_sheets.showWorkerAvailabilityBottomSheet(context, ref);
+}
+
+// Job filter sheets
 void showJobCategoryBottomSheet(BuildContext context, WidgetRef ref) {
-  final currentCategory = ref.watch(jobSearchProvider).category;
-  
-  showModalBottomSheet(
-    context: context,
-    builder: (ctx) {
-      return ListView(
-        children: JobCategory.values.map((category) {
-          final isSelected = currentCategory == category;
-          return ListTile(
-            leading: Icon(
-              isSelected ? Icons.check_circle : Icons.circle_outlined,
-              color: isSelected ? Colors.green : Colors.grey,
-            ),
-            title: Text(category.displayName),
-            onTap: () {
-              ref.read(jobSearchProvider.notifier)
-                .setcategory(isSelected ? null : category);
-              Navigator.pop(ctx);
-            },
-          );
-        }).toList(),
-      );
-    },
-  );
+  job_sheets.showJobCategoryBottomSheet(context, ref);
 }
 
-// Job Type Bottom Sheet
 void showJobTypeBottomSheet(BuildContext context, WidgetRef ref) {
-  final currentJobType = ref.watch(jobSearchProvider).jobType;
-  
-  showModalBottomSheet(
-    context: context,
-    builder: (ctx) {
-      return ListView(
-        children: JobType.values.map((jobType) {
-          final isSelected = currentJobType == jobType;
-          return ListTile(
-            leading: Icon(
-              isSelected ? Icons.check_circle : Icons.circle_outlined,
-              color: isSelected ? Colors.green : Colors.grey,
-            ),
-            title: Text(jobType.displayName),
-            onTap: () {
-              ref.read(jobSearchProvider.notifier)
-                .setJobType(isSelected ? null : jobType);
-              Navigator.pop(ctx);
-            },
-          );
-        }).toList(),
-      );
-    },
-  );
+  job_sheets.showJobTypeBottomSheet(context, ref);
 }

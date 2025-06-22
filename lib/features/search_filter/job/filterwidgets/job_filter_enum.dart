@@ -23,8 +23,24 @@ enum JobCategory {
   it('IT'),
   healthcare('Healthcare'),
   construction('Construction'),
-  education('Education');
+  education('Education'),
+  design('Design'),
+  finance('Finance'),
+  other('Other');
 
   final String displayName;
   const JobCategory(this.displayName);
+}
+
+enum WorkingDays {
+  monday('Monday'),
+  tuesday('Tuesday'),
+  wednesday('Wednesday'),
+  thursday('Thursday'),
+  friday('Friday'),
+  saturday('Saturday'),
+  sunday('Sunday');
+
+  final String displayName;
+  const WorkingDays(this.displayName);
 }

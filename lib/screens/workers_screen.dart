@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_workers_provider.dart';
+import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/providers/saved_worker_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/search_filter/search_filter_provider.dart';
@@ -38,17 +39,22 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
   }
 
   void _scrollListener() {
-    final double maxScroll = _scrollController.position.maxScrollExtent;
-    final double currentScroll = _scrollController.position.pixels;
-    final double delta = MediaQuery.of(context).size.height * 0.20;
-    
-    if (maxScroll - currentScroll <= delta) {
+  final double maxScroll = _scrollController.position.maxScrollExtent;
+  final double currentScroll = _scrollController.position.pixels;
+  final double delta = MediaQuery.of(context).size.height * 0.20;
+  
+  if (maxScroll - currentScroll <= delta) {
+    final searchNotifier = ref.read(workerSearchProvider.notifier);
+    if (searchNotifier.state.query.isNotEmpty || searchNotifier.state.hasActiveFilters) {
+      searchNotifier.loadMore();
+    } else {
       final notifier = ref.read(workersNotifierProvider.notifier);
       if (notifier.hasMore) {
         notifier.loadNextPage();
       }
     }
   }
+}
 
   Future<void> _loadInitialWorkers() async {
     final category = ref.read(searchFilterProvider).category;
@@ -61,6 +67,8 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
   Widget build(BuildContext context) {
     final workersState = ref.watch(workersNotifierProvider);
     final filterState = ref.watch(searchFilterProvider);
+    final searchState = ref.watch(jobSearchProvider);
+    final hasActiveSearch = searchState.query.isNotEmpty || searchState.hasActiveFilters;
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -77,6 +85,24 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: WorkerSearchBar(),
+          ),
+          if (hasActiveSearch)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Text(
+                   'Search results for "${searchState.query}"'
+                     'Filtered results',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => ref.read(workerSearchProvider.notifier).reset(),
+                  child: const Text('Clear all'),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: RefreshIndicator(

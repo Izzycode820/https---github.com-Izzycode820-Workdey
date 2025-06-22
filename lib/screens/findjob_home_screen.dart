@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_job_provider.dart';
+import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
@@ -38,17 +39,24 @@ void initState() {
   final double delta = MediaQuery.of(context).size.height * 0.20;
   
   if (maxScroll - currentScroll <= delta) {
-    final notifier = ref.read(jobsNotifierProvider.notifier);
-    if (notifier.hasMore ) {
-      notifier.loadNextPage();
+    final searchNotifier = ref.read(jobSearchProvider.notifier);
+    if (searchNotifier.state.query.isNotEmpty || searchNotifier.state.hasActiveFilters) {
+      searchNotifier.loadMore();
+    } else {
+      final notifier = ref.read(jobsNotifierProvider.notifier);
+      if (notifier.hasMore) {
+        notifier.loadNextPage();
+      }
     }
   }
 }
 
 
-  @override
-Widget build(BuildContext context) {
+@override
+Widget build(context) {
   final jobsState = ref.watch(jobsNotifierProvider);
+  final searchState = ref.watch(jobSearchProvider);
+    final hasActiveSearch = searchState.query.isNotEmpty || searchState.hasActiveFilters;
 
   return Scaffold(
     appBar: CustomAppBar(
@@ -62,9 +70,14 @@ Widget build(BuildContext context) {
     ),
     body: RefreshIndicator(
       onRefresh: () async {
-          await ref.read(jobsNotifierProvider.notifier).refreshJobs();
-          ref.read(lastRefreshTimeProvider.notifier).state = DateTime.now();
-        },
+          setState(() => _isRefreshing = true);
+          try {
+          await ref.read(jobSearchProvider.notifier).refreshSearch();
+        } finally {
+          if (mounted) setState(() => _isRefreshing = false);
+        }
+      },
+
       child: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -78,6 +91,23 @@ Widget build(BuildContext context) {
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: JobSearchBar(),
           ),
+          if (hasActiveSearch) 
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Search results for "${searchState.query}"',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () => ref.read(jobSearchProvider.notifier).reset(),
+                            child: const Text('Clear search'),
+                          ),
+                        ],
+                      ),
+                    ),
           _buildRefreshButton(),
         ],
       ),
@@ -106,7 +136,11 @@ Widget build(BuildContext context) {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('No jobs available'),
+                        Text(
+                            hasActiveSearch 
+                              ? 'No jobs found for "${searchState.query}"'
+                              : 'No jobs available',
+                          ),
                        _buildRefreshButton(),
                       ],
                     ),
