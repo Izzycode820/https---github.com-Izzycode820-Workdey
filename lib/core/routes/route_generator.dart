@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/app.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
-import 'package:workdey_frontend/features/search_filter/search_context.dart';
 import 'package:workdey_frontend/screens/findjob_home_screen.dart';
 import 'package:workdey_frontend/screens/login_screen.dart';
 import 'package:workdey_frontend/screens/messaging_screen.dart';
@@ -17,14 +15,10 @@ import 'package:workdey_frontend/screens/workers_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-final searchContext = _getContextFromRoute(settings.name);
 
 return MaterialPageRoute(
       builder: (context) {
         // Set the search context before building the widget
-        ProviderScope.containerOf(context)
-          .read(searchContextProvider.notifier)
-          .state = searchContext;
 
 return switch (settings.name) {
        AppRoutes.findJobs => const HomeScreen(),
@@ -44,10 +38,5 @@ return switch (settings.name) {
     );
   }
 
-  static SearchContext _getContextFromRoute(String? routeName) {
-    if (routeName?.contains('worker') ?? false) {
-      return SearchContext.workers;
-    }
-    return SearchContext.jobs;
-  }
+ 
 }

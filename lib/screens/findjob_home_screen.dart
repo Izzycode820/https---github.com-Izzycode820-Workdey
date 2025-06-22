@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/get_job_provider.dart';
-import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
-import 'package:workdey_frontend/features/search_filter/job/searchwidgets/job_search_bar.dart';
+import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -39,28 +38,22 @@ void initState() {
   final double delta = MediaQuery.of(context).size.height * 0.20;
   
   if (maxScroll - currentScroll <= delta) {
-    final searchNotifier = ref.read(jobSearchProvider.notifier);
-    if (searchNotifier.state.query.isNotEmpty || searchNotifier.state.hasActiveFilters) {
-      searchNotifier.loadMore();
-    } else {
-      final notifier = ref.read(jobsNotifierProvider.notifier);
-      if (notifier.hasMore) {
-        notifier.loadNextPage();
-      }
+    final notifier = ref.read(jobsNotifierProvider.notifier);
+    if (notifier.hasMore ) {
+      notifier.loadNextPage();
     }
   }
 }
 
 
-@override
-Widget build(context) {
+  @override
+Widget build(BuildContext context) {
   final jobsState = ref.watch(jobsNotifierProvider);
-  final searchState = ref.watch(jobSearchProvider);
-  final searchResults = ref.watch(jobResultsProvider);
-  final hasActiveSearch = searchState.query.isNotEmpty || searchState.hasActiveFilters;
 
   return Scaffold(
     appBar: CustomAppBar(
+      isJobSearch: true,
+        showSearchBar: true,
       actionButton: TextButton(
     onPressed: () => Navigator.pushNamed(context, AppRoutes.postJobs),
     child: const Text(
@@ -71,13 +64,9 @@ Widget build(context) {
     ),
     body: RefreshIndicator(
       onRefresh: () async {
-          if (hasActiveSearch) {
-          await ref.read(jobSearchProvider.notifier).refreshSearch();
-        } else {
           await ref.read(jobsNotifierProvider.notifier).refreshJobs();
-        }
-      },
-
+          ref.read(lastRefreshTimeProvider.notifier).state = DateTime.now();
+        },
       child: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -89,53 +78,12 @@ Widget build(context) {
           // Search Bar
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: JobSearchBar(),
           ),
-          if (hasActiveSearch) 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Search results for "${searchState.query}"',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () {
-                              ref.read(jobSearchProvider.notifier).reset(); 
-                              ref.read(jobResultsProvider.notifier).updateResults([]); 
-                            },
-                            child: const Text('Clear search'),
-                          ),
-                        ],
-                      ),
-                    ),
           _buildRefreshButton(),
         ],
       ),
     ),
-    //search results
-          if (hasActiveSearch)
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return JobCard(
-                    job: searchResults[index],
-                    onBookmarkPressed: (jobId) {
-                      // Handle bookmark
-                        // // Get the current saved status
-                        // final isCurrentlySaved = paginated.results[index].isSaved;
-                        // // Use the savedJobsProvider instead
-                        // ref.read(savedJobsProvider.notifier).toggleSave(jobId, isCurrentlySaved);
-                      
-                    },
-                  );
-                },
-                childCount: searchResults.length,
-              ),
-            )
-          else
+          
                // Jobs List
             jobsState.when(
             loading: () => const SliverFillRemaining(
@@ -159,11 +107,7 @@ Widget build(context) {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                            hasActiveSearch 
-                              ? 'No jobs found for "${searchState.query}"'
-                              : 'No jobs available',
-                          ),
+                        const Text('No jobs available'),
                        _buildRefreshButton(),
                       ],
                     ),

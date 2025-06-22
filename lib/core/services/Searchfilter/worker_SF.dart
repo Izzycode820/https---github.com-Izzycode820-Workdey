@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:workdey_frontend/core/models/getworkers/get_workers_model.dart';
-import 'package:workdey_frontend/features/search_filter/worker/filterwidget/worker_filters_enums.dart';
+import 'package:workdey_frontend/features/search_filter/worker_filters_enums.dart';
 
 class WorkerSearchService {
   final Dio _dio;
@@ -22,9 +22,14 @@ class WorkerSearchService {
       if (location != null) 'location': location,
       if (availability != null) 
         'availability[]': availability.map((a) => a.apiValue).toList(),
+      'page': page,  
     };
 
     final response = await _dio.get('/api/v1/worker-search/', queryParameters: params);
-    return response.data.map((json) => Worker.fromJson(json)).toList();
-  }
+     final data = response.data as Map<String, dynamic>;
+  final results = data['results'] as List;
+  
+  return results.map((json) => Worker.fromJson(json)).toList();
+}
+
 }

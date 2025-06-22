@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
-import 'package:workdey_frontend/features/search_filter/job/filterwidgets/job_filter_enum.dart';
+import 'package:workdey_frontend/features/search_filter/job_filter_enum.dart';
 
 class JobSearchService {
   final Dio _dio;
@@ -27,9 +27,15 @@ class JobSearchService {
       if (workingDays != null) 'working_days[]': workingDays,
       if (jobNature != null) 'job_nature': jobNature.name,
       if (postedWithin != null) 'posted_within': postedWithin,
+      'page': page,
     };
 
     final response = await _dio.get('/api/v1/job-search/', queryParameters: params);
-    return response.data.map((json) => Job.fromJson(json)).toList();
-  }
+  
+   final data = response.data as Map<String, dynamic>;
+  final results = data['results'] as List;
+  
+  return results.map((json) => Job.fromJson(json)).toList();
+}
+  
 }

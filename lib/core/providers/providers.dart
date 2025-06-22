@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:workdey_frontend/core/interceptors/auth_interceptor.dart';
 import 'package:workdey_frontend/core/interceptors/job_interceptor.dart';
 import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
-import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
-import 'package:workdey_frontend/core/models/getworkers/get_workers_model.dart';
+import 'package:workdey_frontend/core/providers/job_search_provider.dart';
+import 'package:workdey_frontend/core/providers/worker_search_provider.dart';
 import 'package:workdey_frontend/core/services/Searchfilter/job_SF.dart';
 import 'package:workdey_frontend/core/services/Searchfilter/worker_SF.dart';
 import 'package:workdey_frontend/core/services/applicant_service.dart';
@@ -17,11 +17,7 @@ import 'package:workdey_frontend/core/services/post_job_service.dart';
 import 'package:workdey_frontend/core/services/signup_service.dart';
 import 'package:workdey_frontend/core/storage/local_cache.dart';
 import 'package:workdey_frontend/core/storage/local_cache_impl.dart';
-import 'package:workdey_frontend/features/search_filter/job/searchwidgets/job_search_provider.dart';
-import 'package:workdey_frontend/features/search_filter/job/searchwidgets/job_search_state.dart';
-import 'package:workdey_frontend/features/search_filter/Searchresults/search_results_notifier.dart';
-import 'package:workdey_frontend/features/search_filter/worker/searchwidget/worker_search_provider.dart';
-import 'package:workdey_frontend/features/search_filter/worker/searchwidget/worker_search_state.dart';
+
 
 
 // 1. Basic storage provider
@@ -145,27 +141,22 @@ final signupServiceProvider = Provider<SignupService>((ref) {
 
 //14. Job search related providers
 final jobSearchServiceProvider = Provider<JobSearchService>((ref) {
-  return JobSearchService(ref.read(dioProvider));
+  final dio = ref.read(dioProvider);
+  return JobSearchService(dio);
+});
+//
+final jobSearchNotifierProvider = StateNotifierProvider<JobSearchNotifier, JobSearchState>((ref) {
+  final service = ref.read(jobSearchServiceProvider);
+  return JobSearchNotifier(service);
 });
 
-//JOb search providers
-final jobSearchProvider = StateNotifierProvider<JobSearchNotifier, JobSearchState>((ref) {
-  return JobSearchNotifier(ref.read(jobSearchServiceProvider), ref);
-});
-
-final jobResultsProvider = StateNotifierProvider<JobResultsNotifier, List<Job>>((ref) {
-  return JobResultsNotifier();
-});
-
-//Workers searching relates providers
+//15 Worker Search Related Providers
 final workerSearchServiceProvider = Provider<WorkerSearchService>((ref) {
-  return WorkerSearchService(ref.read(dioProvider));
+  final dio = ref.read(dioProvider);
+  return WorkerSearchService(dio);
 });
 
-final workerSearchProvider = StateNotifierProvider<WorkerSearchNotifier, WorkerSearchState>((ref) {
-  return WorkerSearchNotifier(ref.read(workerSearchServiceProvider), ref);
-});
-
-final workerResultsProvider = StateNotifierProvider<WorkerResultsNotifier, List<Worker>>((ref) {
-  return WorkerResultsNotifier();
+final workerSearchNotifierProvider = StateNotifierProvider<WorkerSearchNotifier, WorkerSearchState>((ref) {
+  final service = ref.read(workerSearchServiceProvider);
+  return WorkerSearchNotifier(service);
 });
