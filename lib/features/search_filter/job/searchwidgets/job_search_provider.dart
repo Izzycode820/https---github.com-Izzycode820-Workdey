@@ -92,17 +92,22 @@ Future<void> loadMore() async {
 //Api call
   Future<void> _performSearch() async{
     try {
-      final results = await _searchService.search(
-        query: state.query,
-        // category: state.category,
-        // skills: state.skills,
-        // location: state.location,
-        // jobNature: state.jobNature,
-        // workingDays: state.workingDays,
-      );
-      // Update your results provider here
+    final results = await _searchService.search(
+      query: state.query,
+      category: state.category,
+      skills: state.skills,
+      location: state.location,
+      jobNature: state.jobNature,
+      workingDays: state.workingDays,
+      page: _currentPage,
+    );
+    
+    if (_currentPage == 1) {
       _ref.read(jobResultsProvider.notifier).updateResults(results);
-    } catch (e) {
+    } else {
+      _ref.read(jobResultsProvider.notifier).addResults(results);
+    }
+  } catch (e) {
       // Handle error
     }
   }

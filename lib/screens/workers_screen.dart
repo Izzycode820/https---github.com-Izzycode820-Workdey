@@ -68,6 +68,7 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
     final workersState = ref.watch(workersNotifierProvider);
     final filterState = ref.watch(searchFilterProvider);
     final searchState = ref.watch(jobSearchProvider);
+    final searchResults = ref.watch(workerResultsProvider);
     final hasActiveSearch = searchState.query.isNotEmpty || searchState.hasActiveFilters;
 
     return Scaffold(
@@ -93,23 +94,47 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
               children: [
                 Text(
                    'Search results for "${searchState.query}"'
-                     'Filtered results',
+                  ,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: () => ref.read(workerSearchProvider.notifier).reset(),
-                  child: const Text('Clear all'),
+                  onPressed: () {
+                      ref.read(workerSearchProvider.notifier).reset(); 
+                      ref.read(workerResultsProvider.notifier).updateResults([]);
+                    },
+                  child: const Text('Clear search'),
                 ),
               ],
             ),
           ),
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _loadInitialWorkers,
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: [
+              onRefresh: () async {
+              if (hasActiveSearch) {
+                await ref.read(workerSearchProvider.notifier).refreshSearch();
+              } else {
+                await _loadInitialWorkers();
+              }
+            },
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                if (hasActiveSearch)
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return WorkerCard(
+                          worker: searchResults[index],
+                          onBookmarkPressed: (workerId) {
+                            // Handle bookmark
+                          },
+                        );
+                      },
+                      childCount: searchResults.length,
+                    ),
+                  )
+                else
                   workersState.maybeWhen(
   loading: () => const SliverFillRemaining(
     child: Center(child: CircularProgressIndicator()),

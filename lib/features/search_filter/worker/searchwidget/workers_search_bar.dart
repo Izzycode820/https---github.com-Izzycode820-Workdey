@@ -69,7 +69,7 @@ class WorkerSearchBar extends ConsumerWidget {
       builder: (context) => SearchInputPage(
         searchContext: SearchContext.workers,
         onSearch: (query) {
-          ref.read(jobSearchProvider.notifier).setQuery(query);
+          ref.read(workerSearchProvider.notifier).setQuery(query);
           Navigator.pop(context); // Return to jobs page
         },
       ),

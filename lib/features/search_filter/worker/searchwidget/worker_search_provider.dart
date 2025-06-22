@@ -58,21 +58,22 @@ Future<void> loadMore() async {
   
   try {
     final results = await _searchService.search(
-      // query: state.query,
-      // category: state.category,
-      // skills: state.skills,
-      // location: state.location,
-      // availability: state.availability,
+      query: state.query,
+      category: state.category,
+      skills: state.skills,
+      location: state.location,
+      availability: state.availability,
       // Add pagination parameters as needed by your API
-      page: _currentPage + 1,
+      page: _currentPage,
     );
     
-    if (results.isNotEmpty) {
-      _currentPage++;
+    if (_currentPage == 1) {
+      _ref.read(workerResultsProvider.notifier).updateResults(results);
+    } else {
       _ref.read(workerResultsProvider.notifier).addResults(results);
     }
-  } finally {
-    _isLoading = false;
+  } catch (e) {
+    //Handle error
   }
 }
 

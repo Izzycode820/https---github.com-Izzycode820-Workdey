@@ -56,7 +56,8 @@ void initState() {
 Widget build(context) {
   final jobsState = ref.watch(jobsNotifierProvider);
   final searchState = ref.watch(jobSearchProvider);
-    final hasActiveSearch = searchState.query.isNotEmpty || searchState.hasActiveFilters;
+  final searchResults = ref.watch(jobResultsProvider);
+  final hasActiveSearch = searchState.query.isNotEmpty || searchState.hasActiveFilters;
 
   return Scaffold(
     appBar: CustomAppBar(
@@ -70,11 +71,10 @@ Widget build(context) {
     ),
     body: RefreshIndicator(
       onRefresh: () async {
-          setState(() => _isRefreshing = true);
-          try {
+          if (hasActiveSearch) {
           await ref.read(jobSearchProvider.notifier).refreshSearch();
-        } finally {
-          if (mounted) setState(() => _isRefreshing = false);
+        } else {
+          await ref.read(jobsNotifierProvider.notifier).refreshJobs();
         }
       },
 
@@ -102,7 +102,10 @@ Widget build(context) {
                           ),
                           const Spacer(),
                           TextButton(
-                            onPressed: () => ref.read(jobSearchProvider.notifier).reset(),
+                            onPressed: () {
+                              ref.read(jobSearchProvider.notifier).reset(); 
+                              ref.read(jobResultsProvider.notifier).updateResults([]); 
+                            },
                             child: const Text('Clear search'),
                           ),
                         ],
@@ -112,7 +115,27 @@ Widget build(context) {
         ],
       ),
     ),
-          
+    //search results
+          if (hasActiveSearch)
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return JobCard(
+                    job: searchResults[index],
+                    onBookmarkPressed: (jobId) {
+                      // Handle bookmark
+                        // // Get the current saved status
+                        // final isCurrentlySaved = paginated.results[index].isSaved;
+                        // // Use the savedJobsProvider instead
+                        // ref.read(savedJobsProvider.notifier).toggleSave(jobId, isCurrentlySaved);
+                      
+                    },
+                  );
+                },
+                childCount: searchResults.length,
+              ),
+            )
+          else
                // Jobs List
             jobsState.when(
             loading: () => const SliverFillRemaining(
