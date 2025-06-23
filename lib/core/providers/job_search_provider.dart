@@ -53,6 +53,8 @@ class JobSearchState extends SearchState<Job> {
 // Notifiers
 class JobSearchNotifier extends StateNotifier<JobSearchState> {
   final JobSearchService _service;
+  int _currentPage = 1;
+  bool _hasMore = true;
 
   JobSearchNotifier(this._service) : super(JobSearchState(
     results: [],
@@ -64,17 +66,39 @@ class JobSearchNotifier extends StateNotifier<JobSearchState> {
 
   Future<void> searchJobs({String? query, bool loadMore = false}) async {
     try {
-      state = state.copyWith(
-        isLoading: true,
-        error: null,
-        query: query ?? state.query,
-        page: loadMore ? state.page : 1,
-      );
+      if (!loadMore) {
+        _currentPage = 1;
+        _hasMore = true;
+        state = state.copyWith(
+          isLoading: true,
+          error: null,
+          query: query ?? state.query,
+          page: 1,
+          results: [],
+        );
+      } else {
+        if (!_hasMore) return;
+        state = state.copyWith(isLoading: true);
+      }
 
       final results = await _service.search(
         query: query ?? state.query,
-        page: loadMore ? state.page + 1 : 1,
+        page: loadMore ? _currentPage + 1 : 1,
+      //other params
       );
+
+      // Handle empty response
+      if (results.isEmpty) {
+        _hasMore = false;
+        state = state.copyWith(
+          isLoading: false,
+          hasMore: false,
+        );
+        return;
+      }
+
+      _currentPage = loadMore ? _currentPage + 1 : 1;
+      _hasMore = results.isNotEmpty; // Or use API's pagination info if available
 
       state = state.copyWith(
         isLoading: false,
@@ -82,12 +106,14 @@ class JobSearchNotifier extends StateNotifier<JobSearchState> {
             ? [...state.results, ...results]
             : results,
         page: loadMore ? state.page + 1 : 1,
-        hasMore: results.isNotEmpty, // Adjust based on your pagination logic
+      hasMore: results.isNotEmpty,
       );
     } catch (e) {
+      // On error, maintain existing results but show error
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
+        hasMore: false,
       );
     }
   }

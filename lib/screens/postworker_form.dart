@@ -45,9 +45,9 @@ class _PostWorkerFormState extends ConsumerState<PostWorkerForm> {
     notifier.updateField('portfolioLink', worker.portfolioLink);
     
     // Set controller values with null checks
-    _titleController.text = worker.title ?? '';
+    _titleController.text = worker.title;
     _bioController.text = worker.bio ?? '';
-    _locationController.text = worker.location ?? '';
+    _locationController.text = worker.location ;
     _experienceController.text = (worker.experienceYears ?? 0).toString();
     _portfolioController.text = worker.portfolioLink ?? '';
   }

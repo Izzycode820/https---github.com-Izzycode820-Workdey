@@ -18,6 +18,8 @@ class JobSearchService {
     String? postedWithin,
     int page = 1,
   }) async {
+    try{
+
     final params = {
       if (query != null) 'search': query,
       if (category != null) 'category': category.displayName.toUpperCase(),
@@ -30,12 +32,22 @@ class JobSearchService {
       'page': page,
     };
 
-    final response = await _dio.get('/api/v1/job-search/', queryParameters: params);
+    final response = await _dio.get('/api/v1/job-search/', queryParameters: 
+    params);
+
+    // Handle 404 for pagination
+    if (response.statusCode == 404 && page > 1) {
+      return [];
+    }
   
    final data = response.data as Map<String, dynamic>;
-  final results = data['results'] as List;
-  
-  return results.map((json) => Job.fromJson(json)).toList();
-}
-  
-}
+    if (data['results'] == null) return [];
+    
+    return (data['results'] as List).map((json) => Job.fromJson(json)).toList();
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 404 && page > 1) {
+      return []; // No more pages available
+    }
+    rethrow;
+  }
+  }}

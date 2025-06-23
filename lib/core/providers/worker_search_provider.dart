@@ -54,6 +54,8 @@ class WorkerSearchState extends SearchState<Worker> {
 // Notifiers
 class WorkerSearchNotifier extends StateNotifier<WorkerSearchState> {
   final WorkerSearchService _service;
+  int _currentPage = 1;
+  bool _hasMore = true;
 
   WorkerSearchNotifier(this._service) : super(WorkerSearchState(
     results: [],
@@ -65,17 +67,38 @@ class WorkerSearchNotifier extends StateNotifier<WorkerSearchState> {
 
   Future<void> searchWorkers({String? query, bool loadMore = false}) async {
     try {
-      state = state.copyWith(
-        isLoading: true,
-        error: null,
-        query: query ?? state.query,
-        page: loadMore ? state.page : 1,
-      );
+      if (!loadMore) {
+        _currentPage = 1;
+        _hasMore = true;
+        state = state.copyWith(
+          isLoading: true,
+          error: null,
+          query: query ?? state.query,
+          page: 1,
+          results: [],
+        );
+      } else {
+        if (!_hasMore) return;
+        state = state.copyWith(isLoading: true);
+      }
 
       final results = await _service.search(
         query: query ?? state.query,
-        page: loadMore ? state.page + 1 : 1,
+        page: loadMore ? _currentPage + 1 : 1,
       );
+
+      // Handle empty response
+      if (results.isEmpty) {
+        _hasMore = false;
+        state = state.copyWith(
+          isLoading: false,
+          hasMore: false,
+        );
+        return;
+      }
+
+      _currentPage = loadMore ? _currentPage + 1 : 1;
+      _hasMore = results.isNotEmpty; // Or use API's pagination info if available
 
       state = state.copyWith(
         isLoading: false,
@@ -83,15 +106,28 @@ class WorkerSearchNotifier extends StateNotifier<WorkerSearchState> {
             ? [...state.results, ...results]
             : results,
         page: loadMore ? state.page + 1 : 1,
-        hasMore: results.isNotEmpty, // Adjust based on your pagination logic
+        hasMore: results.isNotEmpty,
       );
     } catch (e) {
+      // On error, maintain existing results but show error
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
+        hasMore: false,
       );
     }
   }
+
+  Future<void> triggerSearch() async {
+  state = state.copyWith(isLoading: true);
+  
+  final results = await _service.search(query: state.query);
+  
+  state = state.copyWith(
+    isLoading: false,
+    results: results,
+  );
+}
 
   void setQuery(String query) {
     state = state.copyWith(query: query);

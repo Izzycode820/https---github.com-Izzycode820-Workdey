@@ -15,6 +15,9 @@ class WorkerSearchService {
     List<WorkerAvailability>? availability,
     int page = 1,
   }) async {
+
+    try{
+
     final params = {
       if (query != null) 'search': query,
       if (category != null) 'category': category.name.toUpperCase(),
@@ -26,10 +29,22 @@ class WorkerSearchService {
     };
 
     final response = await _dio.get('/api/v1/worker-search/', queryParameters: params);
-     final data = response.data as Map<String, dynamic>;
-  final results = data['results'] as List;
-  
-  return results.map((json) => Worker.fromJson(json)).toList();
+    
+    // Handle 404 for pagination
+    if (response.statusCode == 404 && page > 1) {
+      return [];
+    }
+
+    final data = response.data as Map<String, dynamic>;
+    if (data['results'] == null) return [];
+    
+    return (data['results'] as List).map((json) => Worker.fromJson(json)).toList();
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 404 && page > 1) {
+      return []; // No more pages available
+    }
+    rethrow;
+  }
 }
 
 }

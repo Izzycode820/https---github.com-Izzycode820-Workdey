@@ -70,6 +70,10 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(widget.searchType == SearchType.job 
+        ? jobSearchNotifierProvider 
+        : workerSearchNotifierProvider);
+        
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.searchType == SearchType.job 
@@ -109,25 +113,39 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
       return const Center(child: Text('No jobs found'));
     }
 
-    return ListView.builder(
+    return RefreshIndicator(
+    onRefresh: () async {
+      await ref.read(jobSearchNotifierProvider.notifier)
+        .searchJobs(query: widget.searchQuery);
+    },
+    child:  ListView.builder(
       controller: _scrollController,
       itemCount: state.hasMore 
           ? state.results.length + 1 
           : state.results.length,
       itemBuilder: (context, index) {
         if (index >= state.results.length) {
-          return const Center(child: CircularProgressIndicator());
+          return state.hasMore
+              ? const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : const Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: Text('No more results')),
+        );
         }
         return _buildJobItem(state.results[index]);
       },
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildJobItem(Job job) {
     return Card(
       child: ListTile(
-        title: Text(job.title ?? 'No title'),
-        subtitle: Text(job.location ?? 'No location'),
+        title: Text(job.title),
+        subtitle: Text(job.location),
       ),
     );
   }
@@ -144,19 +162,35 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
       return const Center(child: Text('No workers found'));
     }
 
-    return ListView.builder(
+
+    return RefreshIndicator(
+    onRefresh: () async {
+      await ref.read(jobSearchNotifierProvider.notifier)
+        .searchJobs(query: widget.searchQuery);
+    },
+
+    child:  ListView.builder(
       controller: _scrollController,
       itemCount: state.hasMore 
           ? state.results.length + 1 
           : state.results.length,
       itemBuilder: (context, index) {
         if (index >= state.results.length) {
-          return const Center(child: CircularProgressIndicator());
+          return state.hasMore
+              ? const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : const Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: Text('No more results')),
+        );
         }
         return _buildWorkerItem(state.results[index]);
       },
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildWorkerItem(Worker worker) {
     return Card(
