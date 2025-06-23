@@ -5,7 +5,6 @@ import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
-import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 import 'package:workdey_frontend/shared/enum/search_type.dart';
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/providers/recent_search_provider.dart';
 import 'package:workdey_frontend/features/search_filter/search_input_screen.dart';
 import 'package:workdey_frontend/screens/search_screen.dart';
@@ -16,21 +17,6 @@ class SearchBarWidget extends ConsumerWidget {
     this.isStatic = true,
     this.isInputScreen = false,
   });
-
-  // void _showFilters(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (context) => Container(
-  //       padding: const EdgeInsets.all(16),
-  //       child: Column(
-  //         children: [
-  //           Text('Filters', style: Theme.of(context).textTheme.headlineSmall),
-  //           // Add filter widgets here
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,52 +52,83 @@ class SearchBarWidget extends ConsumerWidget {
   }
 
   Widget _buildActiveSearchBar(BuildContext context, WidgetRef ref) {
-    final controller = TextEditingController();
-    void _showFilters() { // Moved inside _buildActiveSearchBar
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Text('Filters', style: Theme.of(context).textTheme.headlineSmall),
-              // Add filter widgets here
-            ],
-          ),
-        ),
-      );
-    }
+  final controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
 
-    return TextField(
-      controller: controller,
-      autofocus: isInputScreen,
-      decoration: InputDecoration(
-       hintText: searchType == SearchType.job ? 'Search jobs...' : 'Search workers...',
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: isInputScreen
-            ? IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                    final query = controller.text.trim();
-                    if (query.isNotEmpty) {
-                      ref.read(recentSearchesProvider.notifier).addSearch(query);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SearchResultsScreen(
-                            searchType: searchType, 
-                            searchQuery: query,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-              )
-            : IconButton(
-                icon: const Icon(Icons.tune),
-                onPressed: _showFilters, // Use the local function
-              ),
-      ),
+  void performSearch() async {
+    final query = controller.text.trim();
+    if (query.isNotEmpty) {
+      ref.read(recentSearchesProvider.notifier).addSearch(query);
+
+showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
+
+      // Navigate to results screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SearchResultsScreen(
+          searchType: searchType,
+          searchQuery: query,
+        ),
+      ),
+    ).then((_) {
+    Navigator.of(context).pop(); // Dismiss loading when navigation completes
+  });
+  
+  // Trigger search
+  if (searchType == SearchType.job) {
+    ref.read(jobSearchNotifierProvider.notifier).searchJobs(query: query);
+  } else {
+    ref.read(workerSearchNotifierProvider.notifier).searchWorkers(query: query);
   }
+  
+  focusNode.unfocus();
+}}
+
+  return TextField(
+    controller: controller,
+    focusNode: focusNode,
+    autofocus: isInputScreen,
+    textInputAction: TextInputAction.search,
+    onSubmitted: (_) => performSearch(),
+    decoration: InputDecoration(
+      hintText: searchType == SearchType.job ? 'Search jobs...' : 'Search workers...',
+      prefixIcon: const Icon(Icons.search),
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (controller.text.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                controller.clear();
+                performSearch();
+              },
+            ),
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: performSearch,
+          ),
+          if (!isInputScreen)
+            IconButton(
+              icon: const Icon(Icons.tune),
+              onPressed: () => _showMainFilterSheet(context, ref),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+void _showMainFilterSheet(BuildContext context, WidgetRef ref) {
+  if (searchType == SearchType.job) {
+    ref.read(jobFilterSheetsProvider).showMainFilterSheet(context, ref);
+  } else {
+    ref.read(workerFilterSheetsProvider).showMainFilterSheet(context, ref);
+  }
+}
 }

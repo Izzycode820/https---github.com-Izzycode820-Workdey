@@ -1,8 +1,8 @@
 enum JobType {
-  internship('Internship'),
-  professional('Professional'),
-  volunteer('Volunteer'),
-  local('Local');
+  internship('INT'),
+  professional('PRO'),
+  volunteer('VOL'),
+  local('LOC');
 
   final String displayName;
   const JobType(this.displayName);
@@ -13,7 +13,9 @@ enum JobNature {
   fullTime('Full-time'),
   partTime('Part-time'),
   contract('Contract'),
-  internship('Internship');
+  internship('Internship'),
+  errand('Errand'),
+  community('Community');
 
   final String displayName;
   const JobNature(this.displayName);

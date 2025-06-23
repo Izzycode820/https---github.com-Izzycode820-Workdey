@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/models/getworkers/get_workers_model.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
+import 'package:workdey_frontend/features/search_filter/job/job_filter_chips.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
+import 'package:workdey_frontend/features/search_filter/worker/workers_filter_chips.dart';
 import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 class SearchResultsScreen extends ConsumerStatefulWidget {
@@ -58,15 +60,34 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == 
-        _scrollController.position.maxScrollExtent) {
-      if (widget.searchType == SearchType.job) {
-        ref.read(jobSearchNotifierProvider.notifier).searchJobs(loadMore: true);
-      } else {
-        ref.read(workerSearchNotifierProvider.notifier).searchWorkers(loadMore: true);
-      }
+  final maxScroll = _scrollController.position.maxScrollExtent;
+  final currentScroll = _scrollController.position.pixels;
+  const delta = 100.0;
+  
+  if (maxScroll - currentScroll <= delta) {
+    _loadMoreResults();
+  }
+}
+
+void _loadMoreResults() {
+  if (widget.searchType == SearchType.job) {
+    final state = ref.read(jobSearchNotifierProvider);
+    if (!state.isLoading && state.hasMore) {
+      ref.read(jobSearchNotifierProvider.notifier).searchJobs(
+        query: widget.searchQuery,
+        loadMore: true,
+      );
+    }
+  } else {
+    final state = ref.read(workerSearchNotifierProvider);
+    if (!state.isLoading && state.hasMore) {
+      ref.read(workerSearchNotifierProvider.notifier).searchWorkers(
+        query: widget.searchQuery,
+        loadMore: true,
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +100,12 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
         title: Text(widget.searchType == SearchType.job 
             ? 'Job Results' 
             : 'Worker Results'),
+            actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_alt),
+            onPressed: () => _showMainFilterSheet(context),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -90,26 +117,42 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
               isInputScreen: false,
             ),
           ),
-          FilterChipsRow(searchType: widget.searchType),
-          Expanded(
-            child: widget.searchType == SearchType.job
-                ? _buildJobResults(ref)
-                : _buildWorkerResults(ref),
+          const SizedBox(height: 8),
+        // Make filter chips scrollable and properly constrained
+        SizedBox(
+          height: 50,
+          child: widget.searchType == SearchType.job
+              ? const JobFilterChips()
+              : const WorkerFilterChips(),
           ),
-        ],
-      ),
-    );
-  }
+        const SizedBox(height: 8),
+        Expanded(
+          child: widget.searchType == SearchType.job
+              ? _buildJobResults(ref)
+              : _buildWorkerResults(ref),
+        ),
+      ],
+    ),
+  );
+}
 
+ void _showMainFilterSheet(BuildContext context) {
+    if (widget.searchType == SearchType.job) {
+      ref.read(jobFilterSheetsProvider).showMainFilterSheet(context, ref);
+    } else {
+      ref.read(workerFilterSheetsProvider).showMainFilterSheet(context, ref);
+    }
+  }
+  
   Widget _buildJobResults(WidgetRef ref) {
-    final state = ref.watch(jobSearchNotifierProvider);
-    if (state.isLoading && state.results.isEmpty) {
+    final jobState = ref.watch(jobSearchNotifierProvider);
+    if (jobState.isLoading && jobState.results.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (state.error != null) {
-      return Center(child: Text('Error: ${state.error}'));
+    if (jobState.error != null) {
+      return Center(child: Text('Error: ${jobState.error}'));
     }
-    if (state.results.isEmpty) {
+    if (jobState.results.isEmpty) {
       return const Center(child: Text('No jobs found'));
     }
 
@@ -120,12 +163,12 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
     },
     child:  ListView.builder(
       controller: _scrollController,
-      itemCount: state.hasMore 
-          ? state.results.length + 1 
-          : state.results.length,
+      itemCount: jobState.hasMore 
+          ? jobState.results.length + 1 
+          : jobState.results.length,
       itemBuilder: (context, index) {
-        if (index >= state.results.length) {
-          return state.hasMore
+        if (index >= jobState.results.length) {
+          return jobState.hasMore
               ? const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
@@ -135,7 +178,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           child: Center(child: Text('No more results')),
         );
         }
-        return _buildJobItem(state.results[index]);
+        return _buildJobItem(jobState.results[index]);
       },
     ),
   );
@@ -151,14 +194,14 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   }
 
   Widget _buildWorkerResults(WidgetRef ref) {
-    final state = ref.watch(workerSearchNotifierProvider);
-    if (state.isLoading && state.results.isEmpty) {
+    final workerState = ref.watch(workerSearchNotifierProvider);
+    if (workerState.isLoading && workerState.results.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (state.error != null) {
-      return Center(child: Text('Error: ${state.error}'));
+    if (workerState.error != null) {
+      return Center(child: Text('Error: ${workerState.error}'));
     }
-    if (state.results.isEmpty) {
+    if (workerState.results.isEmpty) {
       return const Center(child: Text('No workers found'));
     }
 
@@ -171,12 +214,12 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
 
     child:  ListView.builder(
       controller: _scrollController,
-      itemCount: state.hasMore 
-          ? state.results.length + 1 
-          : state.results.length,
+      itemCount: workerState.hasMore 
+          ? workerState.results.length + 1 
+          : workerState.results.length,
       itemBuilder: (context, index) {
-        if (index >= state.results.length) {
-          return state.hasMore
+        if (index >= workerState.results.length) {
+          return workerState.hasMore
               ? const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: CircularProgressIndicator()),
@@ -186,7 +229,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           child: Center(child: Text('No more results')),
         );
         }
-        return _buildWorkerItem(state.results[index]);
+        return _buildWorkerItem(workerState.results[index]);
       },
     ),
   );
@@ -207,48 +250,48 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   }
 }
 
-class FilterChipsRow extends ConsumerWidget {
-  final SearchType searchType;
+// class FilterChipsRow extends ConsumerWidget {
+//   final SearchType searchType;
   
-  const FilterChipsRow({
-    super.key,
-    required this.searchType,
-  });
+//   const FilterChipsRow({
+//     super.key,
+//     required this.searchType,
+//   });
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          if (searchType == SearchType.job) ...[
-            _buildJobFilterChip('Full-time', ref),
-            _buildJobFilterChip('Remote', ref),
-          ] else ...[
-            _buildWorkerFilterChip('Available Now', ref),
-            _buildWorkerFilterChip('Verified', ref),
-          ],
-        ],
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     return SingleChildScrollView(
+//       scrollDirection: Axis.horizontal,
+//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+//       child: Row(
+//         children: [
+//           if (searchType == SearchType.job) ...[
+//             _buildJobFilterChip('Full-time', ref),
+//             _buildJobFilterChip('Remote', ref),
+//           ] else ...[
+//             _buildWorkerFilterChip('Available Now', ref),
+//             _buildWorkerFilterChip('Verified', ref),
+//           ],
+//         ],
+//       ),
+//     );
+//   }
 
-  Widget _buildJobFilterChip(String label, WidgetRef ref) {
-    return FilterChip(
-      label: Text(label),
-      onSelected: (selected) {
-        ref.read(jobSearchNotifierProvider.notifier).searchJobs();
-      },
-    );
-  }
+//   Widget _buildJobFilterChip(String label, WidgetRef ref) {
+//     return FilterChip(
+//       label: Text(label),
+//       onSelected: (selected) {
+//         ref.read(jobSearchNotifierProvider.notifier).searchJobs();
+//       },
+//     );
+//   }
 
-  Widget _buildWorkerFilterChip(String label, WidgetRef ref) {
-    return FilterChip(
-      label: Text(label),
-      onSelected: (selected) {
-        ref.read(workerSearchNotifierProvider.notifier).searchWorkers();
-      },
-    );
-  }
-}
+//   Widget _buildWorkerFilterChip(String label, WidgetRef ref) {
+//     return FilterChip(
+//       label: Text(label),
+//       onSelected: (selected) {
+//         ref.read(workerSearchNotifierProvider.notifier).searchWorkers();
+//       },
+//     );
+//   }
+// }

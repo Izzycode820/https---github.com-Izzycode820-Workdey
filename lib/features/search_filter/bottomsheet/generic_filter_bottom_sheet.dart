@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workdey_frontend/features/search_filter/generic_filter_bottom_sheet.dart' as worker_sheets;
-import 'package:workdey_frontend/features/search_filter/generic_filter_bottom_sheet.dart' as job_sheets;
+import 'package:workdey_frontend/features/search_filter/bottomsheet/job_bottomsheet.dart' as job_sheets;
+import 'package:workdey_frontend/features/search_filter/bottomsheet/workers_bottomsheet.dart' as worker_sheets;
 
 //  bottom sheet decoration
 const _bottomSheetDecoration = BoxDecoration(

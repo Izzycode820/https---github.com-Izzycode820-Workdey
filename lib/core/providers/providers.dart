@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:workdey_frontend/core/interceptors/auth_interceptor.dart';
 import 'package:workdey_frontend/core/interceptors/job_interceptor.dart';
 import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
+import 'package:workdey_frontend/core/providers/filter_provider.dart';
 import 'package:workdey_frontend/core/providers/job_search_provider.dart';
 import 'package:workdey_frontend/core/providers/worker_search_provider.dart';
 import 'package:workdey_frontend/core/services/Searchfilter/job_SF.dart';
@@ -160,3 +161,8 @@ final workerSearchNotifierProvider = StateNotifierProvider<WorkerSearchNotifier,
   final service = ref.read(workerSearchServiceProvider);
   return WorkerSearchNotifier(service);
 });
+
+
+//filters 
+final jobFilterSheetsProvider = Provider((ref) => JobFilterSheets());
+final workerFilterSheetsProvider = Provider((ref) => WorkerFilterSheets());
