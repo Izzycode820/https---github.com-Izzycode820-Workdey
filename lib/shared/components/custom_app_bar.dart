@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onNotificationPressed;
   final Widget? actionButton;
-  final bool? isJobSearch; // Make optional
+  final SearchType? searchType;
   final bool showSearchBar; // New parameter to control visibility
 
   const CustomAppBar({
     super.key,
     this.onNotificationPressed,
     this.actionButton,
-    this.isJobSearch, // Now optional
+    required this.searchType,
     this.showSearchBar = false, // Default to false
   });
 
+  const CustomAppBar.withoutSearch({
+    super.key,
+    this.onNotificationPressed,
+    this.actionButton,
+  }) : showSearchBar = false,
+       searchType = null;
+
+       
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -37,10 +46,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               preferredSize: const Size.fromHeight(60),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: SearchBarWidget(isJobSearch: isJobSearch ?? false, isStatic: true),
-              ),
-            )
-          : null,
+                child: SearchBarWidget(
+                  searchType: searchType!,
+            isStatic: true,
+          ),
+        ),
+      )
+    : null,
       backgroundColor: Colors.white,
       elevation: 0,
     );

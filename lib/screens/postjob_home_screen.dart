@@ -55,7 +55,7 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
     final jobsState = ref.watch(postedJobsProvider);
     
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const CustomAppBar.withoutSearch(
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(postedJobsProvider.notifier).refreshJobs(),

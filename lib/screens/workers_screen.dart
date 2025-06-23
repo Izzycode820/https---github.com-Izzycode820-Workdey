@@ -6,6 +6,7 @@ import 'package:workdey_frontend/core/providers/saved_worker_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/workers/wokers_card.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 class WorkersScreen extends ConsumerStatefulWidget {
   const WorkersScreen({super.key});
@@ -58,7 +59,7 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        isJobSearch: false,
+         searchType: SearchType.worker,
         showSearchBar: true,
         actionButton: TextButton(
     onPressed: () => Navigator.pushNamed(context, AppRoutes.postWorker),

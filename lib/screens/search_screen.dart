@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
-import 'package:workdey_frontend/core/providers/job_search_provider.dart';
+import 'package:workdey_frontend/core/models/getworkers/get_workers_model.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
-class JobSearchPage extends ConsumerStatefulWidget {
-  final String? searchQuery;
+class SearchResultsScreen extends ConsumerStatefulWidget {
+  final SearchType searchType;
+  final String searchQuery;
   
-  const JobSearchPage({
+  const SearchResultsScreen({
     super.key,
-    this.searchQuery,
+    required this.searchType,
+    required this.searchQuery,
   });
 
   @override
-  ConsumerState<JobSearchPage> createState() => _JobSearchPageState();
+  ConsumerState<SearchResultsScreen> createState() => _SearchResultsScreenState();
 }
 
-class _JobSearchPageState extends ConsumerState<JobSearchPage> {
+class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
 
@@ -25,17 +28,26 @@ class _JobSearchPageState extends ConsumerState<JobSearchPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    if (widget.searchQuery != null) {
-      _searchController.text = widget.searchQuery!;
-    }
-    // Trigger initial search if needed
+    _searchController.text = widget.searchQuery;
+    
+    
+    // Schedule the search after the frame is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.searchQuery != null) {
-        ref.read(jobSearchNotifierProvider.notifier)
-          ..setQuery(widget.searchQuery!)
-          ..searchJobs();
-      }
+      _triggerInitialSearch();
     });
+  }
+
+
+  void _triggerInitialSearch() {
+    if (widget.searchType == SearchType.job) {
+      ref.read(jobSearchNotifierProvider.notifier)
+        ..setQuery(widget.searchQuery)
+        ..searchJobs();
+    } else {
+      ref.read(workerSearchNotifierProvider.notifier)
+        ..setQuery(widget.searchQuery)
+        ..searchWorkers();
+    }
   }
 
   @override
@@ -48,50 +60,51 @@ class _JobSearchPageState extends ConsumerState<JobSearchPage> {
   void _onScroll() {
     if (_scrollController.position.pixels == 
         _scrollController.position.maxScrollExtent) {
-      ref.read(jobSearchNotifierProvider.notifier).searchJobs(loadMore: true);
+      if (widget.searchType == SearchType.job) {
+        ref.read(jobSearchNotifierProvider.notifier).searchJobs(loadMore: true);
+      } else {
+        ref.read(workerSearchNotifierProvider.notifier).searchWorkers(loadMore: true);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(jobSearchNotifierProvider);
-    
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        title: Text(widget.searchType == SearchType.job 
+            ? 'Job Results' 
+            : 'Worker Results'),
       ),
       body: Column(
         children: [
-          // Replaced ActiveSearchBar with SearchBarWidget
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SearchBarWidget(
-              isJobSearch: true,
+              searchType: widget.searchType,
               isStatic: false,
               isInputScreen: false,
             ),
           ),
-          const FilterChipsRow(),          
+          FilterChipsRow(searchType: widget.searchType),
           Expanded(
-            child: _buildResultsList(state),
+            child: widget.searchType == SearchType.job
+                ? _buildJobResults(ref)
+                : _buildWorkerResults(ref),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildResultsList(JobSearchState state) {
+  Widget _buildJobResults(WidgetRef ref) {
+    final state = ref.watch(jobSearchNotifierProvider);
     if (state.isLoading && state.results.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-
     if (state.error != null) {
       return Center(child: Text('Error: ${state.error}'));
     }
-
     if (state.results.isEmpty) {
       return const Center(child: Text('No jobs found'));
     }
@@ -113,17 +126,60 @@ class _JobSearchPageState extends ConsumerState<JobSearchPage> {
   Widget _buildJobItem(Job job) {
     return Card(
       child: ListTile(
-        title: Text(job.title),
-        subtitle: Text(job.location),
-        // Add more job details as needed
+        title: Text(job.title ?? 'No title'),
+        subtitle: Text(job.location ?? 'No location'),
+      ),
+    );
+  }
+
+  Widget _buildWorkerResults(WidgetRef ref) {
+    final state = ref.watch(workerSearchNotifierProvider);
+    if (state.isLoading && state.results.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.error != null) {
+      return Center(child: Text('Error: ${state.error}'));
+    }
+    if (state.results.isEmpty) {
+      return const Center(child: Text('No workers found'));
+    }
+
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: state.hasMore 
+          ? state.results.length + 1 
+          : state.results.length,
+      itemBuilder: (context, index) {
+        if (index >= state.results.length) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _buildWorkerItem(state.results[index]);
+      },
+    );
+  }
+
+  Widget _buildWorkerItem(Worker worker) {
+    return Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: worker.profilePicture != null 
+              ? NetworkImage(worker.profilePicture!) 
+              : null,
+        ),
+        title: Text(worker.userName ?? 'No name'),
+        subtitle: Text(worker.skills?.join(', ') ?? 'No skills listed'),
       ),
     );
   }
 }
 
-// Filter chips implementation
 class FilterChipsRow extends ConsumerWidget {
-  const FilterChipsRow({super.key});
+  final SearchType searchType;
+  
+  const FilterChipsRow({
+    super.key,
+    required this.searchType,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -132,22 +188,33 @@ class FilterChipsRow extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          FilterChip(
-            label: const Text('Full-time'),
-            onSelected: (bool value) {
-              // Implement filter logic
-            },
-          ),
-          const SizedBox(width: 8),
-          FilterChip(
-            label: const Text('Remote'),
-            onSelected: (bool value) {
-              // Implement filter logic
-            },
-          ),
-          // Add more filter chips as needed
+          if (searchType == SearchType.job) ...[
+            _buildJobFilterChip('Full-time', ref),
+            _buildJobFilterChip('Remote', ref),
+          ] else ...[
+            _buildWorkerFilterChip('Available Now', ref),
+            _buildWorkerFilterChip('Verified', ref),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _buildJobFilterChip(String label, WidgetRef ref) {
+    return FilterChip(
+      label: Text(label),
+      onSelected: (selected) {
+        ref.read(jobSearchNotifierProvider.notifier).searchJobs();
+      },
+    );
+  }
+
+  Widget _buildWorkerFilterChip(String label, WidgetRef ref) {
+    return FilterChip(
+      label: Text(label),
+      onSelected: (selected) {
+        ref.read(workerSearchNotifierProvider.notifier).searchWorkers();
+      },
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
 import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -52,7 +53,7 @@ Widget build(BuildContext context) {
 
   return Scaffold(
     appBar: CustomAppBar(
-      isJobSearch: true,
+     searchType: SearchType.job,
         showSearchBar: true,
       actionButton: TextButton(
     onPressed: () => Navigator.pushNamed(context, AppRoutes.postJobs),
@@ -72,9 +73,7 @@ Widget build(BuildContext context) {
         slivers: [
           SliverToBoxAdapter(
             child: Column(
-              children: [
-              //  const JobSectionSelector(),
-          
+              children: [          
           // Search Bar
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

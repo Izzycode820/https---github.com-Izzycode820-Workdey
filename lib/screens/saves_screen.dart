@@ -41,7 +41,7 @@ class _SavedJobsPageState extends ConsumerState<SavedJobsPage> {
     final savedJobsState = ref.watch(savedJobsProvider);
     
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const CustomAppBar.withoutSearch(
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(savedJobsProvider.notifier).refresh(),

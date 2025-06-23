@@ -48,7 +48,7 @@ class _PostedWorkersScreenState extends ConsumerState<PostedWorkersScreen> {
     final workersState = ref.watch(myWorkersProvider);
     
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const CustomAppBar.withoutSearch(
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(myWorkersProvider.notifier).refreshWorker(),
