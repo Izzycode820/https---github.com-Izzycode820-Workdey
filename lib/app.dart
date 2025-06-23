@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/login_provider.dart';
 import 'package:workdey_frontend/core/routes/route_generator.dart';
-import 'package:workdey_frontend/core/routes/routes.dart';
 import 'package:workdey_frontend/screens/findjob_home_screen.dart';
 import 'package:workdey_frontend/screens/login_screen.dart';
 import 'package:workdey_frontend/screens/messaging_screen.dart';

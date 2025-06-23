@@ -1,89 +1,96 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workdey_frontend/core/providers/providers.dart';
+import 'package:workdey_frontend/core/providers/recent_search_provider.dart';
+import 'package:workdey_frontend/features/search_filter/search_input_screen.dart';
 import 'package:workdey_frontend/screens/search_screen.dart';
 
-class SearchBarWidget extends ConsumerStatefulWidget {
+class SearchBarWidget extends ConsumerWidget {
+  final bool isStatic;
+  final bool isInputScreen;
   final bool isJobSearch;
   
   const SearchBarWidget({
     super.key,
     required this.isJobSearch,
+    this.isStatic = true,
+    this.isInputScreen = false,
   });
 
-  @override
-  ConsumerState<SearchBarWidget> createState() => _SearchBarWidgetState();
-}
-
-class _SearchBarWidgetState extends ConsumerState<SearchBarWidget> {
-  final _searchController = TextEditingController();
-  Timer? _debounceTimer;
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _debounceTimer?.cancel();
-    super.dispose();
-  }
-
-  void _onSearchChanged(String query) {
-    // Cancel previous timer if it exists
-    _debounceTimer?.cancel();
-    
-    // Start new timer
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      _performSearch(query);
-    });
-  }
-
-  void _performSearch(String query) {
-    if (widget.isJobSearch) {
-      ref.read(jobSearchNotifierProvider.notifier)
-      ..setQuery(query)
-      ..searchJobs();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const JobSearchPage()),
-    );
-    } else {
-      ref.read(workerSearchNotifierProvider.notifier)
-      ..setQuery(query)
-      ..searchWorkers();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const JobSearchPage()),
-    );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: _searchController,
-      decoration: InputDecoration(
-        hintText: widget.isJobSearch 
-            ? 'Search jobs...' 
-            : 'Search workers...',
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.tune),
-          onPressed: () {
-            // Will implement filter opening in Phase 2
-          
-          //  if (widget.isJobSearch) {
-          //    ref.read(jobSearchNotifierProvider.notifier).toggleFilters();
-          //   } else {
-          //      ref.read(workerSearchNotifierProvider.notifier).toggleFilters();
-          //   }
-          },
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+  void _showFilters(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Text('Filters', style: Theme.of(context).textTheme.headlineSmall),
+            // Add filter widgets here
+          ],
         ),
       ),
-      onChanged: _onSearchChanged,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return isStatic
+        ? _buildStaticSearchBar(context)
+        : _buildActiveSearchBar(context, ref);
+  }
+
+  Widget _buildStaticSearchBar(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => SearchInputScreen(isJobSearch: isJobSearch)),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          border: Border.all(),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.search),
+            const SizedBox(width: 8),
+            Text(isJobSearch ? 'Search jobs...' : 'Search workers...', 
+                style: const TextStyle(color: Colors.grey)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActiveSearchBar(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController();
+    
+    return TextField(
+      controller: controller,
+      autofocus: isInputScreen,
+      decoration: InputDecoration(
+        hintText: isJobSearch ? 'Search jobs...' : 'Search workers...',
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: isInputScreen
+            ? IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  if (controller.text.trim().isNotEmpty) {
+                    ref.read(recentSearchesProvider.notifier)
+                        .addSearch(controller.text.trim());
+                  }
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => JobSearchPage(searchQuery: controller.text)),
+                  );
+                },
+              )
+            : IconButton(
+                icon: const Icon(Icons.tune),
+                onPressed: () => _showFilters(context),
+              ),
+      ),
     );
   }
 }

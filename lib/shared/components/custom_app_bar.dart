@@ -37,7 +37,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               preferredSize: const Size.fromHeight(60),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: SearchBarWidget(isJobSearch: isJobSearch ?? false),
+                child: SearchBarWidget(isJobSearch: isJobSearch ?? false, isStatic: true),
               ),
             )
           : null,

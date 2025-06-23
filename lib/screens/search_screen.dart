@@ -1,12 +1,17 @@
-// job_search_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/providers/job_search_provider.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
+import 'package:workdey_frontend/features/search_filter/search_bar_widget.dart';
 
 class JobSearchPage extends ConsumerStatefulWidget {
-  const JobSearchPage({super.key});
+  final String? searchQuery;
+  
+  const JobSearchPage({
+    super.key,
+    this.searchQuery,
+  });
 
   @override
   ConsumerState<JobSearchPage> createState() => _JobSearchPageState();
@@ -14,20 +19,29 @@ class JobSearchPage extends ConsumerStatefulWidget {
 
 class _JobSearchPageState extends ConsumerState<JobSearchPage> {
   final _scrollController = ScrollController();
+  final _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    if (widget.searchQuery != null) {
+      _searchController.text = widget.searchQuery!;
+    }
     // Trigger initial search if needed
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(jobSearchNotifierProvider.notifier).searchJobs();
+      if (widget.searchQuery != null) {
+        ref.read(jobSearchNotifierProvider.notifier)
+          ..setQuery(widget.searchQuery!)
+          ..searchJobs();
+      }
     });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -44,11 +58,23 @@ class _JobSearchPageState extends ConsumerState<JobSearchPage> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Job Search Results'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [
-          // Search bar can be placed here if needed
+          // Replaced ActiveSearchBar with SearchBarWidget
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SearchBarWidget(
+              isJobSearch: true,
+              isStatic: false,
+              isInputScreen: false,
+            ),
+          ),
+          const FilterChipsRow(),          
           Expanded(
             child: _buildResultsList(state),
           ),
@@ -90,6 +116,37 @@ class _JobSearchPageState extends ConsumerState<JobSearchPage> {
         title: Text(job.title),
         subtitle: Text(job.location),
         // Add more job details as needed
+      ),
+    );
+  }
+}
+
+// Filter chips implementation
+class FilterChipsRow extends ConsumerWidget {
+  const FilterChipsRow({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          FilterChip(
+            label: const Text('Full-time'),
+            onSelected: (bool value) {
+              // Implement filter logic
+            },
+          ),
+          const SizedBox(width: 8),
+          FilterChip(
+            label: const Text('Remote'),
+            onSelected: (bool value) {
+              // Implement filter logic
+            },
+          ),
+          // Add more filter chips as needed
+        ],
       ),
     );
   }

@@ -92,6 +92,17 @@ class JobSearchNotifier extends StateNotifier<JobSearchState> {
     }
   }
 
+Future<void> triggerSearch() async {
+  state = state.copyWith(isLoading: true);
+  
+  final results = await _service.search(query: state.query);
+  
+  state = state.copyWith(
+    isLoading: false,
+    results: results,
+  );
+}
+
   void setQuery(String query) {
     state = state.copyWith(query: query);
   }
