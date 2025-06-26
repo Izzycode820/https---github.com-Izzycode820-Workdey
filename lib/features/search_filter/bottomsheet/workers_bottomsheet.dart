@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/features/search_filter/bottomsheet/custom_bottomsheet_components.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/features/search_filter/worker_filters_enums.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 // Shared constants
 const _bottomSheetDecoration = BoxDecoration(
@@ -50,7 +51,9 @@ void showWorkerCategoryBottomSheet(BuildContext context, WidgetRef ref) {
               },
               displayName: (category) => category.displayName,
             ),
-            buildBottomSheetApplyButton(ctx),
+            buildBottomSheetApplyButton(ctx,
+                  ref: ref,
+                  searchType: SearchType.worker,),
           ],
         ),
       );
@@ -99,7 +102,9 @@ void showWorkerAvailabilityBottomSheet(BuildContext context, WidgetRef ref) {
                     }).toList(),
                   ),
                 ),
-                buildBottomSheetApplyButton(ctx),
+                buildBottomSheetApplyButton(ctx,
+                  ref: ref,
+                  searchType: SearchType.worker,),
               ],
             ),
           );
@@ -164,7 +169,9 @@ void showWorkerSkillsBottomSheet(BuildContext context, WidgetRef ref) {
                       }).toList(),
                     ),
                   ),
-                buildBottomSheetApplyButton(ctx),
+                buildBottomSheetApplyButton(ctx,
+                  ref: ref,
+                  searchType: SearchType.worker,),
               ],
             ),
           );
@@ -206,6 +213,8 @@ void showWorkerLocationBottomSheet(BuildContext context, WidgetRef ref) {
             ),
             buildBottomSheetApplyButton(
               ctx,
+                  ref: ref,
+                  searchType: SearchType.worker,
               onPressed: () {
                 ref.read(workerSearchNotifierProvider.notifier)
                     .setLocation(textController.text.trim());

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/features/search_filter/bottomsheet/custom_bottomsheet_components.dart';
 import 'package:workdey_frontend/features/search_filter/worker_filters_enums.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 class WorkerFilterSheets {
   void showMainFilterSheet(BuildContext context, WidgetRef ref) {
@@ -17,7 +18,11 @@ class WorkerFilterSheets {
             buildBottomSheetHeader(ctx, 'Filter Workers'),
             _buildCategorySection(ref),
          //   _buildAvailabilitySection(ref, context),
-            buildBottomSheetApplyButton(ctx),
+            buildBottomSheetApplyButton(ctx
+            ,
+                  ref: ref,
+                  searchType: SearchType.worker,
+            ),
           ],
         ),
       ),

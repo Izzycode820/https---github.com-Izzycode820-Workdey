@@ -1,5 +1,8 @@
 // shared_bottom_sheet_components.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workdey_frontend/core/providers/providers.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 // Shared decoration
 const bottomSheetDecoration = BoxDecoration(
@@ -83,7 +86,12 @@ Widget buildChoiceChips<T>({
 }
 
 // Reusable apply button
-Widget buildBottomSheetApplyButton(BuildContext context, {VoidCallback? onPressed}) {
+Widget buildBottomSheetApplyButton(
+  BuildContext context, {
+  required WidgetRef ref,
+  required SearchType searchType,
+  VoidCallback? onPressed,
+}) {
   return Container(
     width: double.infinity,
     padding: const EdgeInsets.all(16),
@@ -93,7 +101,18 @@ Widget buildBottomSheetApplyButton(BuildContext context, {VoidCallback? onPresse
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24)),
         padding: const EdgeInsets.symmetric(vertical: 16)),
-      onPressed: onPressed ?? () => Navigator.pop(context),
+      onPressed: () {
+        if (onPressed != null) onPressed();
+        
+        // Trigger search based on type
+        if (searchType == SearchType.job) {
+          ref.read(jobSearchNotifierProvider.notifier).searchJobs();
+        } else {
+          ref.read(workerSearchNotifierProvider.notifier).searchWorkers();
+        }
+        
+        Navigator.pop(context);
+      },
       child: Text('Show Results', style: buttonTextStyle),
     ),
   );

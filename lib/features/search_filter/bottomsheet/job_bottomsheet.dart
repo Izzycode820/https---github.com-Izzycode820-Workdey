@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/features/search_filter/bottomsheet/custom_bottomsheet_components.dart';
 import 'package:workdey_frontend/features/search_filter/job_filter_enum.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 // Reuse the same constants from workers_bottomsheet.dart
 
@@ -30,7 +31,9 @@ void showJobCategoryBottomSheet(BuildContext context, WidgetRef ref) {
               },
               displayName: (category) => category.displayName,
             ),
-            buildBottomSheetApplyButton(ctx),
+            buildBottomSheetApplyButton(ctx,
+              ref: ref,
+              searchType: SearchType.job,),
           ],
         ),
       );
@@ -92,7 +95,9 @@ void showJobSkillsBottomSheet(BuildContext context, WidgetRef ref) {
                       }).toList(),
                     ),
                   ),
-                buildBottomSheetApplyButton(ctx),
+                buildBottomSheetApplyButton(ctx,
+              ref: ref,
+              searchType: SearchType.job,),
               ],
             ),
           );
@@ -123,7 +128,9 @@ void showJobTypeBottomSheet(BuildContext context, WidgetRef ref) {
               },
               displayName: (type) => type.displayName,
             ),
-            buildBottomSheetApplyButton(ctx),
+            buildBottomSheetApplyButton(ctx,
+              ref: ref,
+              searchType: SearchType.job,),
           ],
         ),
       );
@@ -163,7 +170,9 @@ void showJobLocationBottomSheet(BuildContext context, WidgetRef ref) {
               ),
             ),
             buildBottomSheetApplyButton(
-              ctx,
+              ctx, 
+              ref: ref,
+              searchType: SearchType.job,
               onPressed: () {
                 ref.read(jobSearchNotifierProvider.notifier)
                     .setLocation(textController.text.trim());
@@ -208,7 +217,9 @@ void showJobWorkingDaysBottomSheet(BuildContext context, WidgetRef ref) {
                   },
                   displayName: (day) => day.displayName,
                 ),
-                buildBottomSheetApplyButton(ctx),
+                buildBottomSheetApplyButton(ctx,
+              ref: ref,
+              searchType: SearchType.job,),
               ],
             ),
           );
@@ -240,7 +251,9 @@ void showJobNatureBottomSheet(BuildContext context, WidgetRef ref) {
               },
               displayName: (nature) => nature.displayName,
             ),
-            buildBottomSheetApplyButton(ctx),
+            buildBottomSheetApplyButton(ctx,
+              ref: ref,
+              searchType: SearchType.job,),
           ],
         ),
       );

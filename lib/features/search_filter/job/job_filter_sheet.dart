@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/features/search_filter/bottomsheet/custom_bottomsheet_components.dart';
 import 'package:workdey_frontend/features/search_filter/job_filter_enum.dart';
+import 'package:workdey_frontend/shared/enum/search_type.dart';
 
 class JobFilterSheets {
   void showMainFilterSheet(BuildContext context, WidgetRef ref) {
@@ -18,7 +19,10 @@ class JobFilterSheets {
             _buildCategorySection(ref),
           //  _buildJobTypeSection(ref),
            // _buildSkillsSection(ref, context),
-            buildBottomSheetApplyButton(ctx),
+            buildBottomSheetApplyButton(ctx
+            ,
+                  ref: ref,
+                  searchType: SearchType.job,),
           ],
         ),
       ),
