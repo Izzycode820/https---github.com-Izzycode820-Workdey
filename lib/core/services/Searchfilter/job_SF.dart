@@ -20,20 +20,32 @@ class JobSearchService {
   }) async {
     try{
 
-    final params = {
+    final params = <String, dynamic>{
       if (query != null) 'search': query,
       if (category != null) 'category': category.displayName.toUpperCase(),
       if (jobType != null) 'job_type': jobType.displayName,
-      if (skills != null) 'skills[]': skills,
       if (location != null) 'location': location,
-      if (workingDays != null) 'working_days[]': workingDays,
       if (jobNature != null) 'job_nature': jobNature.name,
       if (postedWithin != null) 'posted_within': postedWithin,
       'page': page,
     };
 
+// Handle skills array
+  if (skills != null && skills.isNotEmpty) {
+    for (final skill in skills) {
+      params['skills[]'] = skill;
+    }
+  }
+
+  // Handle working days array - THIS IS THE KEY FIX
+  if (workingDays != null && workingDays.isNotEmpty) {
+    for (final day in workingDays) {
+      params['working_days[]'] = day.paramValue; // Use the string value
+    }
+  }
+  
     final response = await _dio.get('/api/v1/job-search/', queryParameters: 
-    params);
+    params,);
 
     // Handle 404 for pagination
     if (response.statusCode == 404 && page > 1) {

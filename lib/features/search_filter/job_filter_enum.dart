@@ -45,4 +45,6 @@ enum WorkingDays {
 
   final String displayName;
   const WorkingDays(this.displayName);
+
+  String get paramValue => displayName;
 }
