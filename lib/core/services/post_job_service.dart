@@ -12,9 +12,21 @@ class PostJobService {
 
    Future<Map<String, dynamic>> postJob(PostJob job) async {
   try {
+    // Prepare location data
+      final jobData = job.toJson()
+        ..removeWhere((key, value) => value == null);
+      
+      // Ensure proper location structure
+      if (job.location == null && job.city != null) {
+      jobData['location'] = [
+        if (job.city != null) job.city,
+        if (job.district != null) job.district,
+      ].where((part) => part != null).join(', ');
+    }
+      
     final response = await _dio.post(
       '/api/v1/jobs/',
-      data: job.toJson(),
+      data: jobData,
       options: Options(
         validateStatus: (status) => status! < 500,
       ),

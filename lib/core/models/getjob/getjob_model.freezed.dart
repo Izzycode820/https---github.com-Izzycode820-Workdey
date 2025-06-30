@@ -28,6 +28,12 @@ mixin _$Job {
   int get poster =>
       throw _privateConstructorUsedError; // Can be String if just ID
   String get location => throw _privateConstructorUsedError;
+  String? get city => throw _privateConstructorUsedError;
+  String? get district => throw _privateConstructorUsedError;
+  @JsonKey(name: 'location_display')
+  String? get locationDisplay => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_precise')
+  bool? get isPrecise => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'job_nature')
@@ -62,6 +68,8 @@ mixin _$Job {
   String? get expiresIn => throw _privateConstructorUsedError;
   @JsonKey(name: 'poster_picture')
   String? get posterPicture => throw _privateConstructorUsedError;
+  @JsonKey(name: 'fallback_message')
+  String? get fallbackMessage => throw _privateConstructorUsedError;
 
   /// Serializes this Job to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -84,6 +92,10 @@ abstract class $JobCopyWith<$Res> {
       String category,
       int poster,
       String location,
+      String? city,
+      String? district,
+      @JsonKey(name: 'location_display') String? locationDisplay,
+      @JsonKey(name: 'is_precise') bool? isPrecise,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'job_nature') String? jobNature,
       @JsonKey(name: 'poster_name') String? posterName,
@@ -101,7 +113,8 @@ abstract class $JobCopyWith<$Res> {
       @JsonKey(name: 'has_applied') bool hasApplied,
       @JsonKey(name: 'is_saved') bool isSaved,
       @JsonKey(name: 'expires_in') String? expiresIn,
-      @JsonKey(name: 'poster_picture') String? posterPicture});
+      @JsonKey(name: 'poster_picture') String? posterPicture,
+      @JsonKey(name: 'fallback_message') String? fallbackMessage});
 }
 
 /// @nodoc
@@ -124,6 +137,10 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
     Object? category = null,
     Object? poster = null,
     Object? location = null,
+    Object? city = freezed,
+    Object? district = freezed,
+    Object? locationDisplay = freezed,
+    Object? isPrecise = freezed,
     Object? createdAt = null,
     Object? jobNature = freezed,
     Object? posterName = freezed,
@@ -141,6 +158,7 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
     Object? isSaved = null,
     Object? expiresIn = freezed,
     Object? posterPicture = freezed,
+    Object? fallbackMessage = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -167,6 +185,22 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
+      city: freezed == city
+          ? _value.city
+          : city // ignore: cast_nullable_to_non_nullable
+              as String?,
+      district: freezed == district
+          ? _value.district
+          : district // ignore: cast_nullable_to_non_nullable
+              as String?,
+      locationDisplay: freezed == locationDisplay
+          ? _value.locationDisplay
+          : locationDisplay // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isPrecise: freezed == isPrecise
+          ? _value.isPrecise
+          : isPrecise // ignore: cast_nullable_to_non_nullable
+              as bool?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -235,6 +269,10 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
           ? _value.posterPicture
           : posterPicture // ignore: cast_nullable_to_non_nullable
               as String?,
+      fallbackMessage: freezed == fallbackMessage
+          ? _value.fallbackMessage
+          : fallbackMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -252,6 +290,10 @@ abstract class _$$JobImplCopyWith<$Res> implements $JobCopyWith<$Res> {
       String category,
       int poster,
       String location,
+      String? city,
+      String? district,
+      @JsonKey(name: 'location_display') String? locationDisplay,
+      @JsonKey(name: 'is_precise') bool? isPrecise,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'job_nature') String? jobNature,
       @JsonKey(name: 'poster_name') String? posterName,
@@ -269,7 +311,8 @@ abstract class _$$JobImplCopyWith<$Res> implements $JobCopyWith<$Res> {
       @JsonKey(name: 'has_applied') bool hasApplied,
       @JsonKey(name: 'is_saved') bool isSaved,
       @JsonKey(name: 'expires_in') String? expiresIn,
-      @JsonKey(name: 'poster_picture') String? posterPicture});
+      @JsonKey(name: 'poster_picture') String? posterPicture,
+      @JsonKey(name: 'fallback_message') String? fallbackMessage});
 }
 
 /// @nodoc
@@ -289,6 +332,10 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
     Object? category = null,
     Object? poster = null,
     Object? location = null,
+    Object? city = freezed,
+    Object? district = freezed,
+    Object? locationDisplay = freezed,
+    Object? isPrecise = freezed,
     Object? createdAt = null,
     Object? jobNature = freezed,
     Object? posterName = freezed,
@@ -306,6 +353,7 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
     Object? isSaved = null,
     Object? expiresIn = freezed,
     Object? posterPicture = freezed,
+    Object? fallbackMessage = freezed,
   }) {
     return _then(_$JobImpl(
       id: null == id
@@ -332,6 +380,22 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
+      city: freezed == city
+          ? _value.city
+          : city // ignore: cast_nullable_to_non_nullable
+              as String?,
+      district: freezed == district
+          ? _value.district
+          : district // ignore: cast_nullable_to_non_nullable
+              as String?,
+      locationDisplay: freezed == locationDisplay
+          ? _value.locationDisplay
+          : locationDisplay // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isPrecise: freezed == isPrecise
+          ? _value.isPrecise
+          : isPrecise // ignore: cast_nullable_to_non_nullable
+              as bool?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -400,6 +464,10 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
           ? _value.posterPicture
           : posterPicture // ignore: cast_nullable_to_non_nullable
               as String?,
+      fallbackMessage: freezed == fallbackMessage
+          ? _value.fallbackMessage
+          : fallbackMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -415,6 +483,10 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       required this.category,
       required this.poster,
       required this.location,
+      this.city,
+      this.district,
+      @JsonKey(name: 'location_display') this.locationDisplay,
+      @JsonKey(name: 'is_precise') this.isPrecise,
       @JsonKey(name: 'created_at') required this.createdAt,
       @JsonKey(name: 'job_nature') this.jobNature,
       @JsonKey(name: 'poster_name') this.posterName,
@@ -433,7 +505,8 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       @JsonKey(name: 'has_applied') this.hasApplied = false,
       @JsonKey(name: 'is_saved') this.isSaved = false,
       @JsonKey(name: 'expires_in') this.expiresIn,
-      @JsonKey(name: 'poster_picture') this.posterPicture})
+      @JsonKey(name: 'poster_picture') this.posterPicture,
+      @JsonKey(name: 'fallback_message') this.fallbackMessage})
       : _workingDays = workingDays,
         _requirements = requirements,
         _typeSpecific = typeSpecific,
@@ -456,6 +529,16 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
 // Can be String if just ID
   @override
   final String location;
+  @override
+  final String? city;
+  @override
+  final String? district;
+  @override
+  @JsonKey(name: 'location_display')
+  final String? locationDisplay;
+  @override
+  @JsonKey(name: 'is_precise')
+  final bool? isPrecise;
   @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
@@ -537,10 +620,13 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
   @override
   @JsonKey(name: 'poster_picture')
   final String? posterPicture;
+  @override
+  @JsonKey(name: 'fallback_message')
+  final String? fallbackMessage;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, createdAt: $createdAt, jobNature: $jobNature, posterName: $posterName, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture)';
+    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, city: $city, district: $district, locationDisplay: $locationDisplay, isPrecise: $isPrecise, createdAt: $createdAt, jobNature: $jobNature, posterName: $posterName, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture, fallbackMessage: $fallbackMessage)';
   }
 
   @override
@@ -554,6 +640,10 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       ..add(DiagnosticsProperty('category', category))
       ..add(DiagnosticsProperty('poster', poster))
       ..add(DiagnosticsProperty('location', location))
+      ..add(DiagnosticsProperty('city', city))
+      ..add(DiagnosticsProperty('district', district))
+      ..add(DiagnosticsProperty('locationDisplay', locationDisplay))
+      ..add(DiagnosticsProperty('isPrecise', isPrecise))
       ..add(DiagnosticsProperty('createdAt', createdAt))
       ..add(DiagnosticsProperty('jobNature', jobNature))
       ..add(DiagnosticsProperty('posterName', posterName))
@@ -570,7 +660,8 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       ..add(DiagnosticsProperty('hasApplied', hasApplied))
       ..add(DiagnosticsProperty('isSaved', isSaved))
       ..add(DiagnosticsProperty('expiresIn', expiresIn))
-      ..add(DiagnosticsProperty('posterPicture', posterPicture));
+      ..add(DiagnosticsProperty('posterPicture', posterPicture))
+      ..add(DiagnosticsProperty('fallbackMessage', fallbackMessage));
   }
 
   @override
@@ -586,6 +677,13 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
             (identical(other.poster, poster) || other.poster == poster) &&
             (identical(other.location, location) ||
                 other.location == location) &&
+            (identical(other.city, city) || other.city == city) &&
+            (identical(other.district, district) ||
+                other.district == district) &&
+            (identical(other.locationDisplay, locationDisplay) ||
+                other.locationDisplay == locationDisplay) &&
+            (identical(other.isPrecise, isPrecise) ||
+                other.isPrecise == isPrecise) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.jobNature, jobNature) ||
@@ -617,7 +715,9 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
             (identical(other.expiresIn, expiresIn) ||
                 other.expiresIn == expiresIn) &&
             (identical(other.posterPicture, posterPicture) ||
-                other.posterPicture == posterPicture));
+                other.posterPicture == posterPicture) &&
+            (identical(other.fallbackMessage, fallbackMessage) ||
+                other.fallbackMessage == fallbackMessage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -630,6 +730,10 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
         category,
         poster,
         location,
+        city,
+        district,
+        locationDisplay,
+        isPrecise,
         createdAt,
         jobNature,
         posterName,
@@ -646,7 +750,8 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
         hasApplied,
         isSaved,
         expiresIn,
-        posterPicture
+        posterPicture,
+        fallbackMessage
       ]);
 
   /// Create a copy of Job
@@ -673,6 +778,10 @@ abstract class _Job implements Job {
           required final String category,
           required final int poster,
           required final String location,
+          final String? city,
+          final String? district,
+          @JsonKey(name: 'location_display') final String? locationDisplay,
+          @JsonKey(name: 'is_precise') final bool? isPrecise,
           @JsonKey(name: 'created_at') required final DateTime createdAt,
           @JsonKey(name: 'job_nature') final String? jobNature,
           @JsonKey(name: 'poster_name') final String? posterName,
@@ -691,7 +800,8 @@ abstract class _Job implements Job {
           @JsonKey(name: 'has_applied') final bool hasApplied,
           @JsonKey(name: 'is_saved') final bool isSaved,
           @JsonKey(name: 'expires_in') final String? expiresIn,
-          @JsonKey(name: 'poster_picture') final String? posterPicture}) =
+          @JsonKey(name: 'poster_picture') final String? posterPicture,
+          @JsonKey(name: 'fallback_message') final String? fallbackMessage}) =
       _$JobImpl;
 
   factory _Job.fromJson(Map<String, dynamic> json) = _$JobImpl.fromJson;
@@ -709,6 +819,16 @@ abstract class _Job implements Job {
   int get poster; // Can be String if just ID
   @override
   String get location;
+  @override
+  String? get city;
+  @override
+  String? get district;
+  @override
+  @JsonKey(name: 'location_display')
+  String? get locationDisplay;
+  @override
+  @JsonKey(name: 'is_precise')
+  bool? get isPrecise;
   @override
   @JsonKey(name: 'created_at')
   DateTime get createdAt;
@@ -758,6 +878,9 @@ abstract class _Job implements Job {
   @override
   @JsonKey(name: 'poster_picture')
   String? get posterPicture;
+  @override
+  @JsonKey(name: 'fallback_message')
+  String? get fallbackMessage;
 
   /// Create a copy of Job
   /// with the given fields replaced by the non-null parameter values.

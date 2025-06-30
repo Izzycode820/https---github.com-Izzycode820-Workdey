@@ -25,7 +25,9 @@ mixin _$PostJob {
   String get jobType => throw _privateConstructorUsedError; // Match backend
   String get title => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
-  String get location => throw _privateConstructorUsedError;
+  String? get location => throw _privateConstructorUsedError;
+  String? get city => throw _privateConstructorUsedError;
+  String? get district => throw _privateConstructorUsedError;
   @JsonKey(name: 'job_nature')
   String? get job_nature => throw _privateConstructorUsedError; // Match backend
   String get description => throw _privateConstructorUsedError;
@@ -60,7 +62,9 @@ abstract class $PostJobCopyWith<$Res> {
       @JsonKey(name: 'job_type') String jobType,
       String title,
       String category,
-      String location,
+      String? location,
+      String? city,
+      String? district,
       @JsonKey(name: 'job_nature') String? job_nature,
       String description,
       @JsonKey(name: 'roles_description') String? rolesDescription,
@@ -89,7 +93,9 @@ class _$PostJobCopyWithImpl<$Res, $Val extends PostJob>
     Object? jobType = null,
     Object? title = null,
     Object? category = null,
-    Object? location = null,
+    Object? location = freezed,
+    Object? city = freezed,
+    Object? district = freezed,
     Object? job_nature = freezed,
     Object? description = null,
     Object? rolesDescription = freezed,
@@ -115,10 +121,18 @@ class _$PostJobCopyWithImpl<$Res, $Val extends PostJob>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
-      location: null == location
+      location: freezed == location
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      city: freezed == city
+          ? _value.city
+          : city // ignore: cast_nullable_to_non_nullable
+              as String?,
+      district: freezed == district
+          ? _value.district
+          : district // ignore: cast_nullable_to_non_nullable
+              as String?,
       job_nature: freezed == job_nature
           ? _value.job_nature
           : job_nature // ignore: cast_nullable_to_non_nullable
@@ -163,7 +177,9 @@ abstract class _$$PostJobImplCopyWith<$Res> implements $PostJobCopyWith<$Res> {
       @JsonKey(name: 'job_type') String jobType,
       String title,
       String category,
-      String location,
+      String? location,
+      String? city,
+      String? district,
       @JsonKey(name: 'job_nature') String? job_nature,
       String description,
       @JsonKey(name: 'roles_description') String? rolesDescription,
@@ -190,7 +206,9 @@ class __$$PostJobImplCopyWithImpl<$Res>
     Object? jobType = null,
     Object? title = null,
     Object? category = null,
-    Object? location = null,
+    Object? location = freezed,
+    Object? city = freezed,
+    Object? district = freezed,
     Object? job_nature = freezed,
     Object? description = null,
     Object? rolesDescription = freezed,
@@ -216,10 +234,18 @@ class __$$PostJobImplCopyWithImpl<$Res>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
-      location: null == location
+      location: freezed == location
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      city: freezed == city
+          ? _value.city
+          : city // ignore: cast_nullable_to_non_nullable
+              as String?,
+      district: freezed == district
+          ? _value.district
+          : district // ignore: cast_nullable_to_non_nullable
+              as String?,
       job_nature: freezed == job_nature
           ? _value.job_nature
           : job_nature // ignore: cast_nullable_to_non_nullable
@@ -261,7 +287,9 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       @JsonKey(name: 'job_type') required this.jobType,
       required this.title,
       required this.category,
-      required this.location,
+      this.location,
+      this.city,
+      this.district,
       @JsonKey(name: 'job_nature') this.job_nature,
       required this.description,
       @JsonKey(name: 'roles_description') this.rolesDescription,
@@ -288,7 +316,11 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
   @override
   final String category;
   @override
-  final String location;
+  final String? location;
+  @override
+  final String? city;
+  @override
+  final String? district;
   @override
   @JsonKey(name: 'job_nature')
   final String? job_nature;
@@ -334,7 +366,7 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PostJob(id: $id, jobType: $jobType, title: $title, category: $category, location: $location, job_nature: $job_nature, description: $description, rolesDescription: $rolesDescription, requirements: $requirements, workingDays: $workingDays, dueDate: $dueDate, typeSpecific: $typeSpecific)';
+    return 'PostJob(id: $id, jobType: $jobType, title: $title, category: $category, location: $location, city: $city, district: $district, job_nature: $job_nature, description: $description, rolesDescription: $rolesDescription, requirements: $requirements, workingDays: $workingDays, dueDate: $dueDate, typeSpecific: $typeSpecific)';
   }
 
   @override
@@ -347,6 +379,8 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('category', category))
       ..add(DiagnosticsProperty('location', location))
+      ..add(DiagnosticsProperty('city', city))
+      ..add(DiagnosticsProperty('district', district))
       ..add(DiagnosticsProperty('job_nature', job_nature))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('rolesDescription', rolesDescription))
@@ -368,6 +402,9 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
                 other.category == category) &&
             (identical(other.location, location) ||
                 other.location == location) &&
+            (identical(other.city, city) || other.city == city) &&
+            (identical(other.district, district) ||
+                other.district == district) &&
             (identical(other.job_nature, job_nature) ||
                 other.job_nature == job_nature) &&
             (identical(other.description, description) ||
@@ -392,6 +429,8 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       title,
       category,
       location,
+      city,
+      district,
       job_nature,
       description,
       rolesDescription,
@@ -422,7 +461,9 @@ abstract class _PostJob implements PostJob {
       @JsonKey(name: 'job_type') required final String jobType,
       required final String title,
       required final String category,
-      required final String location,
+      final String? location,
+      final String? city,
+      final String? district,
       @JsonKey(name: 'job_nature') final String? job_nature,
       required final String description,
       @JsonKey(name: 'roles_description') final String? rolesDescription,
@@ -444,7 +485,11 @@ abstract class _PostJob implements PostJob {
   @override
   String get category;
   @override
-  String get location;
+  String? get location;
+  @override
+  String? get city;
+  @override
+  String? get district;
   @override
   @JsonKey(name: 'job_nature')
   String? get job_nature; // Match backend

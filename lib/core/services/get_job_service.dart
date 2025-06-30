@@ -15,6 +15,7 @@ class JobService {
   Future<PaginatedResponse<Job>> fetchJobs({
     int page = 1,
     bool forceRefresh = false,
+    
   }) async {
     debugPrint('🌐 Fetching jobs page $page (forceRefresh: $forceRefresh)');
     await AuthUtils.printCurrentToken();
@@ -110,6 +111,86 @@ class JobService {
       throw DioExceptions.fromDioError(e);
     }
   }
+
+      Future<PaginatedResponse<Job>> fetchJobsByLocation({
+        int page = 1,
+        bool forceRefresh = false,
+        String? city,
+        String? district,
+      }) async {
+        final params = {
+          'page': page,
+          if (city != null) 'city': city,
+          if (district != null) 'district': district,
+        };
+
+ try {
+        final response = await _dio.get(
+          '/api/v1/jobs/',
+          queryParameters: params,
+          options: Options(
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        ),
+        );
+
+        final responseData = response.data as Map<String, dynamic>;
+        if (responseData['results'] == null || !(responseData['results'] is List)) {
+          debugPrint('⚠️ Invalid response structure - returning empty results');
+          return PaginatedResponse<Job>(
+            count: 0,
+            results: [],
+            next: null,
+            previous: null,
+          );
+        }
+        
+        final paginatedResponse = PaginatedResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => Job.fromJson(json as Map<String, dynamic>),
+      );
+
+      // Cache only first page
+      if (page == 1) {
+        debugPrint('💾 Caching jobs (${paginatedResponse.results.length} items)');
+        await _cache.saveJobs(paginatedResponse.results);
+      }
+
+      return paginatedResponse;
+      }on DioException catch (e) {
+      debugPrint('❌ Error fetching jobs: ${e.message}');
+
+      // Handle 404 specifically
+    if (e.response?.statusCode == 404) {
+      debugPrint('🔍 Page $page not found - returning empty results');
+      return PaginatedResponse<Job>(
+        count: 0,
+        results: [],
+        next: null,
+        previous: null,
+      );
+    }
+      
+      // Fallback to cache if offline
+      if (e.type == DioExceptionType.connectionError) {
+        debugPrint('🌐 Offline - trying cache fallback');
+        final cachedJobs = await _cache.getCachedJobs();
+        if (cachedJobs != null) {
+          debugPrint('✅ Using cached jobs as fallback (${cachedJobs.length} items)');
+          return PaginatedResponse(
+            count: cachedJobs.length,
+            results: cachedJobs,
+            next: null,
+            previous: null,
+          );
+        }
+      }
+      throw DioExceptions.fromDioError(e);
+    }
+  }
+      
 
   Future<Job> getJobDetails(String jobId) async {
     debugPrint('🔍 Fetching details for job $jobId');

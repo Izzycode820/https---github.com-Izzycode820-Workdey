@@ -40,6 +40,7 @@ class JobCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildLocationHeader(context, job),
               // Top Header Row
               Row(
                 children: [
@@ -128,13 +129,12 @@ class JobCard extends ConsumerWidget {
                 children: [
                   Icon(Icons.location_on, size: 16, color: Colors.red[700]),
                   const SizedBox(width: 4),
-                  Text(
-                    job.location,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.red[700],
+                  Text(job.locationDisplay ?? job.location, // Fallback to 'location' if null
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.red[700],
+                      ),
                     ),
-                  ),
                   const SizedBox(width: 16),
                   Text(
                     job.category,
@@ -273,6 +273,51 @@ class JobCard extends ConsumerWidget {
     }
   }
 }
+
+// NEW: Location badge widget
+  Widget _buildLocationHeader(BuildContext context, Job job) {
+  return Row(
+    children: [
+      if (job.isPrecise ?? false)
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.green[50],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.place, size: 14, color: Colors.green),
+              const SizedBox(width: 4),
+              Text(
+                'Local Match',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.green[800],
+                ),
+              ),
+            ],
+          ),
+        ),
+      if (job.isPrecise == false && job.city != null)
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Text(
+              'Showing results near ${job.city}',
+              style: TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+                color: Colors.orange[800],
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+}
+  
 class _InfoChip extends StatelessWidget {
   final String label;
   final Color color;

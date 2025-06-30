@@ -21,20 +21,32 @@ class JobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
   final JobService _service;
   int _currentPage = 1;
   bool _hasMore = true;
+  String? _currentCity;
+  String? _currentDistrict;
+
+  String? get currentCity => _currentCity;
+  String? get currentDistrict => _currentDistrict;
 
   JobsNotifier(this._service) : super(const AsyncValue.loading()) {
     loadInitialJobs();
   }
   
   bool get hasMore => _hasMore;
-
+  
   Future<void> loadInitialJobs({bool forceRefresh = false}) async {
     _currentPage = 1;
     _hasMore = true;
     state = const AsyncValue<PaginatedResponse<Job>>.loading();
     
     try {
-      final jobs = await _service.fetchJobs(page: _currentPage, forceRefresh: forceRefresh);
+      final jobs = _currentCity == null
+         ? await _service.fetchJobs(page: _currentPage, forceRefresh: forceRefresh)
+         :await _service.fetchJobsByLocation(
+              page: _currentPage,
+              forceRefresh: forceRefresh,
+              city: _currentCity,
+              district: _currentDistrict,
+            );
       state = AsyncValue<PaginatedResponse<Job>>.data(jobs);
     } catch (e, stack) {
       state = AsyncValue<PaginatedResponse<Job>>.error(e, stack);
@@ -50,7 +62,13 @@ class JobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
     try {
       state = AsyncValue<PaginatedResponse<Job>>.loading()
           .copyWithPrevious(state);
-      final newJobs = await _service.fetchJobs(page: _currentPage + 1);
+      final newJobs = _currentCity == null
+      ? await _service.fetchJobs(page: _currentPage + 1)
+      : await _service.fetchJobsByLocation(
+              page: _currentPage + 1,
+              city: _currentCity,
+              district: _currentDistrict,
+            );
       
       if (newJobs.results.isEmpty) {
       // No more items - update state accordingly
@@ -113,6 +131,31 @@ class JobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> searchByLocation({String? city, String? district}) async {
+    _currentCity = city;
+    _currentDistrict = district;
+    _currentPage = 1; // Reset pagination
+    await loadInitialJobs(forceRefresh: true);
+  }
+
+  Future<void> loadInitialJobsByLocation({bool forceRefresh = false}) async {
+    _currentPage = 1;
+    _hasMore = true;
+    state = const AsyncValue.loading();
+
+    try {
+      final jobs = await _service.fetchJobsByLocation(
+        page: _currentPage,
+        forceRefresh: forceRefresh,
+        city: _currentCity, // Pass city to API
+        district: _currentDistrict, // Pass district to API
+      );
+      state = AsyncValue.data(jobs);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
     }
   }
 }

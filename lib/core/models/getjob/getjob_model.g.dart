@@ -13,6 +13,10 @@ _$JobImpl _$$JobImplFromJson(Map<String, dynamic> json) => _$JobImpl(
       category: json['category'] as String,
       poster: (json['poster'] as num).toInt(),
       location: json['location'] as String,
+      city: json['city'] as String?,
+      district: json['district'] as String?,
+      locationDisplay: json['location_display'] as String?,
+      isPrecise: json['is_precise'] as bool?,
       createdAt: DateTime.parse(json['created_at'] as String),
       jobNature: json['job_nature'] as String?,
       posterName: json['poster_name'] as String?,
@@ -36,6 +40,7 @@ _$JobImpl _$$JobImplFromJson(Map<String, dynamic> json) => _$JobImpl(
       isSaved: json['is_saved'] as bool? ?? false,
       expiresIn: json['expires_in'] as String?,
       posterPicture: json['poster_picture'] as String?,
+      fallbackMessage: json['fallback_message'] as String?,
     );
 
 Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
@@ -45,6 +50,10 @@ Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
       'category': instance.category,
       'poster': instance.poster,
       'location': instance.location,
+      'city': instance.city,
+      'district': instance.district,
+      'location_display': instance.locationDisplay,
+      'is_precise': instance.isPrecise,
       'created_at': instance.createdAt.toIso8601String(),
       'job_nature': instance.jobNature,
       'poster_name': instance.posterName,
@@ -62,4 +71,5 @@ Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
       'is_saved': instance.isSaved,
       'expires_in': instance.expiresIn,
       'poster_picture': instance.posterPicture,
+      'fallback_message': instance.fallbackMessage,
     };

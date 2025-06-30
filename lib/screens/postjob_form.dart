@@ -79,7 +79,7 @@ void didChangeDependencies() {
     _titleController.text = postjob.title;
     _descriptionController.text = postjob.description;
     _rolesController.text = postjob.rolesDescription ?? '';
-    _locationController.text = postjob.location;
+    _locationController.text = postjob.location ?? '';
     _dueDateController.text = postjob.dueDate ?? 'Select deadline (yyyy-mm-dd)';
   } catch (e, stack) {
       debugPrint('Initialization error: $e\n$stack');
@@ -104,7 +104,7 @@ void didChangeDependencies() {
     _titleController.text = job.title;
     _descriptionController.text = job.description;
     _rolesController.text = job.rolesDescription ?? '';
-    _locationController.text = job.location;
+    _locationController.text = job.location?? '';
     _dueDateController.text = job.dueDate ?? 'Select deadline (yyyy-mm-dd)';
   }
 

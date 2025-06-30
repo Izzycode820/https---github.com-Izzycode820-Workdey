@@ -12,7 +12,9 @@ class PostJob with _$PostJob{
      @JsonKey(name: 'job_type') required String jobType,  // Match backend
     required String title,
     required String category,
-    required String location,
+    String? location,
+    String? city,   
+    String? district,
     @JsonKey(name: 'job_nature') String? job_nature,  // Match backend
     required String description,
     @JsonKey(name: 'roles_description') String? rolesDescription,  // Match backend
@@ -28,6 +30,10 @@ class PostJob with _$PostJob{
   extension PostJobValidation on PostJob {
   Map<String, String>? validate() {
     final errors = <String, String>{};
+    
+    if (location == null && (city == null || district == null)) {
+      errors['location'] = 'Either provide full location or both city and district';
+    }
     
     if (title.isEmpty) {
       errors['title'] = 'Job title is required';

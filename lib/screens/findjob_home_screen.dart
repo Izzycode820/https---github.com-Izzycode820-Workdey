@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
 import 'package:workdey_frontend/core/providers/get_job_provider.dart';
 import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
+import 'package:workdey_frontend/features/jobs/job_by_location.dart';
+import 'package:workdey_frontend/features/jobs/job_by_location_button.dart';
 import 'package:workdey_frontend/features/jobs/job_card.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 import 'package:workdey_frontend/shared/enum/search_type.dart';
@@ -71,16 +75,34 @@ Widget build(BuildContext context) {
         controller: _scrollController,
         slivers: [
           SliverToBoxAdapter(
-            child: Column(
-              children: [          
-          // Search Bar
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          ),
-          _buildRefreshButton(),
-        ],
+  child: Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            _buildRefreshButton(),
+            const Spacer(),
+            LocationSearchButton(
+              onPressed: _showLocationSearchSheet,
+            ),
+          ],
+        ),
       ),
-    ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: jobsState.when(
+            data: (paginated) => _buildHeaderText(paginated),
+            loading: () => const Text("Loading jobs..."),
+            error: (_, __) => const Text("Error loading jobs"),
+          ),
+        ),
+      ),
+    ],
+  ),
+),
           
                // Jobs List
             jobsState.when(
@@ -152,6 +174,40 @@ Widget build(BuildContext context) {
   );
 }
 
+Widget _buildHeaderText(PaginatedResponse<Job> paginated) {
+  final notifier = ref.read(jobsNotifierProvider.notifier);
+  final count = paginated.count;
+
+  if (notifier.currentCity == null) {
+    return Text('$count general jobs available');
+  }
+
+  if (notifier.currentDistrict == null) {
+    return Text('$count jobs in ${notifier.currentCity}');
+  }
+
+  // Check if backend sent a fallback message
+  if (paginated.results.isNotEmpty && paginated.results[0].fallbackMessage != null) {
+    return Text(paginated.results[0].fallbackMessage!);
+  }
+
+  return Text('$count jobs in ${notifier.currentCity}, ${notifier.currentDistrict}');
+}
+
+void _showLocationSearchSheet() {
+  showModalBottomSheet(
+    context: context,
+    builder: (context) => LocationSearchSheet(
+      onSearch: (city, district) {
+        ref.read(jobsNotifierProvider.notifier).searchByLocation(
+          city: city,
+          district: district,
+        );
+      },
+    ),
+  );
+}
+
  Widget _buildRefreshButton() {
     return _isRefreshing
         ? const Padding(
@@ -181,6 +237,7 @@ Widget build(BuildContext context) {
     }
   }
   
+
   @override
   void dispose() {
     _scrollController.dispose();

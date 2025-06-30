@@ -15,6 +15,10 @@ class Job with _$Job {
     required String category,
     required int poster, // Can be String if just ID
     required String location,
+    String? city,
+    String? district,
+    @JsonKey(name: 'location_display') String? locationDisplay,
+    @JsonKey(name: 'is_precise') bool? isPrecise,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'job_nature') String? jobNature,
     @JsonKey(name: 'poster_name') String? posterName,
@@ -34,10 +38,13 @@ class Job with _$Job {
     @JsonKey(name: 'is_saved') @Default(false) bool isSaved,
     @JsonKey(name: 'expires_in') String? expiresIn,
     @JsonKey(name: 'poster_picture') String? posterPicture,
+    @JsonKey(name: 'fallback_message') String? fallbackMessage,
   }) = _Job;
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
 }
+
+
 
   extension JobX on Job {
   PostJob toPostJob() {
@@ -48,6 +55,9 @@ class Job with _$Job {
       job_nature: jobNature ?? 'Full time',
       category: category,
       location: location,
+      city: city,
+      district: district,
+    //  locationDisplay: locationDisplay,
       description: description,
       rolesDescription: rolesDescription,
       dueDate: dueDate?.toIso8601String().substring(0, 10),
