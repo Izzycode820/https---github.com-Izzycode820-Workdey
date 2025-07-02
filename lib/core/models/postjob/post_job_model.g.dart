@@ -28,6 +28,14 @@ _$PostJobImpl _$$PostJobImplFromJson(Map<String, dynamic> json) =>
           const [],
       dueDate: json['due_date'] as String?,
       typeSpecific: json['type_specific'] as Map<String, dynamic>? ?? const {},
+      requiredSkills: (json['required_skills'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      optionalSkills: (json['optional_skills'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$PostJobImplToJson(_$PostJobImpl instance) =>
@@ -46,4 +54,6 @@ Map<String, dynamic> _$$PostJobImplToJson(_$PostJobImpl instance) =>
       'working_days': instance.workingDays,
       'due_date': instance.dueDate,
       'type_specific': instance.typeSpecific,
+      'required_skills': instance.requiredSkills,
+      'optional_skills': instance.optionalSkills,
     };

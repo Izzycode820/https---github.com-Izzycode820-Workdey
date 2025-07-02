@@ -9,7 +9,7 @@ import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/services/post_job_service.dart';
 
 //Post job form
-final postJobNotifierProvider = StateNotifierProvider.autoDispose<PostJobNotifier, PostJob>((ref) {
+final postJobNotifierProvider = StateNotifierProvider<PostJobNotifier, PostJob>((ref) {
     return PostJobNotifier(ref.read(postJobServiceProvider),
     ref,
     );
@@ -25,8 +25,12 @@ class PostJobNotifier extends StateNotifier<PostJob> {
     job_nature: 'Full time',
     category: 'IT',
     location: '',
+    city: '',
+    district: '',
     description: '',
     typeSpecific: {'salary_period': 'm', 'compensation_toggle': false},
+    requiredSkills: [],
+    optionalSkills: [],
   ));
 
  void updateJobType(String type) {
@@ -50,12 +54,16 @@ class PostJobNotifier extends StateNotifier<PostJob> {
       title: field == 'title' ? value : state.title,
       category: field == 'category' ? value : state.category,
       location: field == 'location' ? value : state.location,
+      city: field == 'city' ? value : state.city,  // Add this
+      district: field == 'district' ? value : state.district,
       description: field == 'description' ? value : state.description,
       rolesDescription: field == 'rolesDescription' ? value : state.rolesDescription,
       requirements: field == 'requirements' ? value : state.requirements,
       workingDays: field == 'workingDays' ? value : state.workingDays,
       dueDate: field == 'dueDate' ? value : state.dueDate,
       job_nature: field == 'job_nature' ? value : state.job_nature,
+      requiredSkills: field == 'requiredSkills' ? value : state.requiredSkills,
+      optionalSkills: field == 'optionalSkills' ? value : state.optionalSkills,
     );
   }
 

@@ -5,7 +5,6 @@ import 'package:workdey_frontend/core/enums/form_mode.dart';
 import 'package:workdey_frontend/core/models/postjob/post_job_model.dart';
 import 'package:workdey_frontend/core/providers/post_job_provider.dart';
 
-
 class PostJobForm extends ConsumerStatefulWidget {
   final FormMode mode;
   final PostJob? initialData;
@@ -25,8 +24,13 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
   final _descriptionController = TextEditingController();
   final _rolesController = TextEditingController();
   final _locationController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _districtController = TextEditingController();
   final _requirementController = TextEditingController();
+  final _requiredSkillController = TextEditingController();
+  final _optionalSkillController = TextEditingController();
   final _dueDateController = TextEditingController();
+  
   Map<String, String> _errors = {};
   bool _initialized = false;
   bool _isSubmitting = false;
@@ -37,51 +41,55 @@ class _PostJobFormState extends ConsumerState<PostJobForm> {
     _setupControllers();
   }
 
- @override
-void didChangeDependencies() {
-  super.didChangeDependencies();
-  if (!_initialized && widget.mode == FormMode.edit && widget.initialData != null) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeWithPostJobData(widget.initialData!);
-    });
-    _initialized = true;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized && widget.mode == FormMode.edit && widget.initialData != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _initializeWithPostJobData(widget.initialData!);
+      });
+      _initialized = true;
+    }
   }
-}
 
-  Future<void>  _initializeWithPostJobData(PostJob postjob) async{
-    try{ 
-    final notifier = ref.read(postJobNotifierProvider.notifier);
-    
-    // Reset to default state first
-    notifier.updateJobType(postjob.jobType);
+  Future<void> _initializeWithPostJobData(PostJob postjob) async {
+    try { 
+      final notifier = ref.read(postJobNotifierProvider.notifier);
+      
+      // Reset to default state first
+      notifier.updateJobType(postjob.jobType);
 
-    // Batch updates to minimize rebuilds
-    notifier.updateField('title', postjob.title);
-    notifier.updateField('location', postjob.location);
-    notifier.updateField('job_nature', postjob.job_nature ?? 'Full time');
-    notifier.updateField('category', postjob.category);
-    notifier.updateField('description', postjob.description);
-    notifier.updateField('rolesDescription', postjob.rolesDescription ?? '');
-    notifier.updateField('requirements', postjob.requirements);
-    notifier.updateField('workingDays', postjob.workingDays);
-    notifier.updateField('dueDate', postjob.dueDate?.toString());
-
-
+      // Batch updates to minimize rebuilds
+      notifier.updateField('title', postjob.title);
+      notifier.updateField('location', postjob.location);
+      notifier.updateField('city', postjob.city);
+      notifier.updateField('district', postjob.district);
+      notifier.updateField('job_nature', postjob.job_nature ?? 'Full time');
+      notifier.updateField('category', postjob.category);
+      notifier.updateField('description', postjob.description);
+      notifier.updateField('rolesDescription', postjob.rolesDescription ?? '');
+      notifier.updateField('requirements', postjob.requirements);
+      notifier.updateField('workingDays', postjob.workingDays);
+      notifier.updateField('dueDate', postjob.dueDate?.toString());
+      notifier.updateField('requiredSkills', postjob.requiredSkills);
+      notifier.updateField('optionalSkills', postjob.optionalSkills);
 
       // Special handling for salary fields
-    if (postjob.jobType == 'PRO' || postjob.jobType == 'LOC') {
-      notifier.updateTypeSpecific('salary', postjob.typeSpecific['salary']);
-      notifier.updateTypeSpecific('salary_period', 
-          postjob.typeSpecific['salary_period'] ?? 'd');}
-    
+      if (postjob.jobType == 'PRO' || postjob.jobType == 'LOC') {
+        notifier.updateTypeSpecific('salary', postjob.typeSpecific['salary']);
+        notifier.updateTypeSpecific('salary_period', 
+            postjob.typeSpecific['salary_period'] ?? 'd');
+      }
 
-    // Update controllers
-    _titleController.text = postjob.title;
-    _descriptionController.text = postjob.description;
-    _rolesController.text = postjob.rolesDescription ?? '';
-    _locationController.text = postjob.location ?? '';
-    _dueDateController.text = postjob.dueDate ?? 'Select deadline (yyyy-mm-dd)';
-  } catch (e, stack) {
+      // Update controllers
+      _titleController.text = postjob.title;
+      _descriptionController.text = postjob.description;
+      _rolesController.text = postjob.rolesDescription ?? '';
+      _locationController.text = postjob.location ?? '';
+      _cityController.text = postjob.city ?? '';
+      _districtController.text = postjob.district ?? '';
+      _dueDateController.text = postjob.dueDate ?? 'Select deadline (yyyy-mm-dd)';
+    } catch (e, stack) {
       debugPrint('Initialization error: $e\n$stack');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -97,14 +105,15 @@ void didChangeDependencies() {
       }
     }
   }
-   
 
   void _setupControllers() {
     final job = ref.read(postJobNotifierProvider);
     _titleController.text = job.title;
     _descriptionController.text = job.description;
     _rolesController.text = job.rolesDescription ?? '';
-    _locationController.text = job.location?? '';
+    _locationController.text = job.location ?? '';
+    _cityController.text = job.city ?? '';
+    _districtController.text = job.district ?? '';
     _dueDateController.text = job.dueDate ?? 'Select deadline (yyyy-mm-dd)';
   }
 
@@ -120,7 +129,11 @@ void didChangeDependencies() {
     _descriptionController.dispose();
     _rolesController.dispose();
     _locationController.dispose();
+    _cityController.dispose();
+    _districtController.dispose();
     _requirementController.dispose();
+    _requiredSkillController.dispose();
+    _optionalSkillController.dispose();
     _dueDateController.dispose();
     if (widget.mode == FormMode.edit) {
       Future.microtask(() => ref.invalidate(postJobNotifierProvider));
@@ -129,39 +142,38 @@ void didChangeDependencies() {
   }
 
   Future<void> _submitForm() async {
-  if (_isSubmitting) return;
-  
-  setState(() => _isSubmitting = true);
-  
-  try {
-    final notifier = ref.read(postJobNotifierProvider.notifier);
-    debugPrint('Submitting with ID: ${widget.initialData?.id}'); // Debug
+    if (_isSubmitting) return;
     
-    final success = await notifier.submitJob(
-      mode: widget.mode,
-      jobId: widget.initialData?.id, // Now properly passed
-    );
+    setState(() => _isSubmitting = true);
     
-    if (mounted && success) {
-      Navigator.pop(context, true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Job ${widget.mode == FormMode.edit ? 'updated' : 'posted'} successfully!')),
+    try {
+      final notifier = ref.read(postJobNotifierProvider.notifier);
+      debugPrint('Submitting with ID: ${widget.initialData?.id}');
+      
+      final success = await notifier.submitJob(
+        mode: widget.mode,
+        jobId: widget.initialData?.id,
       );
+      
+      if (mounted && success) {
+        Navigator.pop(context, true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Job ${widget.mode == FormMode.edit ? 'updated' : 'posted'} successfully!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceAll('Exception: ', '')),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  } finally {
-    if (mounted) setState(() => _isSubmitting = false);
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +206,8 @@ void didChangeDependencies() {
               _buildDynamicFields(job, notifier),
               const SizedBox(height: 24),
               _buildRequirementsSection(job, notifier),
+              const SizedBox(height: 24),
+              _buildSkillsSection(job, notifier),
               const SizedBox(height: 24),
               _buildWorkingDaysSection(job, notifier),
             ],
@@ -270,13 +284,39 @@ void didChangeDependencies() {
         TextFormField(
           controller: _locationController,
           decoration: InputDecoration(
-            labelText: 'Location',
+            labelText: 'Location (Street/Area)',
             border: const OutlineInputBorder(),
             errorText: _errors['location'],
           ),
           onChanged: (value) {
             notifier.updateField('location', value);
             _clearError('location');
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _cityController,
+          decoration: InputDecoration(
+            labelText: 'City',
+            border: const OutlineInputBorder(),
+            errorText: _errors['city'],
+          ),
+          onChanged: (value) {
+            notifier.updateField('city', value);
+            _clearError('city');
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _districtController,
+          decoration: InputDecoration(
+            labelText: 'District/Neighborhood',
+            border: const OutlineInputBorder(),
+            errorText: _errors['district'],
+          ),
+          onChanged: (value) {
+            notifier.updateField('district', value);
+            _clearError('district');
           },
         ),
         const SizedBox(height: 16),
@@ -307,12 +347,10 @@ void didChangeDependencies() {
             DropdownMenuItem(value: 'IT', child: Text('Information Technology')),
             DropdownMenuItem(value: 'HEALTH', child: Text('Health')),
             DropdownMenuItem(value: 'FINANCE', child: Text('Finance')),
-            //DropdownMenuItem(value: 'Freelance', child: Text('Freelance')),
-          //add more
           ],
           onChanged: (value) {
-            if (value != null) { notifier.updateField('category', value);
-          }},
+            if (value != null) notifier.updateField('category', value);
+          },
         ),
         const SizedBox(height: 16),
         TextFormField(
@@ -470,7 +508,98 @@ void didChangeDependencies() {
       ],
     );
   }
-  
+
+  Widget _buildSkillsSection(PostJob job, PostJobNotifier notifier) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Skills Required',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 16),
+        
+        // Required Skills
+        _buildSkillInputField(
+          controller: _requiredSkillController,
+          label: 'Required Skills (Must Have)',
+          skills: job.requiredSkills,
+          onAdd: (skill) => notifier.updateField('requiredSkills', [...job.requiredSkills, skill]),
+          onRemove: (skill) => notifier.updateField(
+            'requiredSkills', 
+            job.requiredSkills.where((s) => s != skill).toList(),
+          ),
+        ),
+        
+        const SizedBox(height: 16),
+        
+        // Optional Skills
+        _buildSkillInputField(
+          controller: _optionalSkillController,
+          label: 'Bonus Skills (Nice to Have)',
+          skills: job.optionalSkills,
+          onAdd: (skill) => notifier.updateField('optionalSkills', [...job.optionalSkills, skill]),
+          onRemove: (skill) => notifier.updateField(
+            'optionalSkills', 
+            job.optionalSkills.where((s) => s != skill).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSkillInputField({
+    required TextEditingController controller,
+    required String label,
+    required List<String> skills,
+    required Function(String) onAdd,
+    required Function(String) onRemove,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...skills.map((skill) => Chip(
+              label: Text(skill),
+              onDeleted: () => onRemove(skill),
+            )),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width - 100,
+              ),
+              child: TextFormField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: 'Add skill',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      if (controller.text.trim().isNotEmpty) {
+                        onAdd(controller.text.trim());
+                        controller.clear();
+                      }
+                    },
+                  ),
+                ),
+                onFieldSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    onAdd(value.trim());
+                    controller.clear();
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _buildWorkingDaysSection(PostJob job, PostJobNotifier notifier) {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     

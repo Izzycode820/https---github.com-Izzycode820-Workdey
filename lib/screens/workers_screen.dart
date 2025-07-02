@@ -61,13 +61,19 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen> {
       appBar: CustomAppBar(
          searchType: SearchType.worker,
         showSearchBar: true,
-        actionButton: TextButton(
-    onPressed: () => Navigator.pushNamed(context, AppRoutes.postWorker),
-    child: const Text(
-      'Workers Card',
-      style: TextStyle(color: Color(0xFF3E8728)),
-    ),
-  ),
+        actionButton: Builder(
+            builder: (context) => TextButton(
+              onPressed: () {
+                Future.delayed(Duration.zero, () {
+                  Navigator.pushNamed(context, AppRoutes.postWorker);
+                });
+              },
+              child: const Text(
+                'Workers Card',
+                style: TextStyle(color: Color(0xFF3E8728)),
+              ),
+            ),
+          ),
       ),
       body: Column(
         children: [

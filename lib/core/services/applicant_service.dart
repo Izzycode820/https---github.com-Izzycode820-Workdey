@@ -7,7 +7,7 @@ class ApplicantService {
 
   ApplicantService(this._dio);
 
-  Future<List<Applicant>> getJobApplicants(int jobId) async {
+  Future<List<Application>> getJobApplicants(int jobId) async {
     try {
       final response = await _dio.get(
         '/api/v1/jobs/$jobId/applicants/',
@@ -19,8 +19,41 @@ class ApplicantService {
       );
 
       return (response.data as List)
-          .map((json) => Applicant.fromJson(json))
+          .map((json) => Application.fromJson(json))
           .toList();
+    } on DioException catch (e) {
+      throw DioExceptions.fromDioError(e);
+    }
+  }
+
+  Future<List<Application>> getMyApplications() async {
+    try {
+      final response = await _dio.get('/api/v1/applications/my_applications/');
+      return (response.data as List)
+          .map((json) => Application.fromJson(json))
+          .toList();
+    } on DioException catch (e) {
+      throw DioExceptions.fromDioError(e);
+    }
+  }
+
+  Future<void> updateApplicationStatus(int applicationId, String status) async {
+    try {
+      await _dio.patch(
+        '/api/v1/applications/$applicationId/status/',
+        data: {'status': status},
+      );
+    } on DioException catch (e) {
+      throw DioExceptions.fromDioError(e);
+    }
+  }
+
+  Future<void> applyToJob(int jobId, Map<String, dynamic> applicationData) async {
+    try {
+      await _dio.post(
+        '/api/v1/jobs/$jobId/apply/',
+        data: applicationData,
+      );
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     }

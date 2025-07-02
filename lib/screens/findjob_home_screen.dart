@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
 import 'package:workdey_frontend/core/providers/get_job_provider.dart';
+import 'package:workdey_frontend/core/providers/post_job_provider.dart';
 import 'package:workdey_frontend/core/providers/route_state_provider.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
 import 'package:workdey_frontend/core/routes/routes.dart';
@@ -22,6 +23,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isRefreshing = false;
+  bool _isNavigating = false;
 
  @override
 void initState() {
@@ -58,13 +60,41 @@ Widget build(BuildContext context) {
     appBar: CustomAppBar(
      searchType: SearchType.job,
         showSearchBar: true,
-      actionButton: TextButton(
-    onPressed: () => Navigator.pushNamed(context, AppRoutes.postJobs),
-    child: const Text(
-      'Post Job',
-      style: TextStyle(color: Color(0xFF3E8728)),
-    ),
+      actionButton: Builder(
+  builder: (context) => TextButton(
+    onPressed: _isNavigating ? null : () async {
+  setState(() => _isNavigating = true);
+  try {
+    // Initialize provider in a post-frame callback
+    await Future.microtask(() {
+      ref.read(postJobNotifierProvider.notifier);
+    });
+    await Navigator.pushNamed(context, AppRoutes.postJobs);
+  } finally {
+    if (mounted) setState(() => _isNavigating = false);
+  }
+},
+    // {
+    //   setState(() => _isNavigating = true);
+    //   await Future.microtask(() {});
+    //   try {
+    //     await Navigator.pushNamed(context, AppRoutes.postJobs);
+    //   } finally {
+    //     if (mounted) setState(() => _isNavigating = false);
+    //   }
+    // },
+    child: _isNavigating
+        ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
+        : const Text(
+            'Post Job',
+            style: TextStyle(color: Color(0xFF3E8728)),
+          ),
   ),
+),
     ),
     body: RefreshIndicator(
       onRefresh: () async {

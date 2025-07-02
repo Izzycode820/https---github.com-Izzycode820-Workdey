@@ -22,6 +22,8 @@ class PostJob with _$PostJob{
     @Default([]) @JsonKey(name: 'working_days') List<String> workingDays,
     @JsonKey(name: 'due_date') String? dueDate,  // Match backend
     @JsonKey(name: 'type_specific') @Default({}) Map<String, dynamic> typeSpecific,
+    @Default([]) @JsonKey(name: 'required_skills') List<String> requiredSkills,
+    @Default([]) @JsonKey(name: 'optional_skills') List<String> optionalSkills,
   }) = _PostJob;
 
   factory PostJob.fromJson(Map<String, dynamic> json) => _$PostJobFromJson(json);
@@ -54,6 +56,10 @@ class PostJob with _$PostJob{
       if (salary == null || salary <= 0) {
         errors['salary'] = 'Salary must be positive';
       }
+    }
+    
+    if (requiredSkills.isEmpty) {
+      errors['requiredSkills'] = 'At least one required skill is needed';
     }
     
     return errors.isNotEmpty ? errors : null;

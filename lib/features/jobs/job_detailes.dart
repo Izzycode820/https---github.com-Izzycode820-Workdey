@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
+import 'package:workdey_frontend/features/application/application_form_screen.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   final Job job;
@@ -190,7 +191,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   elevation: 4,
                   shadowColor: const Color(0xFF1C58F2).withOpacity(0.1),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ApplicationFormScreen(job: widget.job),
+                          ),
+                        );
+                      },
                 child: Text(
                   widget.job.hasApplied ? 'APPLIED' : 'APPLY NOW',
                   style: const TextStyle(

@@ -42,7 +42,7 @@ final localCacheProvider = Provider<LocalCache>((ref) {
 // 4. Base Dio provider without auth dependencies
 final baseDioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.25.64:8000',
+    baseUrl: 'http://192.239.64.64:8000',
     headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
     connectTimeout: const Duration(seconds: 20),
     receiveTimeout: const Duration(seconds: 20),
@@ -129,7 +129,7 @@ final applicantServiceProvider = Provider<ApplicantService>((ref) {
 });
 
 //11. applicant provider
-final jobApplicantsProvider = FutureProvider.family<List<Applicant>, int>((ref, jobId) {
+final jobApplicantsProvider = FutureProvider.family<List<Application>, int>((ref, jobId) {
   return ref.read(applicantServiceProvider).getJobApplicants(jobId);
 });
 

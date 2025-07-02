@@ -39,6 +39,8 @@ class Job with _$Job {
     @JsonKey(name: 'expires_in') String? expiresIn,
     @JsonKey(name: 'poster_picture') String? posterPicture,
     @JsonKey(name: 'fallback_message') String? fallbackMessage,
+    @JsonKey(name: 'required_skills') required List<String> requiredSkills,
+    @JsonKey(name: 'optional_skills') required List<String> optionalSkills,
   }) = _Job;
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
@@ -64,6 +66,7 @@ class Job with _$Job {
       typeSpecific: Map<String, dynamic>.from(typeSpecific),
       requirements: requirements ?? [],
       workingDays: workingDays ?? [],
+   //   requiredSkills: requiredSkills ?? [],
     );
   }
 }

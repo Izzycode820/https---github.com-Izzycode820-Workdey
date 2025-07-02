@@ -7,7 +7,6 @@ import 'package:workdey_frontend/core/providers/post_job_provider.dart';
 import 'package:workdey_frontend/features/jobs/confirmation_dialog.dart';
 import 'package:workdey_frontend/screens/applicants_screen.dart';
 import 'package:workdey_frontend/screens/edit_job_screen.dart';
-import 'package:workdey_frontend/screens/postjob_form.dart';
 
 class PostedJobDetails extends ConsumerStatefulWidget {
   final Job job;
@@ -177,6 +176,17 @@ class _PostedJobDetailsState extends ConsumerState<PostedJobDetails> {
                     title: 'Working Days',
                     content: widget.job.workingDays!.join(', '),
                   ),
+                  if (widget.job.city != null)
+                      _buildSection(
+                        title: 'City',
+                        content: widget.job.city!,
+                      ),
+
+                    if (widget.job.district != null)
+                      _buildSection(
+                        title: 'District',
+                        content: widget.job.district!,
+                      ),
 
                 if (widget.job.category != null)
                   _buildSection(
@@ -189,6 +199,17 @@ class _PostedJobDetailsState extends ConsumerState<PostedJobDetails> {
                     title: 'Job Nature',
                     content: widget.job.jobNature!,
                   ),
+                if (widget.job.requiredSkills != null && widget.job.requiredSkills!.isNotEmpty)
+                      _buildSection(
+                        title: 'Required Skills',
+                        content: widget.job.requiredSkills!.map((s) => '• $s').join('\n'),
+                      ),
+
+                    if (widget.job.optionalSkills != null && widget.job.optionalSkills!.isNotEmpty)
+                      _buildSection(
+                        title: 'Bonus Skills',
+                        content: widget.job.optionalSkills!.map((s) => '• $s').join('\n'),
+  ),
 
                 const SizedBox(height: 24),
               ],

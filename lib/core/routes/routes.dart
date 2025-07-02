@@ -10,5 +10,8 @@ class AppRoutes {
   static const String postJobs = '/post-jobs';
   static const String postWorker = '/post-worker';
   static const String settings = '/settings';
+  static const String myApplication = '/my-application';
+  static const String applicants = '/applicants/:jobId';
+  static const String apply = '/apply/:jobId';
 
 }

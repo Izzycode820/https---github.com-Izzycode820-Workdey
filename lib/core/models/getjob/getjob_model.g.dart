@@ -41,6 +41,12 @@ _$JobImpl _$$JobImplFromJson(Map<String, dynamic> json) => _$JobImpl(
       expiresIn: json['expires_in'] as String?,
       posterPicture: json['poster_picture'] as String?,
       fallbackMessage: json['fallback_message'] as String?,
+      requiredSkills: (json['required_skills'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      optionalSkills: (json['optional_skills'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
@@ -72,4 +78,6 @@ Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
       'expires_in': instance.expiresIn,
       'poster_picture': instance.posterPicture,
       'fallback_message': instance.fallbackMessage,
+      'required_skills': instance.requiredSkills,
+      'optional_skills': instance.optionalSkills,
     };

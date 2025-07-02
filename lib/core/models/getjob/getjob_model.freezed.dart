@@ -70,6 +70,10 @@ mixin _$Job {
   String? get posterPicture => throw _privateConstructorUsedError;
   @JsonKey(name: 'fallback_message')
   String? get fallbackMessage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'required_skills')
+  List<String> get requiredSkills => throw _privateConstructorUsedError;
+  @JsonKey(name: 'optional_skills')
+  List<String> get optionalSkills => throw _privateConstructorUsedError;
 
   /// Serializes this Job to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -114,7 +118,9 @@ abstract class $JobCopyWith<$Res> {
       @JsonKey(name: 'is_saved') bool isSaved,
       @JsonKey(name: 'expires_in') String? expiresIn,
       @JsonKey(name: 'poster_picture') String? posterPicture,
-      @JsonKey(name: 'fallback_message') String? fallbackMessage});
+      @JsonKey(name: 'fallback_message') String? fallbackMessage,
+      @JsonKey(name: 'required_skills') List<String> requiredSkills,
+      @JsonKey(name: 'optional_skills') List<String> optionalSkills});
 }
 
 /// @nodoc
@@ -159,6 +165,8 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
     Object? expiresIn = freezed,
     Object? posterPicture = freezed,
     Object? fallbackMessage = freezed,
+    Object? requiredSkills = null,
+    Object? optionalSkills = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -273,6 +281,14 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
           ? _value.fallbackMessage
           : fallbackMessage // ignore: cast_nullable_to_non_nullable
               as String?,
+      requiredSkills: null == requiredSkills
+          ? _value.requiredSkills
+          : requiredSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      optionalSkills: null == optionalSkills
+          ? _value.optionalSkills
+          : optionalSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -312,7 +328,9 @@ abstract class _$$JobImplCopyWith<$Res> implements $JobCopyWith<$Res> {
       @JsonKey(name: 'is_saved') bool isSaved,
       @JsonKey(name: 'expires_in') String? expiresIn,
       @JsonKey(name: 'poster_picture') String? posterPicture,
-      @JsonKey(name: 'fallback_message') String? fallbackMessage});
+      @JsonKey(name: 'fallback_message') String? fallbackMessage,
+      @JsonKey(name: 'required_skills') List<String> requiredSkills,
+      @JsonKey(name: 'optional_skills') List<String> optionalSkills});
 }
 
 /// @nodoc
@@ -354,6 +372,8 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
     Object? expiresIn = freezed,
     Object? posterPicture = freezed,
     Object? fallbackMessage = freezed,
+    Object? requiredSkills = null,
+    Object? optionalSkills = null,
   }) {
     return _then(_$JobImpl(
       id: null == id
@@ -468,6 +488,14 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
           ? _value.fallbackMessage
           : fallbackMessage // ignore: cast_nullable_to_non_nullable
               as String?,
+      requiredSkills: null == requiredSkills
+          ? _value._requiredSkills
+          : requiredSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      optionalSkills: null == optionalSkills
+          ? _value._optionalSkills
+          : optionalSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -506,11 +534,17 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       @JsonKey(name: 'is_saved') this.isSaved = false,
       @JsonKey(name: 'expires_in') this.expiresIn,
       @JsonKey(name: 'poster_picture') this.posterPicture,
-      @JsonKey(name: 'fallback_message') this.fallbackMessage})
+      @JsonKey(name: 'fallback_message') this.fallbackMessage,
+      @JsonKey(name: 'required_skills')
+      required final List<String> requiredSkills,
+      @JsonKey(name: 'optional_skills')
+      required final List<String> optionalSkills})
       : _workingDays = workingDays,
         _requirements = requirements,
         _typeSpecific = typeSpecific,
-        _verificationBadges = verificationBadges;
+        _verificationBadges = verificationBadges,
+        _requiredSkills = requiredSkills,
+        _optionalSkills = optionalSkills;
 
   factory _$JobImpl.fromJson(Map<String, dynamic> json) =>
       _$$JobImplFromJson(json);
@@ -623,10 +657,27 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
   @override
   @JsonKey(name: 'fallback_message')
   final String? fallbackMessage;
+  final List<String> _requiredSkills;
+  @override
+  @JsonKey(name: 'required_skills')
+  List<String> get requiredSkills {
+    if (_requiredSkills is EqualUnmodifiableListView) return _requiredSkills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_requiredSkills);
+  }
+
+  final List<String> _optionalSkills;
+  @override
+  @JsonKey(name: 'optional_skills')
+  List<String> get optionalSkills {
+    if (_optionalSkills is EqualUnmodifiableListView) return _optionalSkills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_optionalSkills);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, city: $city, district: $district, locationDisplay: $locationDisplay, isPrecise: $isPrecise, createdAt: $createdAt, jobNature: $jobNature, posterName: $posterName, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture, fallbackMessage: $fallbackMessage)';
+    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, city: $city, district: $district, locationDisplay: $locationDisplay, isPrecise: $isPrecise, createdAt: $createdAt, jobNature: $jobNature, posterName: $posterName, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture, fallbackMessage: $fallbackMessage, requiredSkills: $requiredSkills, optionalSkills: $optionalSkills)';
   }
 
   @override
@@ -661,7 +712,9 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       ..add(DiagnosticsProperty('isSaved', isSaved))
       ..add(DiagnosticsProperty('expiresIn', expiresIn))
       ..add(DiagnosticsProperty('posterPicture', posterPicture))
-      ..add(DiagnosticsProperty('fallbackMessage', fallbackMessage));
+      ..add(DiagnosticsProperty('fallbackMessage', fallbackMessage))
+      ..add(DiagnosticsProperty('requiredSkills', requiredSkills))
+      ..add(DiagnosticsProperty('optionalSkills', optionalSkills));
   }
 
   @override
@@ -717,7 +770,11 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
             (identical(other.posterPicture, posterPicture) ||
                 other.posterPicture == posterPicture) &&
             (identical(other.fallbackMessage, fallbackMessage) ||
-                other.fallbackMessage == fallbackMessage));
+                other.fallbackMessage == fallbackMessage) &&
+            const DeepCollectionEquality()
+                .equals(other._requiredSkills, _requiredSkills) &&
+            const DeepCollectionEquality()
+                .equals(other._optionalSkills, _optionalSkills));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -751,7 +808,9 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
         isSaved,
         expiresIn,
         posterPicture,
-        fallbackMessage
+        fallbackMessage,
+        const DeepCollectionEquality().hash(_requiredSkills),
+        const DeepCollectionEquality().hash(_optionalSkills)
       ]);
 
   /// Create a copy of Job
@@ -772,37 +831,40 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
 
 abstract class _Job implements Job {
   const factory _Job(
-          {required final int id,
-          @JsonKey(name: 'job_type') required final String jobType,
-          required final String title,
-          required final String category,
-          required final int poster,
-          required final String location,
-          final String? city,
-          final String? district,
-          @JsonKey(name: 'location_display') final String? locationDisplay,
-          @JsonKey(name: 'is_precise') final bool? isPrecise,
-          @JsonKey(name: 'created_at') required final DateTime createdAt,
-          @JsonKey(name: 'job_nature') final String? jobNature,
-          @JsonKey(name: 'poster_name') final String? posterName,
-          @JsonKey(name: 'working_days') final List<String>? workingDays,
-          @JsonKey(name: 'due_date') final DateTime? dueDate,
-          final List<String>? requirements,
-          required final String description,
-          @JsonKey(name: 'roles_description') final String? rolesDescription,
-          @JsonKey(name: 'type_specific')
-          required final Map<String, dynamic> typeSpecific,
-          @JsonKey(name: 'updated_at') required final DateTime updatedAt,
-          @JsonKey(name: 'post_time') final String? postTime,
-          @JsonKey(name: 'salary_display') final String? salaryDisplay,
-          @JsonKey(name: 'verification_badges')
-          final Map<String, dynamic>? verificationBadges,
-          @JsonKey(name: 'has_applied') final bool hasApplied,
-          @JsonKey(name: 'is_saved') final bool isSaved,
-          @JsonKey(name: 'expires_in') final String? expiresIn,
-          @JsonKey(name: 'poster_picture') final String? posterPicture,
-          @JsonKey(name: 'fallback_message') final String? fallbackMessage}) =
-      _$JobImpl;
+      {required final int id,
+      @JsonKey(name: 'job_type') required final String jobType,
+      required final String title,
+      required final String category,
+      required final int poster,
+      required final String location,
+      final String? city,
+      final String? district,
+      @JsonKey(name: 'location_display') final String? locationDisplay,
+      @JsonKey(name: 'is_precise') final bool? isPrecise,
+      @JsonKey(name: 'created_at') required final DateTime createdAt,
+      @JsonKey(name: 'job_nature') final String? jobNature,
+      @JsonKey(name: 'poster_name') final String? posterName,
+      @JsonKey(name: 'working_days') final List<String>? workingDays,
+      @JsonKey(name: 'due_date') final DateTime? dueDate,
+      final List<String>? requirements,
+      required final String description,
+      @JsonKey(name: 'roles_description') final String? rolesDescription,
+      @JsonKey(name: 'type_specific')
+      required final Map<String, dynamic> typeSpecific,
+      @JsonKey(name: 'updated_at') required final DateTime updatedAt,
+      @JsonKey(name: 'post_time') final String? postTime,
+      @JsonKey(name: 'salary_display') final String? salaryDisplay,
+      @JsonKey(name: 'verification_badges')
+      final Map<String, dynamic>? verificationBadges,
+      @JsonKey(name: 'has_applied') final bool hasApplied,
+      @JsonKey(name: 'is_saved') final bool isSaved,
+      @JsonKey(name: 'expires_in') final String? expiresIn,
+      @JsonKey(name: 'poster_picture') final String? posterPicture,
+      @JsonKey(name: 'fallback_message') final String? fallbackMessage,
+      @JsonKey(name: 'required_skills')
+      required final List<String> requiredSkills,
+      @JsonKey(name: 'optional_skills')
+      required final List<String> optionalSkills}) = _$JobImpl;
 
   factory _Job.fromJson(Map<String, dynamic> json) = _$JobImpl.fromJson;
 
@@ -881,6 +943,12 @@ abstract class _Job implements Job {
   @override
   @JsonKey(name: 'fallback_message')
   String? get fallbackMessage;
+  @override
+  @JsonKey(name: 'required_skills')
+  List<String> get requiredSkills;
+  @override
+  @JsonKey(name: 'optional_skills')
+  List<String> get optionalSkills;
 
   /// Create a copy of Job
   /// with the given fields replaced by the non-null parameter values.

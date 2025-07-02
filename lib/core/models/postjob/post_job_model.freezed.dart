@@ -42,6 +42,10 @@ mixin _$PostJob {
   String? get dueDate => throw _privateConstructorUsedError; // Match backend
   @JsonKey(name: 'type_specific')
   Map<String, dynamic> get typeSpecific => throw _privateConstructorUsedError;
+  @JsonKey(name: 'required_skills')
+  List<String> get requiredSkills => throw _privateConstructorUsedError;
+  @JsonKey(name: 'optional_skills')
+  List<String> get optionalSkills => throw _privateConstructorUsedError;
 
   /// Serializes this PostJob to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -71,7 +75,9 @@ abstract class $PostJobCopyWith<$Res> {
       @JsonKey(name: 'requirements') List<String> requirements,
       @JsonKey(name: 'working_days') List<String> workingDays,
       @JsonKey(name: 'due_date') String? dueDate,
-      @JsonKey(name: 'type_specific') Map<String, dynamic> typeSpecific});
+      @JsonKey(name: 'type_specific') Map<String, dynamic> typeSpecific,
+      @JsonKey(name: 'required_skills') List<String> requiredSkills,
+      @JsonKey(name: 'optional_skills') List<String> optionalSkills});
 }
 
 /// @nodoc
@@ -103,6 +109,8 @@ class _$PostJobCopyWithImpl<$Res, $Val extends PostJob>
     Object? workingDays = null,
     Object? dueDate = freezed,
     Object? typeSpecific = null,
+    Object? requiredSkills = null,
+    Object? optionalSkills = null,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -161,6 +169,14 @@ class _$PostJobCopyWithImpl<$Res, $Val extends PostJob>
           ? _value.typeSpecific
           : typeSpecific // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>,
+      requiredSkills: null == requiredSkills
+          ? _value.requiredSkills
+          : requiredSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      optionalSkills: null == optionalSkills
+          ? _value.optionalSkills
+          : optionalSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -186,7 +202,9 @@ abstract class _$$PostJobImplCopyWith<$Res> implements $PostJobCopyWith<$Res> {
       @JsonKey(name: 'requirements') List<String> requirements,
       @JsonKey(name: 'working_days') List<String> workingDays,
       @JsonKey(name: 'due_date') String? dueDate,
-      @JsonKey(name: 'type_specific') Map<String, dynamic> typeSpecific});
+      @JsonKey(name: 'type_specific') Map<String, dynamic> typeSpecific,
+      @JsonKey(name: 'required_skills') List<String> requiredSkills,
+      @JsonKey(name: 'optional_skills') List<String> optionalSkills});
 }
 
 /// @nodoc
@@ -216,6 +234,8 @@ class __$$PostJobImplCopyWithImpl<$Res>
     Object? workingDays = null,
     Object? dueDate = freezed,
     Object? typeSpecific = null,
+    Object? requiredSkills = null,
+    Object? optionalSkills = null,
   }) {
     return _then(_$PostJobImpl(
       id: freezed == id
@@ -274,6 +294,14 @@ class __$$PostJobImplCopyWithImpl<$Res>
           ? _value._typeSpecific
           : typeSpecific // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>,
+      requiredSkills: null == requiredSkills
+          ? _value._requiredSkills
+          : requiredSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      optionalSkills: null == optionalSkills
+          ? _value._optionalSkills
+          : optionalSkills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -297,10 +325,16 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       @JsonKey(name: 'working_days') final List<String> workingDays = const [],
       @JsonKey(name: 'due_date') this.dueDate,
       @JsonKey(name: 'type_specific')
-      final Map<String, dynamic> typeSpecific = const {}})
+      final Map<String, dynamic> typeSpecific = const {},
+      @JsonKey(name: 'required_skills')
+      final List<String> requiredSkills = const [],
+      @JsonKey(name: 'optional_skills')
+      final List<String> optionalSkills = const []})
       : _requirements = requirements,
         _workingDays = workingDays,
-        _typeSpecific = typeSpecific;
+        _typeSpecific = typeSpecific,
+        _requiredSkills = requiredSkills,
+        _optionalSkills = optionalSkills;
 
   factory _$PostJobImpl.fromJson(Map<String, dynamic> json) =>
       _$$PostJobImplFromJson(json);
@@ -364,9 +398,27 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
     return EqualUnmodifiableMapView(_typeSpecific);
   }
 
+  final List<String> _requiredSkills;
+  @override
+  @JsonKey(name: 'required_skills')
+  List<String> get requiredSkills {
+    if (_requiredSkills is EqualUnmodifiableListView) return _requiredSkills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_requiredSkills);
+  }
+
+  final List<String> _optionalSkills;
+  @override
+  @JsonKey(name: 'optional_skills')
+  List<String> get optionalSkills {
+    if (_optionalSkills is EqualUnmodifiableListView) return _optionalSkills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_optionalSkills);
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PostJob(id: $id, jobType: $jobType, title: $title, category: $category, location: $location, city: $city, district: $district, job_nature: $job_nature, description: $description, rolesDescription: $rolesDescription, requirements: $requirements, workingDays: $workingDays, dueDate: $dueDate, typeSpecific: $typeSpecific)';
+    return 'PostJob(id: $id, jobType: $jobType, title: $title, category: $category, location: $location, city: $city, district: $district, job_nature: $job_nature, description: $description, rolesDescription: $rolesDescription, requirements: $requirements, workingDays: $workingDays, dueDate: $dueDate, typeSpecific: $typeSpecific, requiredSkills: $requiredSkills, optionalSkills: $optionalSkills)';
   }
 
   @override
@@ -387,7 +439,9 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       ..add(DiagnosticsProperty('requirements', requirements))
       ..add(DiagnosticsProperty('workingDays', workingDays))
       ..add(DiagnosticsProperty('dueDate', dueDate))
-      ..add(DiagnosticsProperty('typeSpecific', typeSpecific));
+      ..add(DiagnosticsProperty('typeSpecific', typeSpecific))
+      ..add(DiagnosticsProperty('requiredSkills', requiredSkills))
+      ..add(DiagnosticsProperty('optionalSkills', optionalSkills));
   }
 
   @override
@@ -417,7 +471,11 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
                 .equals(other._workingDays, _workingDays) &&
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
             const DeepCollectionEquality()
-                .equals(other._typeSpecific, _typeSpecific));
+                .equals(other._typeSpecific, _typeSpecific) &&
+            const DeepCollectionEquality()
+                .equals(other._requiredSkills, _requiredSkills) &&
+            const DeepCollectionEquality()
+                .equals(other._optionalSkills, _optionalSkills));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -437,7 +495,9 @@ class _$PostJobImpl with DiagnosticableTreeMixin implements _PostJob {
       const DeepCollectionEquality().hash(_requirements),
       const DeepCollectionEquality().hash(_workingDays),
       dueDate,
-      const DeepCollectionEquality().hash(_typeSpecific));
+      const DeepCollectionEquality().hash(_typeSpecific),
+      const DeepCollectionEquality().hash(_requiredSkills),
+      const DeepCollectionEquality().hash(_optionalSkills));
 
   /// Create a copy of PostJob
   /// with the given fields replaced by the non-null parameter values.
@@ -470,8 +530,10 @@ abstract class _PostJob implements PostJob {
       @JsonKey(name: 'requirements') final List<String> requirements,
       @JsonKey(name: 'working_days') final List<String> workingDays,
       @JsonKey(name: 'due_date') final String? dueDate,
-      @JsonKey(name: 'type_specific')
-      final Map<String, dynamic> typeSpecific}) = _$PostJobImpl;
+      @JsonKey(name: 'type_specific') final Map<String, dynamic> typeSpecific,
+      @JsonKey(name: 'required_skills') final List<String> requiredSkills,
+      @JsonKey(name: 'optional_skills')
+      final List<String> optionalSkills}) = _$PostJobImpl;
 
   factory _PostJob.fromJson(Map<String, dynamic> json) = _$PostJobImpl.fromJson;
 
@@ -510,6 +572,12 @@ abstract class _PostJob implements PostJob {
   @override
   @JsonKey(name: 'type_specific')
   Map<String, dynamic> get typeSpecific;
+  @override
+  @JsonKey(name: 'required_skills')
+  List<String> get requiredSkills;
+  @override
+  @JsonKey(name: 'optional_skills')
+  List<String> get optionalSkills;
 
   /// Create a copy of PostJob
   /// with the given fields replaced by the non-null parameter values.
