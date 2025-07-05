@@ -46,6 +46,7 @@ dependencies:
   json_annotation: ^4.9.0
   geolocator: ^10.0.0
   geocoding: ^2.1.0
+  permission_handler: ^11.0.1
   
 
   # The following adds the Cupertino Icons font to your application.
@@ -61,6 +62,7 @@ dev_dependencies:
   build_runner: ^2.4.6
   freezed: ^2.4.7
   json_serializable: ^6.7.1
+  
 
 
 

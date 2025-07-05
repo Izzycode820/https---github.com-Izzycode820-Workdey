@@ -22,6 +22,21 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	
+	<!-- Location Permission Descriptions -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>WorkDey needs access to your location to find jobs near you and calculate travel distances. This helps match you with the most convenient work opportunities.</string>
+	
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>WorkDey uses your location to find nearby job opportunities and send location-based job alerts. Your location is only used to improve your job search experience.</string>
+    
+    <!-- ADD THIS: Location accuracy authorization for iOS 14+ -->
+    <key>NSLocationTemporaryUsageDescriptionDictionary</key>
+    <dict>
+        <key>JobSearch</key>
+        <string>Allow precise location to find the most relevant jobs in your immediate area.</string>
+    </dict>
+    
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

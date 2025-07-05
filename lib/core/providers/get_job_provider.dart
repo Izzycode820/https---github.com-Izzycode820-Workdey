@@ -158,6 +158,32 @@ class JobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
       state = AsyncValue.error(e, stack);
     }
   }
+
+   Future<void> loadJobsByLocation({
+    required String city,
+    String? district,
+    bool forceRefresh = false,
+  }) async {
+    _currentPage = 1;
+    _hasMore = true;
+    _currentCity = city;
+    _currentDistrict = district;
+    
+    state = const AsyncValue.loading();
+    
+    try {
+      final jobs = await _service.fetchJobsByLocation(
+        page: _currentPage,
+        city: city,
+        district: district,
+        forceRefresh: forceRefresh,
+      );
+      
+      state = AsyncValue.data(jobs);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
 }
 
 final jobsNotifierProvider = StateNotifierProvider<JobsNotifier, AsyncValue<PaginatedResponse<Job>>>((ref) {

@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:workdey_frontend/core/models/location/locationzone/location_zone_model.dart';
 import 'package:workdey_frontend/core/models/postjob/post_job_model.dart';
 
 part 'getjob_model.freezed.dart';
@@ -41,12 +42,42 @@ class Job with _$Job {
     @JsonKey(name: 'fallback_message') String? fallbackMessage,
     @JsonKey(name: 'required_skills') required List<String> requiredSkills,
     @JsonKey(name: 'optional_skills') required List<String> optionalSkills,
+    LocationZone? zone,
+    @JsonKey(name: 'transport_info') Map<String, dynamic>? transportInfo,
+    @JsonKey(name: 'distance_info') Map<String, dynamic>? distanceInfo,
+    @JsonKey(name: 'gps_distance') double? gpsDistance,
+    @JsonKey(name: 'location_accuracy') String? locationAccuracy,
+    double? latitude,
+    double? longitude,
   }) = _Job;
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
 }
 
-
+  extension JobLocationExtension on Job {
+  bool get hasGPS => latitude != null && longitude != null;
+  bool get hasZone => zone != null;
+  bool get hasPreciseLocation => locationAccuracy == 'gps';
+  
+  String get locationDisplayText {
+    if (fallbackMessage != null) return fallbackMessage!;
+    if (hasZone) return zone!.fullName ?? '${zone!.name}, ${zone!.city}';
+    return locationDisplay ?? location;
+  }
+  
+  String get distanceText {
+    if (gpsDistance != null) return '${gpsDistance!.toStringAsFixed(1)}km away';
+    if (transportInfo != null) {
+      final duration = transportInfo!['duration_minutes'];
+      if (duration != null) return '${duration}min travel';
+    }
+    return '';
+  }
+  
+  bool get isAffordableForUser {
+    return transportInfo?['is_affordable'] == true;
+  }
+}
 
   extension JobX on Job {
   PostJob toPostJob() {

@@ -47,6 +47,15 @@ _$JobImpl _$$JobImplFromJson(Map<String, dynamic> json) => _$JobImpl(
       optionalSkills: (json['optional_skills'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      zone: json['zone'] == null
+          ? null
+          : LocationZone.fromJson(json['zone'] as Map<String, dynamic>),
+      transportInfo: json['transport_info'] as Map<String, dynamic>?,
+      distanceInfo: json['distance_info'] as Map<String, dynamic>?,
+      gpsDistance: (json['gps_distance'] as num?)?.toDouble(),
+      locationAccuracy: json['location_accuracy'] as String?,
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
@@ -80,4 +89,11 @@ Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
       'fallback_message': instance.fallbackMessage,
       'required_skills': instance.requiredSkills,
       'optional_skills': instance.optionalSkills,
+      'zone': instance.zone?.toJson(),
+      'transport_info': instance.transportInfo,
+      'distance_info': instance.distanceInfo,
+      'gps_distance': instance.gpsDistance,
+      'location_accuracy': instance.locationAccuracy,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
     };

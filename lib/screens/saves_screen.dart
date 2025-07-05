@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/saved_jobs_provider.dart';
-import 'package:workdey_frontend/features/jobs/job_card.dart';
+import 'package:workdey_frontend/features/jobs/getjobs/job_card.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 
 class SavedJobsPage extends ConsumerStatefulWidget {

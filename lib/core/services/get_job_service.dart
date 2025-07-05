@@ -252,4 +252,46 @@ class JobService {
       : '❌ No cached jobs found');
     return jobs;
   }
+
+  Future<PaginatedResponse<Job>> autofetchJobsByLocation({
+    required int page,
+    String? city,
+    String? district,
+    bool forceRefresh = false,
+  }) async {
+    try {
+      final cacheKey = 'jobs_location_${city}_${district}_$page';
+      
+      if (!forceRefresh) {
+        final cached = await _cache.get(cacheKey);
+        if (cached != null) {
+          return PaginatedResponse<Job>.fromJson(
+            cached, 
+            (json) => Job.fromJson(json as Map<String, dynamic>)
+          );
+        }
+      }
+
+      final params = <String, dynamic>{
+        'page': page,
+        'page_size': 20,
+      };
+      
+      if (city != null) params['city'] = city;
+      if (district != null) params['district'] = district;
+
+      final response = await _dio.get('/api/v1/jobs/', queryParameters: params);
+      
+      final paginatedResponse = PaginatedResponse<Job>.fromJson(
+        response.data,
+        (json) => Job.fromJson(json as Map<String, dynamic>)
+      );
+
+      await _cache.set(cacheKey, response.data, duration: Duration(minutes: 5));
+      return paginatedResponse;
+    } catch (e) {
+      debugPrint('Error fetching jobs by location: $e');
+      rethrow;
+    }
+  }
 }

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/providers/post_job_provider.dart';
 import 'package:workdey_frontend/core/providers/route_state_provider.dart';
-import 'package:workdey_frontend/features/jobs/posted_job_details.dart';
-import 'package:workdey_frontend/features/jobs/posted_job_widget.dart';
+import 'package:workdey_frontend/features/jobs/postjob/posted_job_details.dart';
+import 'package:workdey_frontend/features/jobs/postjob/posted_job_widget.dart';
 import 'package:workdey_frontend/screens/postjob_form.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 
@@ -47,7 +47,7 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
 @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
+   //ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
   }
 
   @override

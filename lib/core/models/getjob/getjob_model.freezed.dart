@@ -74,6 +74,17 @@ mixin _$Job {
   List<String> get requiredSkills => throw _privateConstructorUsedError;
   @JsonKey(name: 'optional_skills')
   List<String> get optionalSkills => throw _privateConstructorUsedError;
+  LocationZone? get zone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'transport_info')
+  Map<String, dynamic>? get transportInfo => throw _privateConstructorUsedError;
+  @JsonKey(name: 'distance_info')
+  Map<String, dynamic>? get distanceInfo => throw _privateConstructorUsedError;
+  @JsonKey(name: 'gps_distance')
+  double? get gpsDistance => throw _privateConstructorUsedError;
+  @JsonKey(name: 'location_accuracy')
+  String? get locationAccuracy => throw _privateConstructorUsedError;
+  double? get latitude => throw _privateConstructorUsedError;
+  double? get longitude => throw _privateConstructorUsedError;
 
   /// Serializes this Job to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -120,7 +131,16 @@ abstract class $JobCopyWith<$Res> {
       @JsonKey(name: 'poster_picture') String? posterPicture,
       @JsonKey(name: 'fallback_message') String? fallbackMessage,
       @JsonKey(name: 'required_skills') List<String> requiredSkills,
-      @JsonKey(name: 'optional_skills') List<String> optionalSkills});
+      @JsonKey(name: 'optional_skills') List<String> optionalSkills,
+      LocationZone? zone,
+      @JsonKey(name: 'transport_info') Map<String, dynamic>? transportInfo,
+      @JsonKey(name: 'distance_info') Map<String, dynamic>? distanceInfo,
+      @JsonKey(name: 'gps_distance') double? gpsDistance,
+      @JsonKey(name: 'location_accuracy') String? locationAccuracy,
+      double? latitude,
+      double? longitude});
+
+  $LocationZoneCopyWith<$Res>? get zone;
 }
 
 /// @nodoc
@@ -167,6 +187,13 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
     Object? fallbackMessage = freezed,
     Object? requiredSkills = null,
     Object? optionalSkills = null,
+    Object? zone = freezed,
+    Object? transportInfo = freezed,
+    Object? distanceInfo = freezed,
+    Object? gpsDistance = freezed,
+    Object? locationAccuracy = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -289,7 +316,49 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
           ? _value.optionalSkills
           : optionalSkills // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      zone: freezed == zone
+          ? _value.zone
+          : zone // ignore: cast_nullable_to_non_nullable
+              as LocationZone?,
+      transportInfo: freezed == transportInfo
+          ? _value.transportInfo
+          : transportInfo // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      distanceInfo: freezed == distanceInfo
+          ? _value.distanceInfo
+          : distanceInfo // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      gpsDistance: freezed == gpsDistance
+          ? _value.gpsDistance
+          : gpsDistance // ignore: cast_nullable_to_non_nullable
+              as double?,
+      locationAccuracy: freezed == locationAccuracy
+          ? _value.locationAccuracy
+          : locationAccuracy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      latitude: freezed == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
     ) as $Val);
+  }
+
+  /// Create a copy of Job
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LocationZoneCopyWith<$Res>? get zone {
+    if (_value.zone == null) {
+      return null;
+    }
+
+    return $LocationZoneCopyWith<$Res>(_value.zone!, (value) {
+      return _then(_value.copyWith(zone: value) as $Val);
+    });
   }
 }
 
@@ -330,7 +399,17 @@ abstract class _$$JobImplCopyWith<$Res> implements $JobCopyWith<$Res> {
       @JsonKey(name: 'poster_picture') String? posterPicture,
       @JsonKey(name: 'fallback_message') String? fallbackMessage,
       @JsonKey(name: 'required_skills') List<String> requiredSkills,
-      @JsonKey(name: 'optional_skills') List<String> optionalSkills});
+      @JsonKey(name: 'optional_skills') List<String> optionalSkills,
+      LocationZone? zone,
+      @JsonKey(name: 'transport_info') Map<String, dynamic>? transportInfo,
+      @JsonKey(name: 'distance_info') Map<String, dynamic>? distanceInfo,
+      @JsonKey(name: 'gps_distance') double? gpsDistance,
+      @JsonKey(name: 'location_accuracy') String? locationAccuracy,
+      double? latitude,
+      double? longitude});
+
+  @override
+  $LocationZoneCopyWith<$Res>? get zone;
 }
 
 /// @nodoc
@@ -374,6 +453,13 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
     Object? fallbackMessage = freezed,
     Object? requiredSkills = null,
     Object? optionalSkills = null,
+    Object? zone = freezed,
+    Object? transportInfo = freezed,
+    Object? distanceInfo = freezed,
+    Object? gpsDistance = freezed,
+    Object? locationAccuracy = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
   }) {
     return _then(_$JobImpl(
       id: null == id
@@ -496,6 +582,34 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
           ? _value._optionalSkills
           : optionalSkills // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      zone: freezed == zone
+          ? _value.zone
+          : zone // ignore: cast_nullable_to_non_nullable
+              as LocationZone?,
+      transportInfo: freezed == transportInfo
+          ? _value._transportInfo
+          : transportInfo // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      distanceInfo: freezed == distanceInfo
+          ? _value._distanceInfo
+          : distanceInfo // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      gpsDistance: freezed == gpsDistance
+          ? _value.gpsDistance
+          : gpsDistance // ignore: cast_nullable_to_non_nullable
+              as double?,
+      locationAccuracy: freezed == locationAccuracy
+          ? _value.locationAccuracy
+          : locationAccuracy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      latitude: freezed == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 }
@@ -538,13 +652,23 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       @JsonKey(name: 'required_skills')
       required final List<String> requiredSkills,
       @JsonKey(name: 'optional_skills')
-      required final List<String> optionalSkills})
+      required final List<String> optionalSkills,
+      this.zone,
+      @JsonKey(name: 'transport_info')
+      final Map<String, dynamic>? transportInfo,
+      @JsonKey(name: 'distance_info') final Map<String, dynamic>? distanceInfo,
+      @JsonKey(name: 'gps_distance') this.gpsDistance,
+      @JsonKey(name: 'location_accuracy') this.locationAccuracy,
+      this.latitude,
+      this.longitude})
       : _workingDays = workingDays,
         _requirements = requirements,
         _typeSpecific = typeSpecific,
         _verificationBadges = verificationBadges,
         _requiredSkills = requiredSkills,
-        _optionalSkills = optionalSkills;
+        _optionalSkills = optionalSkills,
+        _transportInfo = transportInfo,
+        _distanceInfo = distanceInfo;
 
   factory _$JobImpl.fromJson(Map<String, dynamic> json) =>
       _$$JobImplFromJson(json);
@@ -676,8 +800,43 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
   }
 
   @override
+  final LocationZone? zone;
+  final Map<String, dynamic>? _transportInfo;
+  @override
+  @JsonKey(name: 'transport_info')
+  Map<String, dynamic>? get transportInfo {
+    final value = _transportInfo;
+    if (value == null) return null;
+    if (_transportInfo is EqualUnmodifiableMapView) return _transportInfo;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  final Map<String, dynamic>? _distanceInfo;
+  @override
+  @JsonKey(name: 'distance_info')
+  Map<String, dynamic>? get distanceInfo {
+    final value = _distanceInfo;
+    if (value == null) return null;
+    if (_distanceInfo is EqualUnmodifiableMapView) return _distanceInfo;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  @JsonKey(name: 'gps_distance')
+  final double? gpsDistance;
+  @override
+  @JsonKey(name: 'location_accuracy')
+  final String? locationAccuracy;
+  @override
+  final double? latitude;
+  @override
+  final double? longitude;
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, city: $city, district: $district, locationDisplay: $locationDisplay, isPrecise: $isPrecise, createdAt: $createdAt, jobNature: $jobNature, posterName: $posterName, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture, fallbackMessage: $fallbackMessage, requiredSkills: $requiredSkills, optionalSkills: $optionalSkills)';
+    return 'Job(id: $id, jobType: $jobType, title: $title, category: $category, poster: $poster, location: $location, city: $city, district: $district, locationDisplay: $locationDisplay, isPrecise: $isPrecise, createdAt: $createdAt, jobNature: $jobNature, posterName: $posterName, workingDays: $workingDays, dueDate: $dueDate, requirements: $requirements, description: $description, rolesDescription: $rolesDescription, typeSpecific: $typeSpecific, updatedAt: $updatedAt, postTime: $postTime, salaryDisplay: $salaryDisplay, verificationBadges: $verificationBadges, hasApplied: $hasApplied, isSaved: $isSaved, expiresIn: $expiresIn, posterPicture: $posterPicture, fallbackMessage: $fallbackMessage, requiredSkills: $requiredSkills, optionalSkills: $optionalSkills, zone: $zone, transportInfo: $transportInfo, distanceInfo: $distanceInfo, gpsDistance: $gpsDistance, locationAccuracy: $locationAccuracy, latitude: $latitude, longitude: $longitude)';
   }
 
   @override
@@ -714,7 +873,14 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
       ..add(DiagnosticsProperty('posterPicture', posterPicture))
       ..add(DiagnosticsProperty('fallbackMessage', fallbackMessage))
       ..add(DiagnosticsProperty('requiredSkills', requiredSkills))
-      ..add(DiagnosticsProperty('optionalSkills', optionalSkills));
+      ..add(DiagnosticsProperty('optionalSkills', optionalSkills))
+      ..add(DiagnosticsProperty('zone', zone))
+      ..add(DiagnosticsProperty('transportInfo', transportInfo))
+      ..add(DiagnosticsProperty('distanceInfo', distanceInfo))
+      ..add(DiagnosticsProperty('gpsDistance', gpsDistance))
+      ..add(DiagnosticsProperty('locationAccuracy', locationAccuracy))
+      ..add(DiagnosticsProperty('latitude', latitude))
+      ..add(DiagnosticsProperty('longitude', longitude));
   }
 
   @override
@@ -774,7 +940,20 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
             const DeepCollectionEquality()
                 .equals(other._requiredSkills, _requiredSkills) &&
             const DeepCollectionEquality()
-                .equals(other._optionalSkills, _optionalSkills));
+                .equals(other._optionalSkills, _optionalSkills) &&
+            (identical(other.zone, zone) || other.zone == zone) &&
+            const DeepCollectionEquality()
+                .equals(other._transportInfo, _transportInfo) &&
+            const DeepCollectionEquality()
+                .equals(other._distanceInfo, _distanceInfo) &&
+            (identical(other.gpsDistance, gpsDistance) ||
+                other.gpsDistance == gpsDistance) &&
+            (identical(other.locationAccuracy, locationAccuracy) ||
+                other.locationAccuracy == locationAccuracy) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -810,7 +989,14 @@ class _$JobImpl with DiagnosticableTreeMixin implements _Job {
         posterPicture,
         fallbackMessage,
         const DeepCollectionEquality().hash(_requiredSkills),
-        const DeepCollectionEquality().hash(_optionalSkills)
+        const DeepCollectionEquality().hash(_optionalSkills),
+        zone,
+        const DeepCollectionEquality().hash(_transportInfo),
+        const DeepCollectionEquality().hash(_distanceInfo),
+        gpsDistance,
+        locationAccuracy,
+        latitude,
+        longitude
       ]);
 
   /// Create a copy of Job
@@ -864,7 +1050,15 @@ abstract class _Job implements Job {
       @JsonKey(name: 'required_skills')
       required final List<String> requiredSkills,
       @JsonKey(name: 'optional_skills')
-      required final List<String> optionalSkills}) = _$JobImpl;
+      required final List<String> optionalSkills,
+      final LocationZone? zone,
+      @JsonKey(name: 'transport_info')
+      final Map<String, dynamic>? transportInfo,
+      @JsonKey(name: 'distance_info') final Map<String, dynamic>? distanceInfo,
+      @JsonKey(name: 'gps_distance') final double? gpsDistance,
+      @JsonKey(name: 'location_accuracy') final String? locationAccuracy,
+      final double? latitude,
+      final double? longitude}) = _$JobImpl;
 
   factory _Job.fromJson(Map<String, dynamic> json) = _$JobImpl.fromJson;
 
@@ -949,6 +1143,24 @@ abstract class _Job implements Job {
   @override
   @JsonKey(name: 'optional_skills')
   List<String> get optionalSkills;
+  @override
+  LocationZone? get zone;
+  @override
+  @JsonKey(name: 'transport_info')
+  Map<String, dynamic>? get transportInfo;
+  @override
+  @JsonKey(name: 'distance_info')
+  Map<String, dynamic>? get distanceInfo;
+  @override
+  @JsonKey(name: 'gps_distance')
+  double? get gpsDistance;
+  @override
+  @JsonKey(name: 'location_accuracy')
+  String? get locationAccuracy;
+  @override
+  double? get latitude;
+  @override
+  double? get longitude;
 
   /// Create a copy of Job
   /// with the given fields replaced by the non-null parameter values.

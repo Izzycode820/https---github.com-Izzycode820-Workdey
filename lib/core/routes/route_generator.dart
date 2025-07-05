@@ -25,7 +25,7 @@ return MaterialPageRoute(
         // Set the search context before building the widget
 
 return switch (settings.name) {
-       AppRoutes.findJobs => const HomeScreen(),
+       AppRoutes.findJobs => const EnhancedHomeScreen(),
        AppRoutes.postJobs => const PostedJobsScreen(),
        AppRoutes.postWorker => const PostedWorkersScreen(),
        AppRoutes.login => const LoginScreen(),

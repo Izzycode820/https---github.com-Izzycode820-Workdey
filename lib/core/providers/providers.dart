@@ -7,10 +7,12 @@ import 'package:workdey_frontend/core/interceptors/job_interceptor.dart';
 import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
 import 'package:workdey_frontend/core/providers/filter_provider.dart';
 import 'package:workdey_frontend/core/providers/job_search_provider.dart';
+import 'package:workdey_frontend/core/providers/location/applicants_provider.dart';
 import 'package:workdey_frontend/core/providers/worker_search_provider.dart';
 import 'package:workdey_frontend/core/services/Searchfilter/job_SF.dart';
 import 'package:workdey_frontend/core/services/Searchfilter/worker_SF.dart';
 import 'package:workdey_frontend/core/services/applicant_service.dart';
+import 'package:workdey_frontend/core/services/location/location_service.dart';
 import 'package:workdey_frontend/core/services/login_service.dart';
 import 'package:workdey_frontend/core/services/connectivity_service.dart';
 import 'package:workdey_frontend/core/services/get_job_service.dart';
@@ -42,7 +44,7 @@ final localCacheProvider = Provider<LocalCache>((ref) {
 // 4. Base Dio provider without auth dependencies
 final baseDioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.239.64.64:8000',
+    baseUrl: 'http://192.168.239.64:8000',
     headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
     connectTimeout: const Duration(seconds: 20),
     receiveTimeout: const Duration(seconds: 20),
@@ -145,6 +147,7 @@ final jobSearchServiceProvider = Provider<JobSearchService>((ref) {
   final dio = ref.read(dioProvider);
   return JobSearchService(dio);
 });
+
 //
 final jobSearchNotifierProvider = StateNotifierProvider<JobSearchNotifier, JobSearchState>((ref) {
   final service = ref.read(jobSearchServiceProvider);
@@ -166,3 +169,61 @@ final workerSearchNotifierProvider = StateNotifierProvider<WorkerSearchNotifier,
 //filters 
 final jobFilterSheetsProvider = Provider((ref) => JobFilterSheets());
 final workerFilterSheetsProvider = Provider((ref) => WorkerFilterSheets());
+
+//Jobs by gps location
+final locationServiceProvider = Provider<LocationService>((ref) {
+  return LocationService(ref.read(dioProvider), ref.read(localCacheProvider));
+});
+
+//application count
+final applicationCountsProvider = FutureProvider.family<ApplicationCounts, int>((ref, jobId) async {
+  try {
+    final applications = await ref.read(applicantServiceProvider).getJobApplicants(jobId);
+    
+    final now = DateTime.now();
+    final yesterday = now.subtract(const Duration(hours: 24));
+    
+    int pending = 0;
+    int approved = 0;
+    int rejected = 0;
+    int newApps = 0;
+    
+    for (final app in applications) {
+      switch (app.status) {
+        case 'PENDING':
+          pending++;
+          break;
+        case 'APPROVED':
+          approved++;
+          break;
+        case 'REJECTED':
+          rejected++;
+          break;
+      }
+      
+      if (app.appliedAt.isAfter(yesterday)) {
+        newApps++;
+      }
+    }
+    
+    return ApplicationCounts(
+      total: applications.length,
+      pending: pending,
+      approved: approved,
+      rejected: rejected,
+      newApplications: newApps,
+    );
+  } catch (e) {
+    return ApplicationCounts(
+      total: 0,
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      newApplications: 0,
+    );
+  }
+});
+
+final applicationsProvider = FutureProvider.family<List<Application>, int>((ref, jobId) {
+  return ref.read(applicantServiceProvider).getJobApplicants(jobId);
+});

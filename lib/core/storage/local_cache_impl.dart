@@ -14,6 +14,53 @@ class LocalCacheImpl implements LocalCache {
 
   LocalCacheImpl(this._storage);
 
+
+   @override
+  Future<void> set(String key, dynamic value, {Duration? duration}) async {
+    try {
+      final jsonString = jsonEncode(value);
+      await _storage.write(key: key, value: jsonString);
+      
+      // Store expiration time if duration is provided
+      if (duration != null) {
+        final expiryTime = DateTime.now().add(duration).toIso8601String();
+        await _storage.write(key: '${key}_expiry', value: expiryTime);
+      }
+    } catch (e) {
+      debugPrint('Error setting cache for key $key: $e');
+    }
+  }
+
+   @override
+  Future<dynamic> get(String key) async {
+    try {
+      // Check if key has expiry
+      final expiryString = await _storage.read(key: '${key}_expiry');
+      if (expiryString != null) {
+        final expiryTime = DateTime.parse(expiryString);
+        if (DateTime.now().isAfter(expiryTime)) {
+          // Cache expired, remove it
+          await remove(key);
+          return null;
+        }
+      }
+
+      final jsonString = await _storage.read(key: key);
+      if (jsonString == null) return null;
+      
+      return jsonDecode(jsonString);
+    } catch (e) {
+      debugPrint('Error getting cache for key $key: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<void> remove(String key) async {
+    await _storage.delete(key: key);
+    await _storage.delete(key: '${key}_expiry'); // Also remove expiry
+  }
+  
   @override
   Future<void> write<T>(String key, T value) async {
     if (value is String || value is List<int>) {

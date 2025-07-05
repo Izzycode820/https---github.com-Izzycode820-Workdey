@@ -135,7 +135,7 @@ class MainApp extends ConsumerStatefulWidget {
 class _MainAppState extends ConsumerState<MainApp> {
 
   final List<Widget> _pages = [
-    const HomeScreen(),
+    const EnhancedHomeScreen(),
     const MessagesScreen(),
     const WorkersScreen(),
     const SavedJobsPage(),

@@ -18,13 +18,14 @@ abstract class LocalCache {
   Future<void> saveJobDetails(Job job);
   Future<void> invalidateJobApplications();
   Future<void> invalidateSavedJobs();
-  
-  // New methods
   Future<List<Job>?> getCachedJobs();
   Future<void> clearJobsCache();
   Future<DateTime?> getLastUpdatedTime();
-  
   Future<void> write<T>(String key, T value);
   Future<T?> read<T>(String key);
   Future<void> delete(String key);
+
+  Future<void> set(String key, dynamic value, {Duration? duration});
+  Future<dynamic> get(String key);
+  Future<void> remove(String key);
 }
