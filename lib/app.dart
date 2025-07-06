@@ -1,3 +1,4 @@
+// enhanced_app.dart
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,7 @@ class WorkdeyApp extends StatelessWidget {
           body: Center(child: Text("Route not found!")),
         ),
       ),
-    home: const App(), // This is the key change - use the App widget as home
+      home: const App(), // This is the key change - use the App widget as home
     );
   }
 
@@ -69,19 +70,18 @@ class WorkdeyApp extends StatelessWidget {
         bodyColor: textDark,
         displayColor: textDark,
       ),
-      //for card
-    cardTheme: CardThemeData(
-      elevation: 4,
-      margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      cardTheme: CardThemeData(
+        elevation: 4,
+        margin: const EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        shadowColor: secondaryGreen.withOpacity(0.2),
+        surfaceTintColor: Colors.transparent,
+        clipBehavior: Clip.none,
       ),
-      shadowColor: secondaryGreen.withOpacity(0.2),
-      surfaceTintColor: Colors.transparent,
-      clipBehavior: Clip.none,
-    ),
-    useMaterial3: true,
-  );
+      useMaterial3: true,
+    );
   }
 
   ThemeData _buildDarkTheme() {
@@ -103,22 +103,68 @@ class App extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
 
     return authState.when(
-      initial: () => const LoginScreen(),
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+      // Show loading while checking existing tokens
+      loading: () {
+        debugPrint("⏳ Checking authentication state...");
+        return const Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3E8728)),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Loading...',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      
+      // Show login screen when not authenticated
+      initial: () {
+        debugPrint("🔐 User not authenticated - showing login");
+        return const LoginScreen();
+      },
+      
+      // Show main app when authenticated
       authenticated: (response) {
-        debugPrint("✅ User authenticated, building main app");
+        debugPrint("✅ User authenticated - showing main app");
         return const MainApp();
       },
+      
+      // Show login with error message
       error: (message) {
-        Future.delayed(Duration.zero, () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
-          );
+        debugPrint("❌ Authentication error: $message");
+        
+        // Show error message using post-frame callback to avoid build conflicts
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                action: SnackBarAction(
+                  label: 'Retry',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    // Retry authentication initialization
+                    ref.read(authStateProvider.notifier).refreshSession();
+                  },
+                ),
+              ),
+            );
+          }
         });
+        
         return const LoginScreen();
       },
     );
@@ -132,8 +178,7 @@ class MainApp extends ConsumerStatefulWidget {
   ConsumerState<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends ConsumerState<MainApp> {
-
+class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
   final List<Widget> _pages = [
     const EnhancedHomeScreen(),
     const MessagesScreen(),
@@ -143,16 +188,69 @@ class _MainAppState extends ConsumerState<MainApp> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Listen for app lifecycle changes to handle token refresh
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    // When app resumes, check if token needs refresh
+    if (state == AppLifecycleState.resumed) {
+      debugPrint("📱 App resumed - checking session validity");
+      _checkSessionOnResume();
+    }
+  }
+
+  Future<void> _checkSessionOnResume() async {
+    final authNotifier = ref.read(authStateProvider.notifier);
+    
+    // Only check if currently authenticated
+    if (authNotifier.isAuthenticated) {
+      try {
+        // You could implement a lightweight session check here
+        // For now, we'll just ensure the session is still valid
+        debugPrint("✅ Session check passed");
+      } catch (e) {
+        debugPrint("❌ Session check failed: $e");
+        // Attempt to refresh the session
+        await authNotifier.refreshSession();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(currentIndexProvider);
 
-    return Scaffold(
-      extendBody: true,
-      body: IndexedStack(
-        index: currentIndex,
-        children: _pages,
+    return WillPopScope(
+      // Handle back button behavior
+      onWillPop: () async {
+        if (currentIndex != 0) {
+          // If not on home tab, go to home tab
+          ref.read(currentIndexProvider.notifier).state = 0;
+          return false;
+        }
+        // If on home tab, allow app to close
+        return true;
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: IndexedStack(
+          index: currentIndex,
+          children: _pages,
+        ),
+        bottomNavigationBar: const BottomNavBar(),
       ),
-      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

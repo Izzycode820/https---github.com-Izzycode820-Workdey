@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final TextInputAction? textInputAction;
   final void Function(String)? onSubmitted;
+  final bool enabled;
   final bool autocorrect;
   final int? maxLines;
   final String? prefixText;
@@ -28,6 +29,7 @@ class CustomTextField extends StatelessWidget {
     required this.label,
     this.obscureText = false,
     this.icon,
+    this.enabled = true,
     this.suffixIcon,
     this.onChanged,
     this.validator,
@@ -50,6 +52,7 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
+      enabled: enabled,
       validator: validator,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
@@ -61,6 +64,9 @@ class CustomTextField extends StatelessWidget {
       onFieldSubmitted: onSubmitted,
       autocorrect: autocorrect,
       maxLines: maxLines,
+      style: TextStyle(
+        color: enabled ? Colors.black : Colors.grey, // Change text color when disabled
+      ),
       decoration: InputDecoration(
         labelText: label,
         helperText: helperText,
