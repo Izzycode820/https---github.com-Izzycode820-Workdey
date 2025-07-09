@@ -1,9 +1,7 @@
-// application_form_screen.dart - Improved Design
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/providers/applicantion_provider.dart';
-import 'package:workdey_frontend/core/routes/routes.dart';
 
 class ApplicationFormScreen extends ConsumerStatefulWidget {
   final Job job;
@@ -30,63 +28,37 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FC),
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           'Apply for Job',
           style: TextStyle(
-            fontFamily: 'Poppins',
+            fontSize: 18,
             fontWeight: FontWeight.w600,
-            fontSize: 20,
-            color: Color(0xFF181A1F),
           ),
         ),
-        centerTitle: true,
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 0.5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF181A1F)),
+          icon: const Icon(Icons.arrow_back, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Column(
         children: [
-          // Job Header Card
           _buildJobHeaderCard(),
-          
-          // Form Content
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Skills Selection
-                    if (widget.job.requiredSkills.isNotEmpty) ...[
-                      _buildSkillsSection(
-                        title: 'Required Skills',
-                        subtitle: 'Select all skills you have',
-                        skills: widget.job.requiredSkills,
-                        selectedSkills: _selectedSkills,
-                        isRequired: true,
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    
-                    if (widget.job.optionalSkills.isNotEmpty) ...[
-                      _buildSkillsSection(
-                        title: 'Bonus Skills',
-                        subtitle: 'Optional - helps you stand out',
-                        skills: widget.job.optionalSkills,
-                        selectedSkills: _selectedOptionalSkills,
-                        isRequired: false,
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    
-                    // Additional Notes Section
+                    _buildSkillsSection(),
+                    const SizedBox(height: 20),
+                    _buildOptionalSkillsSection(),
+                    const SizedBox(height: 20),
                     _buildNotesSection(),
                     const SizedBox(height: 100), // Space for floating button
                   ],
@@ -104,16 +76,248 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
   Widget _buildJobHeaderCard() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[200]!, width: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: _getJobTypeColor().withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  _getJobTypeLabel(),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: _getJobTypeColor(),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              if (widget.job.salaryDisplay != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.green[50],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    widget.job.salaryDisplay!,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.green[700],
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            widget.job.title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              if (widget.job.posterName?.isNotEmpty == true) ...[
+                Text(
+                  widget.job.posterName!,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              Icon(
+                Icons.location_on,
+                size: 12,
+                color: Colors.grey[500],
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  widget.job.locationDisplayText,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[600],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkillsSection() {
+    if (widget.job.requiredSkills?.isEmpty != false) return const SizedBox.shrink();
+    
+    return _buildSection(
+      title: 'Required Skills',
+      subtitle: 'Select the skills you have that match this job',
+      icon: Icons.star,
+      isRequired: true,
+      child: _buildSkillsGrid(
+        widget.job.requiredSkills!,
+        _selectedSkills,
+        isRequired: true,
+      ),
+    );
+  }
+
+  Widget _buildOptionalSkillsSection() {
+    if (widget.job.optionalSkills?.isEmpty != false) return const SizedBox.shrink();
+    
+    return _buildSection(
+      title: 'Bonus Skills',
+      subtitle: 'Additional skills that could strengthen your application',
+      icon: Icons.star_border,
+      isRequired: false,
+      child: _buildSkillsGrid(
+        widget.job.optionalSkills!,
+        _selectedOptionalSkills,
+        isRequired: false,
+      ),
+    );
+  }
+
+  Widget _buildSkillsGrid(List<String> skills, List<String> selectedSkills, {required bool isRequired}) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 6,
+      children: skills.map((skill) {
+        final isSelected = selectedSkills.contains(skill);
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (isSelected) {
+                selectedSkills.remove(skill);
+              } else {
+                selectedSkills.add(skill);
+              }
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected 
+                  ? (isRequired ? Colors.orange[600] : const Color(0xFF3E8728))
+                  : Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isSelected 
+                    ? (isRequired ? Colors.orange[600]! : const Color(0xFF3E8728))
+                    : Colors.grey[300]!,
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isSelected) ...[
+                  Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 14,
+                  ),
+                  const SizedBox(width: 6),
+                ],
+                Text(
+                  skill,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected ? Colors.white : Colors.grey[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildNotesSection() {
+    return _buildSection(
+      title: 'Application Notes',
+      subtitle: 'Tell the employer why you\'re the right person for this job',
+      icon: Icons.note_alt,
+      isRequired: false,
+      child: TextFormField(
+        controller: _notesController,
+        maxLines: 5,
+        decoration: InputDecoration(
+          hintText: 'Share your relevant experience, availability, or any questions about the job...',
+          hintStyle: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[500],
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF3E8728), width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.all(12),
+        ),
+        style: const TextStyle(
+          fontSize: 14,
+          height: 1.4,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isRequired,
+    required Widget child,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF3E8728).withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -123,38 +327,49 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
           Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3E8728).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: isRequired ? Colors.orange[50] : const Color(0xFF3E8728).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Icon(
-                  Icons.work_outline,
-                  color: Color(0xFF3E8728),
-                  size: 24,
+                child: Icon(
+                  icon,
+                  size: 16,
+                  color: isRequired ? Colors.orange[600] : const Color(0xFF3E8728),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.job.title,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF181A1F),
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (isRequired) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '*',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.red[600],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
-                      'Posted by ${widget.job.posterName ?? 'Employer'}',
+                      subtitle,
                       style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
+                        fontSize: 12,
                         color: Colors.grey[600],
                       ),
                     ),
@@ -163,273 +378,37 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
               ),
             ],
           ),
-          if (widget.job.salaryDisplay != null) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF3E8728).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.payments_outlined,
-                    color: Color(0xFF3E8728),
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.job.salaryDisplay!,
-                    style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF3E8728),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSkillsSection({
-    required String title,
-    required String subtitle,
-    required List<String> skills,
-    required List<String> selectedSkills,
-    required bool isRequired,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                isRequired ? Icons.star : Icons.star_border,
-                color: isRequired ? Colors.orange : Colors.grey,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF181A1F),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
           const SizedBox(height: 16),
-          
-          // Skills Grid
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: skills.map((skill) {
-              final isSelected = selectedSkills.contains(skill);
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      selectedSkills.remove(skill);
-                    } else {
-                      selectedSkills.add(skill);
-                    }
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: isSelected 
-                        ? const Color(0xFF3E8728) 
-                        : Colors.grey.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected 
-                          ? const Color(0xFF3E8728) 
-                          : Colors.grey.withOpacity(0.3),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (isSelected)
-                        const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                      if (isSelected) const SizedBox(width: 8),
-                      Text(
-                        skill,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected ? Colors.white : const Color(0xFF181A1F),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          
-          if (isRequired && selectedSkills.isEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: Text(
-                'Please select at least one required skill',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 12,
-                  color: Colors.red[600],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotesSection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(
-                Icons.edit_note,
-                color: Color(0xFF3E8728),
-                size: 20,
-              ),
-              SizedBox(width: 8),
-              Text(
-                'Additional Information',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF181A1F),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Tell the employer why you\'re perfect for this job',
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _notesController,
-            maxLines: 5,
-            decoration: InputDecoration(
-              hintText: 'Share your experience, availability, or any relevant details...',
-              hintStyle: TextStyle(
-                fontFamily: 'Inter',
-                color: Colors.grey[400],
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF3E8728), width: 2),
-              ),
-              filled: true,
-              fillColor: Colors.grey.withOpacity(0.05),
-            ),
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 14,
-            ),
-          ),
+          child,
         ],
       ),
     );
   }
 
   Widget _buildSubmitButton() {
+    final canSubmit = _selectedSkills.isNotEmpty && !_isSubmitting;
+    
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: ElevatedButton(
-        onPressed: _isSubmitting ? null : _submitApplication,
+        onPressed: canSubmit ? _submitApplication : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF3E8728),
+          backgroundColor: canSubmit ? const Color(0xFF3E8728) : Colors.grey[400],
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
           ),
-          elevation: 4,
-          shadowColor: const Color(0xFF3E8728).withOpacity(0.3),
+          elevation: canSubmit ? 2 : 0,
         ),
         child: _isSubmitting
             ? const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 20,
-                    height: 20,
+                    width: 18,
+                    height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -439,94 +418,81 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
                   Text(
                     'Submitting Application...',
                     style: TextStyle(
-                      fontFamily: 'Poppins',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               )
-            : const Text(
-                'Submit Application',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.send, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    canSubmit ? 'Submit Application' : 'Select Required Skills',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
       ),
     );
   }
 
   Future<void> _submitApplication() async {
-    // Validate required skills
-    if (widget.job.requiredSkills.isNotEmpty && _selectedSkills.isEmpty) {
+    if (!_formKey.currentState!.validate() || _selectedSkills.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select at least one required skill'),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: const Text('Please select at least one required skill'),
+          backgroundColor: Colors.red[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
       );
       return;
     }
 
-    if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isSubmitting = true);
 
-    final applicationData = {
-      'response': {
+    try {
+      final applicationData = {
         'skills_met': _selectedSkills,
         'optional_skills_met': _selectedOptionalSkills,
-        'notes': _notesController.text,
-      }
-    };
+        'notes': _notesController.text.trim(),
+      };
 
-    try {
-      await ref.read(applicationServiceProvider).applyToJob(
+      await ref.read(applicantServiceProvider).applyToJob(
         widget.job.id,
         applicationData,
       );
-      
+
       if (mounted) {
-        // Show success message
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 12),
-                Text('Application submitted successfully!'),
-              ],
-            ),
+            content: const Text('Application submitted successfully!'),
             backgroundColor: const Color(0xFF3E8728),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
         );
-        
-        // Navigate back with success result
-        Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text('Error: ${e.toString()}'),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
+            content: Text('Failed to submit application: ${e.toString()}'),
+            backgroundColor: Colors.red[600],
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
         );
@@ -535,6 +501,36 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
       if (mounted) {
         setState(() => _isSubmitting = false);
       }
+    }
+  }
+
+  Color _getJobTypeColor() {
+    switch (widget.job.jobType.toUpperCase()) {
+      case 'PRO':
+        return const Color(0xFF1976D2); // Blue
+      case 'LOC':
+        return const Color(0xFF388E3C); // Green
+      case 'INT':
+        return const Color(0xFF7B1FA2); // Purple
+      case 'VOL':
+        return const Color(0xFFF57C00); // Orange
+      default:
+        return Colors.grey[600]!;
+    }
+  }
+
+  String _getJobTypeLabel() {
+    switch (widget.job.jobType.toUpperCase()) {
+      case 'PRO':
+        return 'Professional';
+      case 'LOC':
+        return 'Local';
+      case 'INT':
+        return 'Internship';
+      case 'VOL':
+        return 'Volunteer';
+      default:
+        return widget.job.jobType;
     }
   }
 }

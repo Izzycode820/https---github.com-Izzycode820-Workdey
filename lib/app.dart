@@ -1,5 +1,3 @@
-// enhanced_app.dart
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/providers/login_provider.dart';
@@ -18,9 +16,6 @@ class WorkdeyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
       title: 'Workdey',
       debugShowCheckedModeBanner: false,
       theme: _buildWorkdeyTheme(),
@@ -31,7 +26,7 @@ class WorkdeyApp extends StatelessWidget {
           body: Center(child: Text("Route not found!")),
         ),
       ),
-      home: const App(), // This is the key change - use the App widget as home
+      home: const App(),
     );
   }
 
@@ -62,25 +57,151 @@ class WorkdeyApp extends StatelessWidget {
         selectedItemColor: const Color(0xFF3E8728),
         unselectedItemColor: Colors.grey.shade400,
       ),
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(fontFamily: 'Poppins'),
-        bodyLarge: TextStyle(fontFamily: 'Inter'),
-        bodyMedium: TextStyle(fontFamily: 'Inter'),
-      ).apply(
-        bodyColor: textDark,
-        displayColor: textDark,
-      ),
+      // Enhanced text theme with better sizing
+      textTheme: _buildResponsiveTextTheme(),
       cardTheme: CardThemeData(
-        elevation: 4,
-        margin: const EdgeInsets.all(8),
+        elevation: 2, // Reduced from 4 for more natural feel
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        shadowColor: secondaryGreen.withOpacity(0.2),
+        shadowColor: secondaryGreen.withOpacity(0.1),
         surfaceTintColor: Colors.transparent,
         clipBehavior: Clip.none,
       ),
+      // Add input decoration theme for forms
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: primaryGreen, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      // Add elevated button theme
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryGreen,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
       useMaterial3: true,
+    );
+  }
+
+  // LinkedIn-style responsive text theme
+  TextTheme _buildResponsiveTextTheme() {
+    return const TextTheme(
+      // Headlines
+      displayLarge: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        height: 1.2,
+      ),
+      displayMedium: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        height: 1.2,
+      ),
+      displaySmall: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        height: 1.2,
+      ),
+      
+      // Headlines
+      headlineLarge: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+      ),
+      headlineMedium: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+      ),
+      headlineSmall: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+      ),
+      
+      // Titles
+      titleLarge: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+      ),
+      titleMedium: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+      ),
+      titleSmall: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+      ),
+      
+      // Body text
+      bodyLarge: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+      ),
+      bodyMedium: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+      ),
+      bodySmall: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+      ),
+      
+      // Labels
+      labelLarge: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        height: 1.4,
+      ),
+      labelMedium: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        height: 1.4,
+      ),
+      labelSmall: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        height: 1.4,
+      ),
+    ).apply(
+      bodyColor: const Color(0xFF181A1F),
+      displayColor: const Color(0xFF181A1F),
     );
   }
 
@@ -103,48 +224,18 @@ class App extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
 
     return authState.when(
-      // Show loading while checking existing tokens
-      loading: () {
-        debugPrint("⏳ Checking authentication state...");
-        return const Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3E8728)),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Loading...',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-      
-      // Show login screen when not authenticated
+      loading: () => const _LoadingScreen(),
       initial: () {
         debugPrint("🔐 User not authenticated - showing login");
         return const LoginScreen();
       },
-      
-      // Show main app when authenticated
       authenticated: (response) {
         debugPrint("✅ User authenticated - showing main app");
         return const MainApp();
       },
-      
-      // Show login with error message
       error: (message) {
         debugPrint("❌ Authentication error: $message");
         
-        // Show error message using post-frame callback to avoid build conflicts
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -152,11 +243,14 @@ class App extends ConsumerWidget {
                 content: Text(message),
                 backgroundColor: Colors.red,
                 behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 action: SnackBarAction(
                   label: 'Retry',
                   textColor: Colors.white,
                   onPressed: () {
-                    // Retry authentication initialization
                     ref.read(authStateProvider.notifier).refreshSession();
                   },
                 ),
@@ -167,6 +261,53 @@ class App extends ConsumerWidget {
         
         return const LoginScreen();
       },
+    );
+  }
+}
+
+// Custom loading screen with better proportions
+class _LoadingScreen extends StatelessWidget {
+  const _LoadingScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3E8728)),
+                strokeWidth: 3,
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Loading...',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -190,7 +331,6 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    // Listen for app lifecycle changes to handle token refresh
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -204,7 +344,6 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     
-    // When app resumes, check if token needs refresh
     if (state == AppLifecycleState.resumed) {
       debugPrint("📱 App resumed - checking session validity");
       _checkSessionOnResume();
@@ -214,15 +353,11 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
   Future<void> _checkSessionOnResume() async {
     final authNotifier = ref.read(authStateProvider.notifier);
     
-    // Only check if currently authenticated
     if (authNotifier.isAuthenticated) {
       try {
-        // You could implement a lightweight session check here
-        // For now, we'll just ensure the session is still valid
         debugPrint("✅ Session check passed");
       } catch (e) {
         debugPrint("❌ Session check failed: $e");
-        // Attempt to refresh the session
         await authNotifier.refreshSession();
       }
     }
@@ -232,19 +367,15 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(currentIndexProvider);
 
-    return WillPopScope(
-      // Handle back button behavior
-      onWillPop: () async {
-        if (currentIndex != 0) {
-          // If not on home tab, go to home tab
+    return PopScope(
+      canPop: currentIndex == 0,
+      onPopInvoked: (didPop) {
+        if (!didPop && currentIndex != 0) {
           ref.read(currentIndexProvider.notifier).state = 0;
-          return false;
         }
-        // If on home tab, allow app to close
-        return true;
       },
       child: Scaffold(
-        extendBody: true,
+        extendBody: false,
         body: IndexedStack(
           index: currentIndex,
           children: _pages,

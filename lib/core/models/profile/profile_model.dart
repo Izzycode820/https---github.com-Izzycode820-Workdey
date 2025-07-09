@@ -43,7 +43,7 @@ class UserProfile with _$UserProfile {
     required List<Skill> skills,
     required List<Experience> experiences,
     required List<Education> educations,
-    required List<Review> reviews,
+    required List<ProfileReview> reviews,
     
     // Additional profile data
     @JsonKey(name: 'profile_completeness') int? profileCompleteness,

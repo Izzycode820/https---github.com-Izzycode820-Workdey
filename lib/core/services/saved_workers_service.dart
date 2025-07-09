@@ -15,7 +15,7 @@ class SavedWorkersService {
   Future<PaginatedResponse<Worker>> getSavedWorkers({int page = 1}) async {
     try {
       final response = await _dio.get(
-        '/api/v1/workers/saved-workers/',
+        '/api/v1/saved-workers/',
         queryParameters: {'page': page},
         options: Options(
           headers: {

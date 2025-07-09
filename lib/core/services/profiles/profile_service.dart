@@ -220,53 +220,6 @@ class ProfileService {
     }
   }
 
-  // ========== REVIEWS MANAGEMENT ==========
-  
-  /// Get reviews received by user
-  Future<PaginatedResponse<Review>> getReviewsReceived({int page = 1}) async {
-    try {
-      final response = await _dio.get('/api/profiles/reviews/my-received/', 
-        queryParameters: {'page': page});
-      return PaginatedResponse.fromJson(
-        response.data as Map<String, dynamic>,
-        (json) => Review.fromJson(json as Map<String, dynamic>),
-      );
-    } on DioException catch (e) {
-      debugPrint('❌ Reviews Received Error: ${e.response?.data}');
-      rethrow;
-    }
-  }
-
-  /// Get reviews given by user
-  Future<PaginatedResponse<Review>> getReviewsGiven({int page = 1}) async {
-    try {
-      final response = await _dio.get('/api/profiles/reviews/my-given/', 
-        queryParameters: {'page': page});
-      return PaginatedResponse.fromJson(
-        response.data as Map<String, dynamic>,
-        (json) => Review.fromJson(json as Map<String, dynamic>),
-      );
-    } on DioException catch (e) {
-      debugPrint('❌ Reviews Given Error: ${e.response?.data}');
-      rethrow;
-    }
-  }
-
-  /// Get reviews for a specific user
-  Future<PaginatedResponse<Review>> getReviewsForUser(int userId, {int page = 1}) async {
-    try {
-      final response = await _dio.get('/api/profiles/reviews/for-user/', 
-        queryParameters: {'user_id': userId, 'page': page});
-      return PaginatedResponse.fromJson(
-        response.data as Map<String, dynamic>,
-        (json) => Review.fromJson(json as Map<String, dynamic>),
-      );
-    } on DioException catch (e) {
-      debugPrint('❌ Reviews For User Error: ${e.response?.data}');
-      rethrow;
-    }
-  }
-
   // ========== TRUST SCORE MANAGEMENT ==========
   
   /// Get current user's trust score

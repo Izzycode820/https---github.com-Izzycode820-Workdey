@@ -1,4 +1,4 @@
-// lib/features/profile/widgets/profile_education_section.dart
+// lib/features/profile/widgets/education_section.dart
 import 'package:flutter/material.dart';
 import 'package:workdey_frontend/core/models/profile/education/education_model.dart';
 
@@ -20,80 +20,71 @@ class ProfileEducationSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Section Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Education',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    if (educations.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${educations.length} record${educations.length == 1 ? '' : 's'}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.purple,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                if (isOwnProfile)
-                  IconButton(
-                    icon: const Icon(Icons.add, size: 20),
-                    onPressed: onAdd,
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.grey[100],
-                      foregroundColor: Colors.purple,
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Education',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
-              ],
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Education Content
-            if (educations.isNotEmpty)
-              _buildEducationTimeline(context)
-            else if (isOwnProfile)
-              _buildEmptyStateForOwner(context)
-            else
-              _buildEmptyStateForVisitor(),
-          ],
-        ),
+                  if (educations.isNotEmpty) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '${educations.length}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.purple,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              if (isOwnProfile)
+                InkWell(
+                  onTap: onAdd,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.add,
+                      size: 16,
+                      color: Colors.purple,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Education Content
+          if (educations.isNotEmpty)
+            _buildEducationTimeline(context)
+          else if (isOwnProfile)
+            _buildEmptyStateForOwner(context)
+          else
+            _buildEmptyStateForVisitor(),
+        ],
       ),
     );
   }
@@ -127,9 +118,9 @@ class ProfileEducationSection extends StatelessWidget {
     
     return InkWell(
       onTap: isOwnProfile ? () => onEdit?.call(education) : null,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(6),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -138,36 +129,25 @@ class ProfileEducationSection extends StatelessWidget {
               children: [
                 // Timeline dot
                 Container(
-                  width: 12,
-                  height: 12,
+                  width: 8,
+                  height: 8,
                   decoration: BoxDecoration(
                     color: isCurrentlyStudying ? Colors.green : Colors.purple,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: (isCurrentlyStudying ? Colors.green : Colors.purple).withOpacity(0.3),
-                        blurRadius: 4,
-                        spreadRadius: 2,
-                      ),
-                    ],
                   ),
                 ),
                 // Timeline line
                 if (!isLast)
                   Container(
-                    width: 2,
-                    height: 70,
+                    width: 1,
+                    height: 40,
                     color: Colors.grey[300],
-                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    margin: const EdgeInsets.symmetric(vertical: 3),
                   ),
               ],
             ),
             
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             
             // Education Content
             Expanded(
@@ -179,15 +159,15 @@ class ProfileEducationSection extends StatelessWidget {
                     children: [
                       Icon(
                         institutionIcon,
-                        size: 20,
+                        size: 14,
                         color: Colors.purple[600],
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           education.institution,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
                           ),
@@ -195,16 +175,16 @@ class ProfileEducationSection extends StatelessWidget {
                       ),
                       if (isCurrentlyStudying)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
                             color: Colors.green[50],
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(3),
                             border: Border.all(color: Colors.green[200]!),
                           ),
                           child: Text(
                             'Current',
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 8,
                               fontWeight: FontWeight.w500,
                               color: Colors.green[700],
                             ),
@@ -213,16 +193,16 @@ class ProfileEducationSection extends StatelessWidget {
                     ],
                   ),
                   
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   
                   // Degree and Field of Study
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: _getEducationLevelColor(education.level).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: _getEducationLevelColor(education.level).withOpacity(0.3),
                           ),
@@ -230,19 +210,19 @@ class ProfileEducationSection extends StatelessWidget {
                         child: Text(
                           _getEducationLevelDisplay(education.level),
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 9,
                             fontWeight: FontWeight.w600,
                             color: _getEducationLevelColor(education.level),
                           ),
                         ),
                       ),
                       if (education.fieldOfStudy != null && education.fieldOfStudy!.isNotEmpty) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             'in ${education.fieldOfStudy}',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[700],
                             ),
@@ -252,21 +232,21 @@ class ProfileEducationSection extends StatelessWidget {
                     ],
                   ),
                   
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   
                   // Duration
                   Row(
                     children: [
                       Icon(
                         Icons.schedule,
-                        size: 14,
+                        size: 10,
                         color: Colors.grey[500],
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 3),
                       Text(
                         duration,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -275,19 +255,19 @@ class ProfileEducationSection extends StatelessWidget {
                   
                   // Edit indicator for own profile
                   if (isOwnProfile) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         Icon(
                           Icons.edit,
-                          size: 12,
+                          size: 8,
                           color: Colors.grey[400],
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Text(
                           'Tap to edit',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 8,
                             color: Colors.grey[400],
                             fontStyle: FontStyle.italic,
                           ),
@@ -310,26 +290,26 @@ class ProfileEducationSection extends StatelessWidget {
     final highestLevel = _getHighestEducationLevel();
     
     return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.purple[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.purple[200]!),
       ),
       child: Row(
         children: [
           Icon(
             Icons.school,
-            size: 16,
+            size: 12,
             color: Colors.purple[600],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Expanded(
             child: Text(
               '$completedEducation completed • $currentEducation ongoing • Highest: $highestLevel',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 color: Colors.purple[700],
               ),
             ),
@@ -341,46 +321,49 @@ class ProfileEducationSection extends StatelessWidget {
 
   Widget _buildEmptyStateForOwner(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: Column(
         children: [
           Icon(
             Icons.school_outlined,
-            size: 32,
+            size: 24,
             color: Colors.grey[400],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           const Text(
             'Add Your Education',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
-            'Share your educational background to show your qualifications',
+            'Share your educational background',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 11,
               color: Colors.grey[600],
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: onAdd,
-            icon: const Icon(Icons.add, size: 18),
+            icon: const Icon(Icons.add, size: 14),
             label: const Text('Add Education'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              textStyle: const TextStyle(fontSize: 11),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              elevation: 0,
             ),
           ),
         ],
@@ -390,24 +373,24 @@ class ProfileEducationSection extends StatelessWidget {
 
   Widget _buildEmptyStateForVisitor() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline,
-            size: 20,
+            size: 16,
             color: Colors.grey[500],
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               'No education records listed yet',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.grey[600],
               ),
             ),
@@ -431,7 +414,7 @@ class ProfileEducationSection extends StatelessWidget {
     
     String duration = '$startYear - $endYear';
     if (years > 0) {
-      duration += ' • ${years}yr${years == 1 ? '' : 's'}';
+      duration += ' • ${years}yr';
     }
     
     return duration;

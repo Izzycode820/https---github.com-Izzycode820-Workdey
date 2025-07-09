@@ -1,4 +1,4 @@
-// lib/features/profile/widgets/profile_about_section.dart
+// lib/features/profile/widgets/about_section.dart
 import 'package:flutter/material.dart';
 import 'package:workdey_frontend/core/models/profile/profile_model.dart';
 
@@ -18,119 +18,109 @@ class ProfileAboutSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Section Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'About',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                if (isOwnProfile)
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 20),
-                    onPressed: onEdit,
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.grey[100],
-                      foregroundColor: Colors.grey[700],
-                    ),
-                  ),
-              ],
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Bio
-            if (profile.bio.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    profile.bio,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.5,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              )
-            else if (isOwnProfile)
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.edit_note,
-                      size: 32,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Add a bio to tell others about yourself',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: onEdit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3E8728),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      ),
-                      child: const Text('Add Bio'),
-                    ),
-                  ],
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'About',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
               ),
+              if (isOwnProfile)
+                InkWell(
+                  onTap: onEdit,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.edit_outlined,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Bio Content
+          if (profile.bio.isNotEmpty)
+            Text(
+              profile.bio,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.4,
+                color: Colors.black87,
+              ),
+            )
+          else if (isOwnProfile)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: Colors.grey[200]!),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.edit_note,
+                    size: 24,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Add a bio to tell others about yourself',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: onEdit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3E8728),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      elevation: 0,
+                    ),
+                    child: const Text('Add Bio', style: TextStyle(fontSize: 11)),
+                  ),
+                ],
+              ),
+            ),
 
-            // Key Information Grid
+          // Key Information
+          if (profile.bio.isNotEmpty) ...[
+            const SizedBox(height: 16),
             _buildInfoGrid(),
-            
-            // Verification Status
-            if (profile.verificationBadgesList.isNotEmpty) ...[
-              const SizedBox(height: 20),
-              _buildVerificationSection(),
-            ],
-            
-            // Languages and Preferences
-            if (profile.languagesSpoken != null && profile.languagesSpoken!.isNotEmpty) ...[
-              const SizedBox(height: 20),
-              _buildLanguagesSection(),
-            ],
           ],
-        ),
+          
+          // Verification Status
+          if (profile.verificationBadgesList.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _buildVerificationSection(),
+          ],
+          
+          // Languages
+          if (profile.languagesSpoken != null && profile.languagesSpoken!.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _buildLanguagesSection(),
+          ],
+        ],
       ),
     );
   }
@@ -138,16 +128,14 @@ class ProfileAboutSection extends StatelessWidget {
   Widget _buildInfoGrid() {
     final infoItems = <Map<String, dynamic>>[];
     
-    // Add experience level
     if (profile.totalYearsExperience > 0) {
       infoItems.add({
         'icon': Icons.work_history_outlined,
-        'label': 'Experience Level',
+        'label': 'Experience',
         'value': '${profile.totalYearsExperience} years (${profile.experienceLevel})',
       });
     }
     
-    // Add availability
     if (profile.availability.isNotEmpty) {
       infoItems.add({
         'icon': Icons.schedule_outlined,
@@ -156,16 +144,14 @@ class ProfileAboutSection extends StatelessWidget {
       });
     }
     
-    // Add willing to learn
     if (profile.willingToLearn) {
       infoItems.add({
         'icon': Icons.school_outlined,
-        'label': 'Learning Attitude',
+        'label': 'Learning',
         'value': 'Open to learning new skills',
       });
     }
     
-    // Add transport
     if (profile.transport != null && profile.transport!.isNotEmpty) {
       infoItems.add({
         'icon': Icons.directions_bus_outlined,
@@ -174,7 +160,6 @@ class ProfileAboutSection extends StatelessWidget {
       });
     }
     
-    // Add location details
     if (profile.city != null || profile.district != null) {
       infoItems.add({
         'icon': Icons.location_on_outlined,
@@ -183,12 +168,11 @@ class ProfileAboutSection extends StatelessWidget {
       });
     }
     
-    // Add hourly rate if available
     if (profile.hourlyRateMin != null && profile.hourlyRateMax != null) {
       infoItems.add({
         'icon': Icons.attach_money_outlined,
-        'label': 'Hourly Rate',
-        'value': '${profile.hourlyRateMin!.toInt()} - ${profile.hourlyRateMax!.toInt()} FCFA',
+        'label': 'Rate',
+        'value': '${profile.hourlyRateMin!.toInt()} - ${profile.hourlyRateMax!.toInt()} FCFA/hr',
       });
     }
 
@@ -209,21 +193,14 @@ class ProfileAboutSection extends StatelessWidget {
     required String value,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF3E8728).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: const Color(0xFF3E8728),
-            ),
+          Icon(
+            icon,
+            size: 16,
+            color: const Color(0xFF3E8728),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -233,17 +210,16 @@ class ProfileAboutSection extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey[600],
-                    letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
@@ -264,30 +240,30 @@ class ProfileAboutSection extends StatelessWidget {
           children: [
             Icon(
               Icons.verified_user,
-              size: 18,
+              size: 14,
               color: Colors.blue[600],
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
-              'Verification Status',
+              'Verified',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[700],
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 6,
+          runSpacing: 6,
           children: profile.verificationBadgesList.map((badge) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.green[50],
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.green[200]!),
               ),
               child: Row(
@@ -295,14 +271,14 @@ class ProfileAboutSection extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_circle,
-                    size: 14,
+                    size: 10,
                     color: Colors.green[600],
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 3),
                   Text(
-                    '$badge Verified',
+                    badge,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Colors.green[700],
                     ),
@@ -324,36 +300,36 @@ class ProfileAboutSection extends StatelessWidget {
           children: [
             const Icon(
               Icons.language,
-              size: 18,
+              size: 14,
               color: Color(0xFF3E8728),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               'Languages',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[700],
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 6,
+          runSpacing: 6,
           children: profile.languagesSpoken!.map((language) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: const Color(0xFF3E8728).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFF3E8728).withOpacity(0.3)),
               ),
               child: Text(
                 language,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF3E8728),
                 ),

@@ -19,10 +19,7 @@ void main() async {
 
   runApp(
     ProviderScope(
-    child: DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => const WorkdeyApp(),
-      ),
+      child: const WorkdeyApp(),
     ),
   );
 }

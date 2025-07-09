@@ -45,14 +45,14 @@ mixin _$UserProfile {
   @JsonKey(name: 'trust_score')
   TrustScore? get trustScore => throw _privateConstructorUsedError;
   @JsonKey(name: 'recent_reviews')
-  List<Review>? get recentReviews => throw _privateConstructorUsedError;
+  List<DetailedReview>? get recentReviews => throw _privateConstructorUsedError;
   @JsonKey(name: 'review_summary')
   ReviewSummary? get reviewSummary =>
       throw _privateConstructorUsedError; // Profile components
   List<Skill> get skills => throw _privateConstructorUsedError;
   List<Experience> get experiences => throw _privateConstructorUsedError;
   List<Education> get educations => throw _privateConstructorUsedError;
-  List<Review> get reviews =>
+  List<ProfileReview> get reviews =>
       throw _privateConstructorUsedError; // Additional profile data
   @JsonKey(name: 'profile_completeness')
   int? get profileCompleteness => throw _privateConstructorUsedError;
@@ -107,12 +107,12 @@ abstract class $UserProfileCopyWith<$Res> {
       @JsonKey(name: 'updated_at') DateTime? updatedAt,
       User user,
       @JsonKey(name: 'trust_score') TrustScore? trustScore,
-      @JsonKey(name: 'recent_reviews') List<Review>? recentReviews,
+      @JsonKey(name: 'recent_reviews') List<DetailedReview>? recentReviews,
       @JsonKey(name: 'review_summary') ReviewSummary? reviewSummary,
       List<Skill> skills,
       List<Experience> experiences,
       List<Education> educations,
-      List<Review> reviews,
+      List<ProfileReview> reviews,
       @JsonKey(name: 'profile_completeness') int? profileCompleteness,
       @JsonKey(name: 'languages_spoken') List<String>? languagesSpoken,
       @JsonKey(name: 'preferred_job_types') List<String>? preferredJobTypes,
@@ -238,7 +238,7 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
       recentReviews: freezed == recentReviews
           ? _value.recentReviews
           : recentReviews // ignore: cast_nullable_to_non_nullable
-              as List<Review>?,
+              as List<DetailedReview>?,
       reviewSummary: freezed == reviewSummary
           ? _value.reviewSummary
           : reviewSummary // ignore: cast_nullable_to_non_nullable
@@ -258,7 +258,7 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
       reviews: null == reviews
           ? _value.reviews
           : reviews // ignore: cast_nullable_to_non_nullable
-              as List<Review>,
+              as List<ProfileReview>,
       profileCompleteness: freezed == profileCompleteness
           ? _value.profileCompleteness
           : profileCompleteness // ignore: cast_nullable_to_non_nullable
@@ -362,12 +362,12 @@ abstract class _$$UserProfileImplCopyWith<$Res>
       @JsonKey(name: 'updated_at') DateTime? updatedAt,
       User user,
       @JsonKey(name: 'trust_score') TrustScore? trustScore,
-      @JsonKey(name: 'recent_reviews') List<Review>? recentReviews,
+      @JsonKey(name: 'recent_reviews') List<DetailedReview>? recentReviews,
       @JsonKey(name: 'review_summary') ReviewSummary? reviewSummary,
       List<Skill> skills,
       List<Experience> experiences,
       List<Education> educations,
-      List<Review> reviews,
+      List<ProfileReview> reviews,
       @JsonKey(name: 'profile_completeness') int? profileCompleteness,
       @JsonKey(name: 'languages_spoken') List<String>? languagesSpoken,
       @JsonKey(name: 'preferred_job_types') List<String>? preferredJobTypes,
@@ -494,7 +494,7 @@ class __$$UserProfileImplCopyWithImpl<$Res>
       recentReviews: freezed == recentReviews
           ? _value._recentReviews
           : recentReviews // ignore: cast_nullable_to_non_nullable
-              as List<Review>?,
+              as List<DetailedReview>?,
       reviewSummary: freezed == reviewSummary
           ? _value.reviewSummary
           : reviewSummary // ignore: cast_nullable_to_non_nullable
@@ -514,7 +514,7 @@ class __$$UserProfileImplCopyWithImpl<$Res>
       reviews: null == reviews
           ? _value._reviews
           : reviews // ignore: cast_nullable_to_non_nullable
-              as List<Review>,
+              as List<ProfileReview>,
       profileCompleteness: freezed == profileCompleteness
           ? _value.profileCompleteness
           : profileCompleteness // ignore: cast_nullable_to_non_nullable
@@ -577,12 +577,13 @@ class _$UserProfileImpl extends _UserProfile with DiagnosticableTreeMixin {
       @JsonKey(name: 'updated_at') this.updatedAt,
       required this.user,
       @JsonKey(name: 'trust_score') this.trustScore,
-      @JsonKey(name: 'recent_reviews') final List<Review>? recentReviews,
+      @JsonKey(name: 'recent_reviews')
+      final List<DetailedReview>? recentReviews,
       @JsonKey(name: 'review_summary') this.reviewSummary,
       required final List<Skill> skills,
       required final List<Experience> experiences,
       required final List<Education> educations,
-      required final List<Review> reviews,
+      required final List<ProfileReview> reviews,
       @JsonKey(name: 'profile_completeness') this.profileCompleteness,
       @JsonKey(name: 'languages_spoken') final List<String>? languagesSpoken,
       @JsonKey(name: 'preferred_job_types')
@@ -660,10 +661,10 @@ class _$UserProfileImpl extends _UserProfile with DiagnosticableTreeMixin {
   @override
   @JsonKey(name: 'trust_score')
   final TrustScore? trustScore;
-  final List<Review>? _recentReviews;
+  final List<DetailedReview>? _recentReviews;
   @override
   @JsonKey(name: 'recent_reviews')
-  List<Review>? get recentReviews {
+  List<DetailedReview>? get recentReviews {
     final value = _recentReviews;
     if (value == null) return null;
     if (_recentReviews is EqualUnmodifiableListView) return _recentReviews;
@@ -700,9 +701,9 @@ class _$UserProfileImpl extends _UserProfile with DiagnosticableTreeMixin {
     return EqualUnmodifiableListView(_educations);
   }
 
-  final List<Review> _reviews;
+  final List<ProfileReview> _reviews;
   @override
-  List<Review> get reviews {
+  List<ProfileReview> get reviews {
     if (_reviews is EqualUnmodifiableListView) return _reviews;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_reviews);
@@ -936,12 +937,13 @@ abstract class _UserProfile extends UserProfile {
       @JsonKey(name: 'updated_at') final DateTime? updatedAt,
       required final User user,
       @JsonKey(name: 'trust_score') final TrustScore? trustScore,
-      @JsonKey(name: 'recent_reviews') final List<Review>? recentReviews,
+      @JsonKey(name: 'recent_reviews')
+      final List<DetailedReview>? recentReviews,
       @JsonKey(name: 'review_summary') final ReviewSummary? reviewSummary,
       required final List<Skill> skills,
       required final List<Experience> experiences,
       required final List<Education> educations,
-      required final List<Review> reviews,
+      required final List<ProfileReview> reviews,
       @JsonKey(name: 'profile_completeness') final int? profileCompleteness,
       @JsonKey(name: 'languages_spoken') final List<String>? languagesSpoken,
       @JsonKey(name: 'preferred_job_types')
@@ -997,7 +999,7 @@ abstract class _UserProfile extends UserProfile {
   TrustScore? get trustScore;
   @override
   @JsonKey(name: 'recent_reviews')
-  List<Review>? get recentReviews;
+  List<DetailedReview>? get recentReviews;
   @override
   @JsonKey(name: 'review_summary')
   ReviewSummary? get reviewSummary; // Profile components
@@ -1008,7 +1010,7 @@ abstract class _UserProfile extends UserProfile {
   @override
   List<Education> get educations;
   @override
-  List<Review> get reviews; // Additional profile data
+  List<ProfileReview> get reviews; // Additional profile data
   @override
   @JsonKey(name: 'profile_completeness')
   int? get profileCompleteness;

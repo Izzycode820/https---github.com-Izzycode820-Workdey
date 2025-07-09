@@ -279,97 +279,52 @@ class _EnhancedHomeScreenState extends ConsumerState<EnhancedHomeScreen>
   }
 
   Widget _buildLocationStatusBar(EnhancedGPSLocationState gpsState) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            _hasLocationPermission ? Colors.green[50]! : Colors.orange[50]!,
-            _hasLocationPermission ? Colors.green[100]! : Colors.orange[100]!,
-          ],
+  return Container(
+    color: Colors.white,
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    child: Row(
+      children: [
+        Icon(
+          _hasLocationPermission ? Icons.gps_fixed : Icons.gps_off,
+          size: 16,
+          color: _hasLocationPermission ? Colors.green[600] : Colors.orange[600],
         ),
-        border: Border(
-          bottom: BorderSide(
-            color: _hasLocationPermission ? Colors.green[200]! : Colors.orange[200]!,
-            width: 1,
+        const SizedBox(width: 6),
+        Text(
+          _hasLocationPermission ? 'GPS Active' : 'GPS Disabled',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: _hasLocationPermission ? Colors.green[700] : Colors.orange[700],
           ),
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: _hasLocationPermission ? Colors.green : Colors.orange,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              _hasLocationPermission ? Icons.gps_fixed : Icons.gps_off,
-              color: Colors.white,
-              size: 16,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _getLocationStatusTitle(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: _hasLocationPermission ? Colors.green[800] : Colors.orange[800],
-                  ),
-                ),
-                Text(
-                  _getLocationStatusSubtitle(gpsState),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: _hasLocationPermission ? Colors.green[600] : Colors.orange[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (!_hasLocationPermission && !_isLocationLoading)
-            TextButton(
-              onPressed: _initializeLocation,
-              child: Text(
-                'Enable GPS',
-                style: TextStyle(
-                  color: Colors.orange[700],
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
+        if (!_hasLocationPermission && !_isLocationLoading) ...[
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: _initializeLocation,
+            child: Text(
+              'Enable',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.blue[600],
+                fontWeight: FontWeight.w600,
               ),
             ),
-          if (_isLocationLoading)
-            const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+          ),
         ],
-      ),
-    );
-  }
+        if (_isLocationLoading) ...[
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.grey[600]),
+          ),
+        ],
+      ],
+    ),
+  );
+}
 
-  String _getLocationStatusTitle() {
-    if (_isLocationLoading) return 'Getting your location...';
-    if (_hasLocationPermission) return 'GPS Active';
-    return 'GPS Disabled';
-  }
-
-  String _getLocationStatusSubtitle(EnhancedGPSLocationState gpsState) {
-    if (_isLocationLoading) return 'Please wait while we find nearby jobs';
-    if (_hasLocationPermission && gpsState.currentPosition != null) {
-      final accuracy = gpsState.currentPosition!.accuracy;
-      return 'Accuracy: ${accuracy.toStringAsFixed(0)}m • Finding jobs within 15km';
-    }
-    return 'Enable GPS to find jobs near you automatically';
-  }
 
   Widget _buildJobModeTabs() {
     return Container(
@@ -470,51 +425,86 @@ class _EnhancedHomeScreenState extends ConsumerState<EnhancedHomeScreen>
   }
 
   // Helper methods
-  Widget _buildGPSJobsHeader(JobListingMode mode, int count) {
-    String title = mode == JobListingMode.nearbyGPS 
-        ? '$count jobs within 15km'
-        : '$count smart matches found';
-    
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        borderRadius: BorderRadius.circular(16),
+ Widget _buildGPSJobsHeader(JobListingMode mode, int count) {
+  String title = mode == JobListingMode.nearbyGPS 
+      ? '$count jobs within 15km'
+      : '$count smart matches found';
+  
+  return DecoratedBox(
+  decoration: BoxDecoration(
+    color: Colors.green[50],
+    border: Border(
+      bottom: BorderSide(color: Colors.green[200]!, width: 0.5),
+    ),
+  ),
+  child: Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    child: Text(
+      title,
+      style: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
+        color: Colors.green[700],
       ),
-      child: Text(title),
-    );
-  }
+    ),
+  ),
+);
+}
 
-  Widget _buildRegularJobsHeader(int count) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(16),
+Widget _buildRegularJobsHeader(int count) {
+  return DecoratedBox(
+  decoration: BoxDecoration(
+    color: Colors.green[50],
+    border: Border(
+      bottom: BorderSide(color: Colors.green[200]!, width: 0.5),
+    ),
+  ),
+  child: Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Thinner padding
+    child: Text(
+      '$count jobs available',
+      style: TextStyle(
+        fontSize: 13, // Smaller text
+        fontWeight: FontWeight.w500,
+        color: Colors.blue[700],
       ),
-      child: Text('$count jobs available'),
-    );
-  }
+    ),
+   ) );
+}
 
-  Widget _buildLoadingHeader(JobListingMode mode) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Row(
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(width: 16),
-          Text('Loading jobs...'),
-        ],
-      ),
-    );
-  }
+Widget _buildLoadingHeader(JobListingMode mode) {
+  return DecoratedBox(
+  decoration: BoxDecoration(
+    color: Colors.green[50],
+    border: Border(
+      bottom: BorderSide(color: Colors.green[200]!, width: 0.5),
+    ),
+  ),
+  child: Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    color: Colors.grey[100],
+    child: Row(
+      children: [
+        SizedBox(
+          width: 14,
+          height: 14,
+          child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.grey[600]),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          'Loading jobs...',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
+    ),
+  ));
+}
 
   Widget _buildErrorHeader(JobListingMode mode) {
     return Container(

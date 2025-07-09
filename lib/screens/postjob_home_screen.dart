@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/providers/post_job_provider.dart';
-import 'package:workdey_frontend/core/providers/route_state_provider.dart';
-import 'package:workdey_frontend/features/jobs/postjob/posted_job_details.dart';
 import 'package:workdey_frontend/features/jobs/postjob/posted_job_widget.dart';
 import 'package:workdey_frontend/screens/postjob_form.dart';
 import 'package:workdey_frontend/shared/components/custom_app_bar.dart';
 
-class PostedJobsScreen extends ConsumerStatefulWidget {
-  const PostedJobsScreen({super.key});
+class UpdatedPostedJobsScreen extends ConsumerStatefulWidget {
+  const UpdatedPostedJobsScreen({super.key});
 
   @override
-  ConsumerState<PostedJobsScreen> createState() => _PostedJobsScreenState();
+  ConsumerState<UpdatedPostedJobsScreen> createState() => _UpdatedPostedJobsScreenState();
 }
 
-class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
+class _UpdatedPostedJobsScreenState extends ConsumerState<UpdatedPostedJobsScreen> {
   final ScrollController _scrollController = ScrollController();
-  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -26,9 +23,9 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
     // Load initial jobs when screen first loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.read(postedJobsProvider) is! AsyncData) {
-      ref.read(postedJobsProvider.notifier).loadInitialJobs();
-    }
-  });
+        ref.read(postedJobsProvider.notifier).loadInitialJobs();
+      }
+    });
   }
 
   void _scrollListener() {
@@ -44,52 +41,30 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
     }
   }
 
-@override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-   //ref.read(appSectionProvider.notifier).state = AppSection.postJobs;
-  }
-
   @override
   Widget build(BuildContext context) {
     final jobsState = ref.watch(postedJobsProvider);
     
     return Scaffold(
-      appBar: const CustomAppBar.withoutSearch(
-      ),
+      backgroundColor: Colors.grey[50],
+      appBar: const CustomAppBar.withoutSearch(),
       body: RefreshIndicator(
         onRefresh: () => ref.read(postedJobsProvider.notifier).refreshJobs(),
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
+            // Header with stats
             SliverToBoxAdapter(
-              child: Column(
-                children: [
-                 // const JobSectionSelector(),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 8.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: _buildRefreshButton(),
-                    ),
-                  ),
-                ],
-              ),
+              child: _buildHeader(jobsState),
             ),
+            
+            // Jobs list
             jobsState.when(
               loading: () => const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (e, _) => SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Error: ${e.toString()}'),
-                      _buildRefreshButton(),
-                    ],
-                  ),
-                ),
+                child: _buildErrorState(e.toString()),
               ),
               data: (paginated) {
                 if (paginated.results.isEmpty) {
@@ -116,9 +91,11 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
                             )
                           : const SizedBox.shrink();
                       }
-                      return PostedJobItem(
+                      
+                      return CleanPostedJobCard(
                         job: paginated.results[index],
-                        onTap: () => _viewJobDetails(paginated.results[index]),
+                        onEdit: () => _navigateToEditJob(paginated.results[index]),
+                        onDelete: () => _deleteJob(paginated.results[index].id),
                       );
                     },
                     childCount: paginated.results.length + (hasMore ? 1 : 0),
@@ -129,69 +106,67 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _navigateToPostJobForm,
         backgroundColor: const Color(0xFF3E8728),
-        child: const Icon(Icons.add, color: Colors.white),
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add, size: 20),
+        label: const Text(
+          'Post Job',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
 
-  Widget _buildRefreshButton() {
-    return _isRefreshing
-        ? const SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          )
-        : IconButton(
-            icon: const Icon(Icons.refresh, size: 24),
-            onPressed: _handleRefresh,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          );
-  }
-
-  Future<void> _handleRefresh() async {
-    if (_isRefreshing) return;
-    
-    setState(() => _isRefreshing = true);
-    try {
-      await ref.read(postedJobsProvider.notifier).refreshJobs();
-    } finally {
-      if (mounted) setState(() => _isRefreshing = false);
-    }
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
+  Widget _buildHeader(AsyncValue jobsState) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            'assets/empty_jobs.jpg',
-            width: 160,
-            height: 117,
+          Row(
+            children: [
+              const Text(
+                'My Posted Jobs',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const Spacer(),
+              IconButton(
+                onPressed: () => ref.read(postedJobsProvider.notifier).refreshJobs(),
+                icon: const Icon(Icons.refresh, size: 20),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.grey[100],
+                  padding: const EdgeInsets.all(8),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          const Text(
-            'No jobs Posted yet',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
-              'All your posted jobs will appear here. Click the + button to post a job',
-              textAlign: TextAlign.center,
+          const SizedBox(height: 8),
+          jobsState.when(
+            data: (paginated) => Text(
+              '${paginated.count} ${paginated.count == 1 ? 'job' : 'jobs'} posted',
               style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w300,
-                fontSize: 13,
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            loading: () => Text(
+              'Loading jobs...',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            error: (_, __) => Text(
+              'Error loading jobs',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.red[600],
               ),
             ),
           ),
@@ -200,23 +175,181 @@ class _PostedJobsScreenState extends ConsumerState<PostedJobsScreen> {
     );
   }
 
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.work_outline,
+                size: 48,
+                color: Colors.grey[400],
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'No Jobs Posted Yet',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Start posting jobs to find the perfect candidates for your open positions.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _navigateToPostJobForm,
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('Post Your First Job'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3E8728),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Colors.red[400],
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Something went wrong',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () => ref.read(postedJobsProvider.notifier).refreshJobs(),
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Try Again'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3E8728),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _navigateToPostJobForm() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const PostJobForm()),
+      MaterialPageRoute(
+        builder: (context) => const CleanJobForm(), // Clean form for creating
+      ),
     ).then((_) {
-      // Refresh jobs when returning from posting a new job
+      // Refresh jobs when returning
       ref.read(postedJobsProvider.notifier).refreshJobs();
     });
   }
 
-  void _viewJobDetails(Job job) {
-     Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => PostedJobDetails(job: job),
-    ),
-  );
+  void _navigateToEditJob(Job job) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CleanJobForm(existingJob: job), // Clean form for editing
+      ),
+    ).then((_) {
+      // Refresh jobs when returning
+      ref.read(postedJobsProvider.notifier).refreshJobs();
+    });
+  }
+
+  Future<void> _deleteJob(int jobId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Job'),
+        content: const Text(
+          'Are you sure you want to delete this job posting? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await ref.read(postedJobsProvider.notifier).removeJob(jobId);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Job deleted successfully'),
+              backgroundColor: Color(0xFF3E8728),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to delete job: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override

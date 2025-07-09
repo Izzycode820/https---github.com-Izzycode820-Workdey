@@ -1,9 +1,10 @@
-// application_details_bottom_sheet.dart - Rich Bottom Sheet with Full Details and Management
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
+import 'package:workdey_frontend/core/providers/applicantion_provider.dart';
 
-class ApplicationBottomSheet extends StatelessWidget {
+class ApplicationBottomSheet extends ConsumerStatefulWidget {
   final Application application;
   final Function(String)? onStatusChanged;
 
@@ -14,47 +15,48 @@ class ApplicationBottomSheet extends StatelessWidget {
   });
 
   @override
+  ConsumerState<ApplicationBottomSheet> createState() => _ApplicationBottomSheetState();
+}
+
+class _ApplicationBottomSheetState extends ConsumerState<ApplicationBottomSheet> {
+  bool _isUpdating = false;
+
+  @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final bottomSheetHeight = screenHeight * 0.6; // 60% height
+
     return Container(
+      height: bottomSheetHeight,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle Bar
-          Container(
-            width: 40,
-            height: 4,
-            margin: const EdgeInsets.only(top: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          
-          // Content
-          Flexible(
+          _buildHandle(),
+          _buildHeader(),
+          Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(),
-                  const SizedBox(height: 24),
-                  if (application.matchStats != null) ...[
+                  _buildApplicantInfo(),
+                  const SizedBox(height: 20),
+                  if (widget.application.matchStats != null) ...[
                     _buildMatchStats(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                   ],
-                  if (application.response != null) ...[
+                  if (widget.application.response?.skillsMet.isNotEmpty == true) ...[
                     _buildSkillsSection(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                   ],
-                  _buildStatusActions(context),
+                  _buildStatusSection(),
+                  const SizedBox(height: 100), // Space for floating buttons
                 ],
               ),
             ),
@@ -64,97 +66,158 @@ class ApplicationBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: _getVerificationColor(application.details.verification_level),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
-            child: Text(
-              application.details.name.isNotEmpty 
-                  ? application.details.name[0].toUpperCase()
-                  : '?',
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                application.details.name,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF181A1F),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(
-                    Icons.work_history,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${application.details.completedJobs} jobs completed',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Applied on ${DateFormat.yMMMd().format(application.appliedAt)}',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              _buildVerificationBadge(application.details.verification_level),
-            ],
-          ),
-        ),
-      ],
+  Widget _buildHandle() {
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
+      width: 32,
+      height: 3,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(2),
+      ),
     );
   }
 
-  Widget _buildVerificationBadge(int verificationLevel) {
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[200]!, width: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.application.details.name.isNotEmpty 
+                      ? widget.application.details.name 
+                      : 'Anonymous Applicant',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    _buildStatusChip(),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Applied on ${DateFormat.yMMMd().format(widget.application.appliedAt)}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close, size: 20),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.grey[100],
+              padding: const EdgeInsets.all(8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusChip() {
+    final color = _getStatusColor(widget.application.status);
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        _getStatusText(widget.application.status),
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildApplicantInfo() {
+    return _buildSection(
+      title: 'Applicant Information',
+      icon: Icons.person,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: _getVerificationColor(widget.application.details.verification_level),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    widget.application.details.name.isNotEmpty 
+                        ? widget.application.details.name[0].toUpperCase()
+                        : '?',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.application.details.name.isNotEmpty 
+                          ? widget.application.details.name 
+                          : 'Anonymous',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    _buildVerificationBadge(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow('Jobs Completed', '${widget.application.details.completedJobs}'),
+          _buildInfoRow('Verification Level', '${widget.application.details.verification_level}/3'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVerificationBadge() {
+    final level = widget.application.details.verification_level;
     String text;
     Color color;
     IconData icon;
     
-    switch (verificationLevel) {
+    switch (level) {
       case 3:
         text = 'FULLY VERIFIED';
         color = const Color(0xFF3E8728);
@@ -177,24 +240,23 @@ class ApplicationBottomSheet extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 16),
-          const SizedBox(width: 6),
+          Icon(icon, color: color, size: 12),
+          const SizedBox(width: 4),
           Text(
             text,
             style: TextStyle(
-              fontFamily: 'Inter',
               color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -203,123 +265,116 @@ class ApplicationBottomSheet extends StatelessWidget {
   }
 
   Widget _buildMatchStats() {
-    if (application.matchStats == null) return const SizedBox.shrink();
+    final stats = widget.application.matchStats!;
+    final color = _getMatchColor(stats.percentage);
     
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: _getMatchColor(application.matchStats!.percentage).withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _getMatchColor(application.matchStats!.percentage).withOpacity(0.3),
+    return _buildSection(
+      title: 'Match Statistics',
+      icon: Icons.analytics,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withOpacity(0.3), width: 0.5),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Match Analysis',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF181A1F),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${application.matchStats!.percentage.toStringAsFixed(1)}%',
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${stats.percentage.toInt()}%',
                       style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: _getMatchColor(application.matchStats!.percentage),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Overall Match',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
                         fontSize: 14,
-                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w700,
+                        color: color,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 80,
-                height: 80,
-                child: CircularProgressIndicator(
-                  value: application.matchStats!.percentage / 100,
-                  strokeWidth: 8,
-                  backgroundColor: Colors.grey.withOpacity(0.2),
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    _getMatchColor(application.matchStats!.percentage),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildMatchStatItem(
-                  'Required Skills',
-                  application.matchStats!.requiredMatch,
-                  Icons.star,
-                  Colors.orange,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Overall Match',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
+                      ),
+                      Text(
+                        'Skills alignment with job requirements',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: color.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildMatchStatItem(
-                  'Bonus Skills',
-                  application.matchStats!.optionalMatch.toString(),
-                  Icons.star_border,
-                  Colors.blue,
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildMatchStatItem(
+                    'Required Skills',
+                    stats.requiredMatch,
+                    Icons.star,
+                    Colors.orange,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildMatchStatItem(
+                    'Bonus Skills',
+                    stats.optionalMatch.toString(),
+                    Icons.star_border,
+                    Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMatchStatItem(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 8),
+          Icon(icon, color: color, size: 16),
+          const SizedBox(height: 4),
           Text(
             value,
             style: const TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF181A1F),
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
             ),
           ),
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 12,
+              fontSize: 10,
               color: Colors.grey[600],
             ),
             textAlign: TextAlign.center,
@@ -330,158 +385,170 @@ class ApplicationBottomSheet extends StatelessWidget {
   }
 
   Widget _buildSkillsSection() {
-    if (application.response == null) return const SizedBox.shrink();
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Application Details',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF181A1F),
-          ),
-        ),
-        const SizedBox(height: 16),
-        
-        // Required Skills
-        if (application.response!.skillsMet.isNotEmpty) ...[
-          _buildSkillCategory(
-            'Required Skills Matched',
-            application.response!.skillsMet,
-            const Color(0xFF3E8728),
-            Icons.check_circle,
-          ),
-          const SizedBox(height: 16),
-        ],
-        
-        // Optional Skills
-        if (application.response!.optionalSkillsMet.isNotEmpty) ...[
-          _buildSkillCategory(
-            'Bonus Skills',
-            application.response!.optionalSkillsMet,
-            Colors.blue,
-            Icons.star,
-          ),
-          const SizedBox(height: 16),
-        ],
-        
-        // Notes
-        if (application.response!.notes.isNotEmpty) ...[
-          const Text(
-            'Additional Message',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF181A1F),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              application.response!.notes,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 14,
-                height: 1.5,
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildSkillCategory(String title, List<String> skills, Color color, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: color, size: 16),
-            const SizedBox(width: 8),
-            Text(
-              title,
+    return _buildSection(
+      title: 'Skills Matched',
+      icon: Icons.psychology,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.application.response!.skillsMet.isNotEmpty) ...[
+            const Text(
+              'Required Skills Met',
               style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 16,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: color,
+                color: Color(0xFF3E8728),
               ),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: widget.application.response!.skillsMet
+                  .map((skill) => _buildChip(skill, const Color(0xFF3E8728)))
+                  .toList(),
             ),
           ],
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: skills.map((skill) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: color.withOpacity(0.3)),
-            ),
-            child: Text(
-              skill,
+          if (widget.application.response!.optionalSkillsMet.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Text(
+              'Bonus Skills Met',
               style: TextStyle(
-                fontFamily: 'Inter',
                 fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: color,
+                fontWeight: FontWeight.w600,
+                color: Colors.blue,
               ),
             ),
-          )).toList(),
-        ),
-      ],
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: widget.application.response!.optionalSkillsMet
+                  .map((skill) => _buildChip(skill, Colors.blue))
+                  .toList(),
+            ),
+          ],
+          if (widget.application.response!.notes.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Text(
+              'Application Notes',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              widget.application.response!.notes,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
-  Widget _buildStatusActions(BuildContext context) {
-    if (application.status == 'APPROVED' || application.status == 'REJECTED') {
-      return Container(
-        padding: const EdgeInsets.all(16),
+  Widget _buildStatusSection() {
+    if (widget.application.status == 'PENDING') {
+      return _buildActionButtons();
+    } else {
+      return _buildStatusInfo();
+    }
+  }
+
+  Widget _buildActionButtons() {
+    return _buildSection(
+      title: 'Review Application',
+      icon: Icons.rate_review,
+      child: Column(
+        children: [
+          Text(
+            'Make a decision on this application',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _isUpdating ? null : () => _updateApplicationStatus('REJECTED'),
+                  icon: _isUpdating 
+                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(Icons.close, size: 18),
+                  label: const Text('Reject'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red[600],
+                    side: BorderSide(color: Colors.red[600]!),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _isUpdating ? null : () => _updateApplicationStatus('APPROVED'),
+                  icon: _isUpdating 
+                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Icon(Icons.check, size: 18),
+                  label: const Text('Approve'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3E8728),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusInfo() {
+    final color = _getStatusColor(widget.application.status);
+    final statusText = _getStatusText(widget.application.status);
+    
+    return _buildSection(
+      title: 'Application Status',
+      icon: Icons.info_outline,
+      child: Container(
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: _getStatusColor(application.status),
-          borderRadius: BorderRadius.circular(12),
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withOpacity(0.3), width: 0.5),
         ),
         child: Row(
           children: [
-            Icon(
-              application.status == 'APPROVED' ? Icons.check_circle : Icons.cancel,
-              color: _getStatusTextColor(application.status),
-            ),
+            Icon(_getStatusIcon(widget.application.status), color: color, size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Application ${application.status.toLowerCase()}',
+                    statusText,
                     style: TextStyle(
-                      fontFamily: 'Poppins',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: _getStatusTextColor(application.status),
+                      color: color,
                     ),
                   ),
                   Text(
-                    application.status == 'APPROVED' 
-                        ? 'You can now contact this applicant'
-                        : 'This applicant was not selected',
+                    _getStatusDescription(widget.application.status),
                     style: TextStyle(
-                      fontFamily: 'Inter',
                       fontSize: 12,
-                      color: _getStatusTextColor(application.status).withOpacity(0.8),
+                      color: color.withOpacity(0.8),
                     ),
                   ),
                 ],
@@ -489,118 +556,199 @@ class ApplicationBottomSheet extends StatelessWidget {
             ),
           ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
+  // Status update method - FIXED with correct provider
+  Future<void> _updateApplicationStatus(String newStatus) async {
+    setState(() => _isUpdating = true);
+    
+    try {
+      await ref.read(applicantServiceProvider).updateApplicationStatus(
+        widget.application.id,
+        newStatus,
+      );
+      
+      if (mounted) {
+        // Call the callback to refresh parent
+        widget.onStatusChanged?.call(newStatus);
+        
+        // Close bottom sheet
+        Navigator.pop(context);
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Application ${newStatus.toLowerCase()} successfully!',
+            ),
+            backgroundColor: newStatus == 'APPROVED' 
+                ? const Color(0xFF3E8728) 
+                : Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update application: ${e.toString()}'),
+            backgroundColor: Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUpdating = false);
+      }
+    }
+  }
+
+  // Helper widgets
+  Widget _buildSection({
+    required String title,
+    required IconData icon,
+    required Widget child,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Review Application',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF181A1F),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Make a decision on this application',
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
-        const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showStatusConfirmation(context, 'REJECTED');
-                },
-                icon: const Icon(Icons.close, size: 18),
-                label: const Text('Reject'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red,
-                  side: const BorderSide(color: Colors.red),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showStatusConfirmation(context, 'APPROVED');
-                },
-                icon: const Icon(Icons.check, size: 18),
-                label: const Text('Approve'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3E8728),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+            Icon(icon, size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 6),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
+        const SizedBox(height: 8),
+        child,
       ],
     );
   }
 
-  void _showStatusConfirmation(BuildContext context, String newStatus) {
-    onStatusChanged?.call(newStatus);
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
+  Widget _buildChip(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.3), width: 0.5),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          color: color,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  // Helper methods
   Color _getVerificationColor(int level) {
     switch (level) {
-      case 3: return const Color(0xFF3E8728);
-      case 2: return Colors.orange;
-      case 1: return Colors.blue;
-      default: return Colors.grey;
+      case 0: return Colors.grey[400]!;
+      case 1: return Colors.orange[400]!;
+      case 2: return Colors.blue[400]!;
+      case 3:
+      default: return Colors.green[400]!;
     }
   }
 
   Color _getStatusColor(String status) {
     switch (status.toUpperCase()) {
-      case 'APPROVED':
-        return const Color(0xFF3E8728).withOpacity(0.1);
-      case 'REJECTED':
-        return Colors.red.withOpacity(0.1);
-      case 'PENDING':
-        return Colors.orange.withOpacity(0.1);
-      default:
-        return Colors.grey.withOpacity(0.1);
+      case 'PENDING': return Colors.orange[600]!;
+      case 'APPROVED': return Colors.green[600]!;
+      case 'REJECTED': return Colors.red[600]!;
+      case 'IN_PROGRESS': return Colors.blue[600]!;
+      case 'COMPLETED': return Colors.purple[600]!;
+      default: return Colors.grey[600]!;
     }
   }
 
-  Color _getStatusTextColor(String status) {
+  String _getStatusText(String status) {
     switch (status.toUpperCase()) {
-      case 'APPROVED':
-        return const Color(0xFF3E8728);
-      case 'REJECTED':
-        return Colors.red;
-      case 'PENDING':
-        return Colors.orange;
-      default:
-        return Colors.grey;
+      case 'PENDING': return 'Pending Review';
+      case 'APPROVED': return 'Approved';
+      case 'REJECTED': return 'Rejected';
+      case 'IN_PROGRESS': return 'In Progress';
+      case 'COMPLETED': return 'Completed';
+      default: return status;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status.toUpperCase()) {
+      case 'PENDING': return Icons.schedule;
+      case 'APPROVED': return Icons.check_circle;
+      case 'REJECTED': return Icons.cancel;
+      case 'IN_PROGRESS': return Icons.work;
+      case 'COMPLETED': return Icons.task_alt;
+      default: return Icons.help_outline;
+    }
+  }
+
+  String _getStatusDescription(String status) {
+    switch (status.toUpperCase()) {
+      case 'APPROVED': return 'Application has been approved and work can begin';
+      case 'REJECTED': return 'Application was not accepted for this position';
+      case 'IN_PROGRESS': return 'Work is currently in progress';
+      case 'COMPLETED': return 'Job has been successfully completed';
+      default: return 'Application status';
     }
   }
 
   Color _getMatchColor(double percentage) {
-    if (percentage >= 80) return const Color(0xFF3E8728);
-    if (percentage >= 60) return Colors.orange;
-    if (percentage >= 40) return Colors.amber;
-    return Colors.red;
+    if (percentage >= 80) return Colors.green[600]!;
+    if (percentage >= 60) return Colors.blue[600]!;
+    if (percentage >= 40) return Colors.orange[600]!;
+    return Colors.red[600]!;
   }
 }

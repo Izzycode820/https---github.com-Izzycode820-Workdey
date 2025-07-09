@@ -31,6 +31,8 @@ mixin _$Application {
   ApplicationResponse? get response => throw _privateConstructorUsedError;
   @JsonKey(name: 'match_stats')
   MatchStats? get matchStats => throw _privateConstructorUsedError;
+  @JsonKey(name: 'completion')
+  JobCompletion? get completion => throw _privateConstructorUsedError;
 
   /// Serializes this Application to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,11 +56,13 @@ abstract class $ApplicationCopyWith<$Res> {
       @JsonKey(name: 'applied_at') DateTime appliedAt,
       @JsonKey(name: 'applicant_details') ApplicantDetails details,
       @JsonKey(name: 'response') ApplicationResponse? response,
-      @JsonKey(name: 'match_stats') MatchStats? matchStats});
+      @JsonKey(name: 'match_stats') MatchStats? matchStats,
+      @JsonKey(name: 'completion') JobCompletion? completion});
 
   $ApplicantDetailsCopyWith<$Res> get details;
   $ApplicationResponseCopyWith<$Res>? get response;
   $MatchStatsCopyWith<$Res>? get matchStats;
+  $JobCompletionCopyWith<$Res>? get completion;
 }
 
 /// @nodoc
@@ -82,6 +86,7 @@ class _$ApplicationCopyWithImpl<$Res, $Val extends Application>
     Object? details = null,
     Object? response = freezed,
     Object? matchStats = freezed,
+    Object? completion = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -108,6 +113,10 @@ class _$ApplicationCopyWithImpl<$Res, $Val extends Application>
           ? _value.matchStats
           : matchStats // ignore: cast_nullable_to_non_nullable
               as MatchStats?,
+      completion: freezed == completion
+          ? _value.completion
+          : completion // ignore: cast_nullable_to_non_nullable
+              as JobCompletion?,
     ) as $Val);
   }
 
@@ -148,6 +157,20 @@ class _$ApplicationCopyWithImpl<$Res, $Val extends Application>
       return _then(_value.copyWith(matchStats: value) as $Val);
     });
   }
+
+  /// Create a copy of Application
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $JobCompletionCopyWith<$Res>? get completion {
+    if (_value.completion == null) {
+      return null;
+    }
+
+    return $JobCompletionCopyWith<$Res>(_value.completion!, (value) {
+      return _then(_value.copyWith(completion: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -164,7 +187,8 @@ abstract class _$$ApplicationImplCopyWith<$Res>
       @JsonKey(name: 'applied_at') DateTime appliedAt,
       @JsonKey(name: 'applicant_details') ApplicantDetails details,
       @JsonKey(name: 'response') ApplicationResponse? response,
-      @JsonKey(name: 'match_stats') MatchStats? matchStats});
+      @JsonKey(name: 'match_stats') MatchStats? matchStats,
+      @JsonKey(name: 'completion') JobCompletion? completion});
 
   @override
   $ApplicantDetailsCopyWith<$Res> get details;
@@ -172,6 +196,8 @@ abstract class _$$ApplicationImplCopyWith<$Res>
   $ApplicationResponseCopyWith<$Res>? get response;
   @override
   $MatchStatsCopyWith<$Res>? get matchStats;
+  @override
+  $JobCompletionCopyWith<$Res>? get completion;
 }
 
 /// @nodoc
@@ -193,6 +219,7 @@ class __$$ApplicationImplCopyWithImpl<$Res>
     Object? details = null,
     Object? response = freezed,
     Object? matchStats = freezed,
+    Object? completion = freezed,
   }) {
     return _then(_$ApplicationImpl(
       id: null == id
@@ -219,6 +246,10 @@ class __$$ApplicationImplCopyWithImpl<$Res>
           ? _value.matchStats
           : matchStats // ignore: cast_nullable_to_non_nullable
               as MatchStats?,
+      completion: freezed == completion
+          ? _value.completion
+          : completion // ignore: cast_nullable_to_non_nullable
+              as JobCompletion?,
     ));
   }
 }
@@ -231,8 +262,9 @@ class _$ApplicationImpl implements _Application {
       @JsonKey(name: 'status') required this.status,
       @JsonKey(name: 'applied_at') required this.appliedAt,
       @JsonKey(name: 'applicant_details') required this.details,
-      @JsonKey(name: 'response') required this.response,
-      @JsonKey(name: 'match_stats') this.matchStats});
+      @JsonKey(name: 'response') this.response,
+      @JsonKey(name: 'match_stats') this.matchStats,
+      @JsonKey(name: 'completion') this.completion});
 
   factory _$ApplicationImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApplicationImplFromJson(json);
@@ -254,10 +286,13 @@ class _$ApplicationImpl implements _Application {
   @override
   @JsonKey(name: 'match_stats')
   final MatchStats? matchStats;
+  @override
+  @JsonKey(name: 'completion')
+  final JobCompletion? completion;
 
   @override
   String toString() {
-    return 'Application(id: $id, status: $status, appliedAt: $appliedAt, details: $details, response: $response, matchStats: $matchStats)';
+    return 'Application(id: $id, status: $status, appliedAt: $appliedAt, details: $details, response: $response, matchStats: $matchStats, completion: $completion)';
   }
 
   @override
@@ -273,13 +308,15 @@ class _$ApplicationImpl implements _Application {
             (identical(other.response, response) ||
                 other.response == response) &&
             (identical(other.matchStats, matchStats) ||
-                other.matchStats == matchStats));
+                other.matchStats == matchStats) &&
+            (identical(other.completion, completion) ||
+                other.completion == completion));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, status, appliedAt, details, response, matchStats);
+  int get hashCode => Object.hash(runtimeType, id, status, appliedAt, details,
+      response, matchStats, completion);
 
   /// Create a copy of Application
   /// with the given fields replaced by the non-null parameter values.
@@ -299,14 +336,15 @@ class _$ApplicationImpl implements _Application {
 
 abstract class _Application implements Application {
   const factory _Application(
-      {required final int id,
-      @JsonKey(name: 'status') required final String status,
-      @JsonKey(name: 'applied_at') required final DateTime appliedAt,
-      @JsonKey(name: 'applicant_details')
-      required final ApplicantDetails details,
-      @JsonKey(name: 'response') required final ApplicationResponse? response,
-      @JsonKey(name: 'match_stats')
-      final MatchStats? matchStats}) = _$ApplicationImpl;
+          {required final int id,
+          @JsonKey(name: 'status') required final String status,
+          @JsonKey(name: 'applied_at') required final DateTime appliedAt,
+          @JsonKey(name: 'applicant_details')
+          required final ApplicantDetails details,
+          @JsonKey(name: 'response') final ApplicationResponse? response,
+          @JsonKey(name: 'match_stats') final MatchStats? matchStats,
+          @JsonKey(name: 'completion') final JobCompletion? completion}) =
+      _$ApplicationImpl;
 
   factory _Application.fromJson(Map<String, dynamic> json) =
       _$ApplicationImpl.fromJson;
@@ -328,6 +366,9 @@ abstract class _Application implements Application {
   @override
   @JsonKey(name: 'match_stats')
   MatchStats? get matchStats;
+  @override
+  @JsonKey(name: 'completion')
+  JobCompletion? get completion;
 
   /// Create a copy of Application
   /// with the given fields replaced by the non-null parameter values.
@@ -343,9 +384,7 @@ ApplicantDetails _$ApplicantDetailsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ApplicantDetails {
-  String get name =>
-      throw _privateConstructorUsedError; //  required String email,
-// required String phone,
+  String get name => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: 0)
   int get verification_level => throw _privateConstructorUsedError;
   @JsonKey(name: 'completed_jobs', defaultValue: 0)
@@ -471,8 +510,6 @@ class _$ApplicantDetailsImpl implements _ApplicantDetails {
 
   @override
   final String name;
-//  required String email,
-// required String phone,
   @override
   @JsonKey(defaultValue: 0)
   final int verification_level;
@@ -530,8 +567,7 @@ abstract class _ApplicantDetails implements ApplicantDetails {
       _$ApplicantDetailsImpl.fromJson;
 
   @override
-  String get name; //  required String email,
-// required String phone,
+  String get name;
   @override
   @JsonKey(defaultValue: 0)
   int get verification_level;
@@ -970,5 +1006,448 @@ abstract class _MatchStats implements MatchStats {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MatchStatsImplCopyWith<_$MatchStatsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+JobCompletion _$JobCompletionFromJson(Map<String, dynamic> json) {
+  return _JobCompletion.fromJson(json);
+}
+
+/// @nodoc
+mixin _$JobCompletion {
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'employer_confirmed')
+  bool get employerConfirmed => throw _privateConstructorUsedError;
+  @JsonKey(name: 'worker_confirmed')
+  bool get workerConfirmed => throw _privateConstructorUsedError;
+  @JsonKey(name: 'employer_confirmed_at')
+  DateTime? get employerConfirmedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'worker_confirmed_at')
+  DateTime? get workerConfirmedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'actual_start_date')
+  DateTime? get actualStartDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'actual_end_date')
+  DateTime? get actualEndDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'final_payment')
+  int? get finalPayment => throw _privateConstructorUsedError;
+  @JsonKey(name: 'completion_notes')
+  String? get completionNotes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_mutually_confirmed')
+  bool get isMutuallyConfirmed => throw _privateConstructorUsedError;
+  @JsonKey(name: 'can_confirm')
+  Map<String, dynamic>? get canConfirm => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  DateTime get createdAt => throw _privateConstructorUsedError;
+
+  /// Serializes this JobCompletion to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of JobCompletion
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $JobCompletionCopyWith<JobCompletion> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $JobCompletionCopyWith<$Res> {
+  factory $JobCompletionCopyWith(
+          JobCompletion value, $Res Function(JobCompletion) then) =
+      _$JobCompletionCopyWithImpl<$Res, JobCompletion>;
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'employer_confirmed') bool employerConfirmed,
+      @JsonKey(name: 'worker_confirmed') bool workerConfirmed,
+      @JsonKey(name: 'employer_confirmed_at') DateTime? employerConfirmedAt,
+      @JsonKey(name: 'worker_confirmed_at') DateTime? workerConfirmedAt,
+      @JsonKey(name: 'actual_start_date') DateTime? actualStartDate,
+      @JsonKey(name: 'actual_end_date') DateTime? actualEndDate,
+      @JsonKey(name: 'final_payment') int? finalPayment,
+      @JsonKey(name: 'completion_notes') String? completionNotes,
+      @JsonKey(name: 'is_mutually_confirmed') bool isMutuallyConfirmed,
+      @JsonKey(name: 'can_confirm') Map<String, dynamic>? canConfirm,
+      @JsonKey(name: 'created_at') DateTime createdAt});
+}
+
+/// @nodoc
+class _$JobCompletionCopyWithImpl<$Res, $Val extends JobCompletion>
+    implements $JobCompletionCopyWith<$Res> {
+  _$JobCompletionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of JobCompletion
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? employerConfirmed = null,
+    Object? workerConfirmed = null,
+    Object? employerConfirmedAt = freezed,
+    Object? workerConfirmedAt = freezed,
+    Object? actualStartDate = freezed,
+    Object? actualEndDate = freezed,
+    Object? finalPayment = freezed,
+    Object? completionNotes = freezed,
+    Object? isMutuallyConfirmed = null,
+    Object? canConfirm = freezed,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      employerConfirmed: null == employerConfirmed
+          ? _value.employerConfirmed
+          : employerConfirmed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      workerConfirmed: null == workerConfirmed
+          ? _value.workerConfirmed
+          : workerConfirmed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      employerConfirmedAt: freezed == employerConfirmedAt
+          ? _value.employerConfirmedAt
+          : employerConfirmedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      workerConfirmedAt: freezed == workerConfirmedAt
+          ? _value.workerConfirmedAt
+          : workerConfirmedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      actualStartDate: freezed == actualStartDate
+          ? _value.actualStartDate
+          : actualStartDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      actualEndDate: freezed == actualEndDate
+          ? _value.actualEndDate
+          : actualEndDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      finalPayment: freezed == finalPayment
+          ? _value.finalPayment
+          : finalPayment // ignore: cast_nullable_to_non_nullable
+              as int?,
+      completionNotes: freezed == completionNotes
+          ? _value.completionNotes
+          : completionNotes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isMutuallyConfirmed: null == isMutuallyConfirmed
+          ? _value.isMutuallyConfirmed
+          : isMutuallyConfirmed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      canConfirm: freezed == canConfirm
+          ? _value.canConfirm
+          : canConfirm // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$JobCompletionImplCopyWith<$Res>
+    implements $JobCompletionCopyWith<$Res> {
+  factory _$$JobCompletionImplCopyWith(
+          _$JobCompletionImpl value, $Res Function(_$JobCompletionImpl) then) =
+      __$$JobCompletionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'employer_confirmed') bool employerConfirmed,
+      @JsonKey(name: 'worker_confirmed') bool workerConfirmed,
+      @JsonKey(name: 'employer_confirmed_at') DateTime? employerConfirmedAt,
+      @JsonKey(name: 'worker_confirmed_at') DateTime? workerConfirmedAt,
+      @JsonKey(name: 'actual_start_date') DateTime? actualStartDate,
+      @JsonKey(name: 'actual_end_date') DateTime? actualEndDate,
+      @JsonKey(name: 'final_payment') int? finalPayment,
+      @JsonKey(name: 'completion_notes') String? completionNotes,
+      @JsonKey(name: 'is_mutually_confirmed') bool isMutuallyConfirmed,
+      @JsonKey(name: 'can_confirm') Map<String, dynamic>? canConfirm,
+      @JsonKey(name: 'created_at') DateTime createdAt});
+}
+
+/// @nodoc
+class __$$JobCompletionImplCopyWithImpl<$Res>
+    extends _$JobCompletionCopyWithImpl<$Res, _$JobCompletionImpl>
+    implements _$$JobCompletionImplCopyWith<$Res> {
+  __$$JobCompletionImplCopyWithImpl(
+      _$JobCompletionImpl _value, $Res Function(_$JobCompletionImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of JobCompletion
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? employerConfirmed = null,
+    Object? workerConfirmed = null,
+    Object? employerConfirmedAt = freezed,
+    Object? workerConfirmedAt = freezed,
+    Object? actualStartDate = freezed,
+    Object? actualEndDate = freezed,
+    Object? finalPayment = freezed,
+    Object? completionNotes = freezed,
+    Object? isMutuallyConfirmed = null,
+    Object? canConfirm = freezed,
+    Object? createdAt = null,
+  }) {
+    return _then(_$JobCompletionImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      employerConfirmed: null == employerConfirmed
+          ? _value.employerConfirmed
+          : employerConfirmed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      workerConfirmed: null == workerConfirmed
+          ? _value.workerConfirmed
+          : workerConfirmed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      employerConfirmedAt: freezed == employerConfirmedAt
+          ? _value.employerConfirmedAt
+          : employerConfirmedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      workerConfirmedAt: freezed == workerConfirmedAt
+          ? _value.workerConfirmedAt
+          : workerConfirmedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      actualStartDate: freezed == actualStartDate
+          ? _value.actualStartDate
+          : actualStartDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      actualEndDate: freezed == actualEndDate
+          ? _value.actualEndDate
+          : actualEndDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      finalPayment: freezed == finalPayment
+          ? _value.finalPayment
+          : finalPayment // ignore: cast_nullable_to_non_nullable
+              as int?,
+      completionNotes: freezed == completionNotes
+          ? _value.completionNotes
+          : completionNotes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isMutuallyConfirmed: null == isMutuallyConfirmed
+          ? _value.isMutuallyConfirmed
+          : isMutuallyConfirmed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      canConfirm: freezed == canConfirm
+          ? _value._canConfirm
+          : canConfirm // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$JobCompletionImpl implements _JobCompletion {
+  const _$JobCompletionImpl(
+      {required this.id,
+      @JsonKey(name: 'employer_confirmed') required this.employerConfirmed,
+      @JsonKey(name: 'worker_confirmed') required this.workerConfirmed,
+      @JsonKey(name: 'employer_confirmed_at') this.employerConfirmedAt,
+      @JsonKey(name: 'worker_confirmed_at') this.workerConfirmedAt,
+      @JsonKey(name: 'actual_start_date') this.actualStartDate,
+      @JsonKey(name: 'actual_end_date') this.actualEndDate,
+      @JsonKey(name: 'final_payment') this.finalPayment,
+      @JsonKey(name: 'completion_notes') this.completionNotes,
+      @JsonKey(name: 'is_mutually_confirmed') required this.isMutuallyConfirmed,
+      @JsonKey(name: 'can_confirm') final Map<String, dynamic>? canConfirm,
+      @JsonKey(name: 'created_at') required this.createdAt})
+      : _canConfirm = canConfirm;
+
+  factory _$JobCompletionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$JobCompletionImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  @JsonKey(name: 'employer_confirmed')
+  final bool employerConfirmed;
+  @override
+  @JsonKey(name: 'worker_confirmed')
+  final bool workerConfirmed;
+  @override
+  @JsonKey(name: 'employer_confirmed_at')
+  final DateTime? employerConfirmedAt;
+  @override
+  @JsonKey(name: 'worker_confirmed_at')
+  final DateTime? workerConfirmedAt;
+  @override
+  @JsonKey(name: 'actual_start_date')
+  final DateTime? actualStartDate;
+  @override
+  @JsonKey(name: 'actual_end_date')
+  final DateTime? actualEndDate;
+  @override
+  @JsonKey(name: 'final_payment')
+  final int? finalPayment;
+  @override
+  @JsonKey(name: 'completion_notes')
+  final String? completionNotes;
+  @override
+  @JsonKey(name: 'is_mutually_confirmed')
+  final bool isMutuallyConfirmed;
+  final Map<String, dynamic>? _canConfirm;
+  @override
+  @JsonKey(name: 'can_confirm')
+  Map<String, dynamic>? get canConfirm {
+    final value = _canConfirm;
+    if (value == null) return null;
+    if (_canConfirm is EqualUnmodifiableMapView) return _canConfirm;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+
+  @override
+  String toString() {
+    return 'JobCompletion(id: $id, employerConfirmed: $employerConfirmed, workerConfirmed: $workerConfirmed, employerConfirmedAt: $employerConfirmedAt, workerConfirmedAt: $workerConfirmedAt, actualStartDate: $actualStartDate, actualEndDate: $actualEndDate, finalPayment: $finalPayment, completionNotes: $completionNotes, isMutuallyConfirmed: $isMutuallyConfirmed, canConfirm: $canConfirm, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$JobCompletionImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.employerConfirmed, employerConfirmed) ||
+                other.employerConfirmed == employerConfirmed) &&
+            (identical(other.workerConfirmed, workerConfirmed) ||
+                other.workerConfirmed == workerConfirmed) &&
+            (identical(other.employerConfirmedAt, employerConfirmedAt) ||
+                other.employerConfirmedAt == employerConfirmedAt) &&
+            (identical(other.workerConfirmedAt, workerConfirmedAt) ||
+                other.workerConfirmedAt == workerConfirmedAt) &&
+            (identical(other.actualStartDate, actualStartDate) ||
+                other.actualStartDate == actualStartDate) &&
+            (identical(other.actualEndDate, actualEndDate) ||
+                other.actualEndDate == actualEndDate) &&
+            (identical(other.finalPayment, finalPayment) ||
+                other.finalPayment == finalPayment) &&
+            (identical(other.completionNotes, completionNotes) ||
+                other.completionNotes == completionNotes) &&
+            (identical(other.isMutuallyConfirmed, isMutuallyConfirmed) ||
+                other.isMutuallyConfirmed == isMutuallyConfirmed) &&
+            const DeepCollectionEquality()
+                .equals(other._canConfirm, _canConfirm) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      employerConfirmed,
+      workerConfirmed,
+      employerConfirmedAt,
+      workerConfirmedAt,
+      actualStartDate,
+      actualEndDate,
+      finalPayment,
+      completionNotes,
+      isMutuallyConfirmed,
+      const DeepCollectionEquality().hash(_canConfirm),
+      createdAt);
+
+  /// Create a copy of JobCompletion
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$JobCompletionImplCopyWith<_$JobCompletionImpl> get copyWith =>
+      __$$JobCompletionImplCopyWithImpl<_$JobCompletionImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$JobCompletionImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _JobCompletion implements JobCompletion {
+  const factory _JobCompletion(
+      {required final int id,
+      @JsonKey(name: 'employer_confirmed')
+      required final bool employerConfirmed,
+      @JsonKey(name: 'worker_confirmed') required final bool workerConfirmed,
+      @JsonKey(name: 'employer_confirmed_at')
+      final DateTime? employerConfirmedAt,
+      @JsonKey(name: 'worker_confirmed_at') final DateTime? workerConfirmedAt,
+      @JsonKey(name: 'actual_start_date') final DateTime? actualStartDate,
+      @JsonKey(name: 'actual_end_date') final DateTime? actualEndDate,
+      @JsonKey(name: 'final_payment') final int? finalPayment,
+      @JsonKey(name: 'completion_notes') final String? completionNotes,
+      @JsonKey(name: 'is_mutually_confirmed')
+      required final bool isMutuallyConfirmed,
+      @JsonKey(name: 'can_confirm') final Map<String, dynamic>? canConfirm,
+      @JsonKey(name: 'created_at')
+      required final DateTime createdAt}) = _$JobCompletionImpl;
+
+  factory _JobCompletion.fromJson(Map<String, dynamic> json) =
+      _$JobCompletionImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  @JsonKey(name: 'employer_confirmed')
+  bool get employerConfirmed;
+  @override
+  @JsonKey(name: 'worker_confirmed')
+  bool get workerConfirmed;
+  @override
+  @JsonKey(name: 'employer_confirmed_at')
+  DateTime? get employerConfirmedAt;
+  @override
+  @JsonKey(name: 'worker_confirmed_at')
+  DateTime? get workerConfirmedAt;
+  @override
+  @JsonKey(name: 'actual_start_date')
+  DateTime? get actualStartDate;
+  @override
+  @JsonKey(name: 'actual_end_date')
+  DateTime? get actualEndDate;
+  @override
+  @JsonKey(name: 'final_payment')
+  int? get finalPayment;
+  @override
+  @JsonKey(name: 'completion_notes')
+  String? get completionNotes;
+  @override
+  @JsonKey(name: 'is_mutually_confirmed')
+  bool get isMutuallyConfirmed;
+  @override
+  @JsonKey(name: 'can_confirm')
+  Map<String, dynamic>? get canConfirm;
+  @override
+  @JsonKey(name: 'created_at')
+  DateTime get createdAt;
+
+  /// Create a copy of JobCompletion
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$JobCompletionImplCopyWith<_$JobCompletionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

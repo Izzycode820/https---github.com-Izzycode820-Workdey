@@ -17,29 +17,37 @@ class ApplicantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 1), // Minimal gap like LinkedIn
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey[200]!,
+            width: 0.5,
+          ),
+        ),
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: isEmployerView 
-            ? () => _showApplicationBottomSheet(context)
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 12),
-              _buildQuickInfo(),
-              if (!isEmployerView) ...[
-                const SizedBox(height: 12),
-                _buildApplicationDetails(),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isEmployerView 
+              ? () => _showApplicationBottomSheet(context)
+              : null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 8),
+                _buildQuickInfo(),
+                if (!isEmployerView) ...[
+                  const SizedBox(height:8),
+                  _buildApplicationDetails(),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -51,8 +59,8 @@ class ApplicantCard extends StatelessWidget {
       children: [
         // Profile Avatar
         Container(
-          width: 48,
-          height: 48,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: _getVerificationColor(application.details.verification_level),
             borderRadius: BorderRadius.circular(12),
@@ -288,7 +296,7 @@ class ApplicantCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        status.toUpperCase(),
+        _getStatusDisplay(status),
         style: TextStyle(
           fontFamily: 'Inter',
           color: _getStatusTextColor(status),
@@ -312,6 +320,17 @@ class ApplicantCard extends StatelessWidget {
     }
   }
 
+  String _getStatusDisplay(String status) {
+    switch (status.toUpperCase()) {
+      case 'IN_PROGRESS':
+        return 'ACTIVE';
+      case 'COMPLETED':
+        return 'DONE';
+      default:
+        return status.toUpperCase();
+    }
+  }
+
   Color _getVerificationColor(int level) {
     switch (level) {
       case 3: return const Color(0xFF3E8728);
@@ -329,6 +348,10 @@ class ApplicantCard extends StatelessWidget {
         return Colors.red.withOpacity(0.1);
       case 'PENDING':
         return Colors.orange.withOpacity(0.1);
+      case 'IN_PROGRESS':
+        return Colors.blue.withOpacity(0.1);
+      case 'COMPLETED':
+        return Colors.purple.withOpacity(0.1);
       default:
         return Colors.grey.withOpacity(0.1);
     }
@@ -342,6 +365,10 @@ class ApplicantCard extends StatelessWidget {
         return Colors.red;
       case 'PENDING':
         return Colors.orange;
+      case 'IN_PROGRESS':
+        return Colors.blue;
+      case 'COMPLETED':
+        return Colors.purple;
       default:
         return Colors.grey;
     }

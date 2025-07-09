@@ -1,4 +1,4 @@
-// lib/features/profile/widgets/profile_experience_section.dart
+// lib/features/profile/widgets/experience_section.dart
 import 'package:flutter/material.dart';
 import 'package:workdey_frontend/core/models/profile/experience/experience_model.dart';
 
@@ -20,80 +20,71 @@ class ProfileExperienceSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Section Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Experience',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    if (experiences.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${_getTotalYears()} years',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                if (isOwnProfile)
-                  IconButton(
-                    icon: const Icon(Icons.add, size: 20),
-                    onPressed: onAdd,
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.grey[100],
-                      foregroundColor: Colors.blue,
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Experience',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
-              ],
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Experience Content
-            if (experiences.isNotEmpty)
-              _buildExperienceTimeline(context)
-            else if (isOwnProfile)
-              _buildEmptyStateForOwner(context)
-            else
-              _buildEmptyStateForVisitor(),
-          ],
-        ),
+                  if (experiences.isNotEmpty) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '${_getTotalYears()}yr',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              if (isOwnProfile)
+                InkWell(
+                  onTap: onAdd,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.add,
+                      size: 16,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Experience Content
+          if (experiences.isNotEmpty)
+            _buildExperienceTimeline(context)
+          else if (isOwnProfile)
+            _buildEmptyStateForOwner(context)
+          else
+            _buildEmptyStateForVisitor(),
+        ],
       ),
     );
   }
@@ -126,9 +117,9 @@ class ProfileExperienceSection extends StatelessWidget {
     
     return InkWell(
       onTap: isOwnProfile ? () => onEdit?.call(experience) : null,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(6),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -137,50 +128,39 @@ class ProfileExperienceSection extends StatelessWidget {
               children: [
                 // Timeline dot
                 Container(
-                  width: 12,
-                  height: 12,
+                  width: 8,
+                  height: 8,
                   decoration: BoxDecoration(
                     color: isCurrentPosition ? Colors.green : Colors.blue,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: (isCurrentPosition ? Colors.green : Colors.blue).withOpacity(0.3),
-                        blurRadius: 4,
-                        spreadRadius: 2,
-                      ),
-                    ],
                   ),
                 ),
                 // Timeline line
                 if (!isLast)
                   Container(
-                    width: 2,
-                    height: 60,
+                    width: 1,
+                    height: 40,
                     color: Colors.grey[300],
-                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    margin: const EdgeInsets.symmetric(vertical: 3),
                   ),
               ],
             ),
             
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             
             // Experience Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Position and Company
+                  // Position and Status
                   Row(
                     children: [
                       Expanded(
                         child: Text(
                           experience.title,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
                           ),
@@ -188,16 +168,16 @@ class ProfileExperienceSection extends StatelessWidget {
                       ),
                       if (isCurrentPosition)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
                             color: Colors.green[50],
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(3),
                             border: Border.all(color: Colors.green[200]!),
                           ),
                           child: Text(
                             'Current',
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 8,
                               fontWeight: FontWeight.w500,
                               color: Colors.green[700],
                             ),
@@ -206,14 +186,14 @@ class ProfileExperienceSection extends StatelessWidget {
                     ],
                   ),
                   
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   
                   // Company and Type
                   Row(
                     children: [
                       Icon(
                         _getCompanyIcon(experience.company),
-                        size: 16,
+                        size: 12,
                         color: Colors.grey[600],
                       ),
                       const SizedBox(width: 4),
@@ -221,22 +201,22 @@ class ProfileExperienceSection extends StatelessWidget {
                         child: Text(
                           experience.company!,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Colors.grey[700],
                           ),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
                           color: _getJobTypeColor(experience.jobType).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
                           _getJobTypeDisplay(experience.jobType),
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 8,
                             fontWeight: FontWeight.w500,
                             color: _getJobTypeColor(experience.jobType),
                           ),
@@ -245,71 +225,57 @@ class ProfileExperienceSection extends StatelessWidget {
                     ],
                   ),
                   
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   
-                  // Duration and Category
+                  // Duration
                   Row(
                     children: [
                       Icon(
                         Icons.schedule,
-                        size: 14,
+                        size: 10,
                         color: Colors.grey[500],
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 3),
                       Text(
                         duration,
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        Icons.category,
-                        size: 14,
-                        color: Colors.grey[500],
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _getCategoryDisplay(experience.category),
-                        style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           color: Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
                   
-                  // Description
+                  // Description (if available)
                   if (experience.description != null && experience.description!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       experience.description!,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 11,
                         color: Colors.grey[700],
-                        height: 1.4,
+                        height: 1.3,
                       ),
-                      maxLines: 3,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                   
                   // Edit indicator for own profile
                   if (isOwnProfile) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         Icon(
                           Icons.edit,
-                          size: 12,
+                          size: 8,
                           color: Colors.grey[400],
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Text(
                           'Tap to edit',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 8,
                             color: Colors.grey[400],
                             fontStyle: FontStyle.italic,
                           ),
@@ -331,26 +297,26 @@ class ProfileExperienceSection extends StatelessWidget {
     final categories = experiences.map((e) => e.category).toSet().length;
     
     return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.blue[200]!),
       ),
       child: Row(
         children: [
           Icon(
             Icons.insights,
-            size: 16,
+            size: 12,
             color: Colors.blue[600],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Expanded(
             child: Text(
-              '${_getTotalYears()} years total • $currentJobs current position${currentJobs == 1 ? '' : 's'} • $categories industr${categories == 1 ? 'y' : 'ies'}',
+              '${_getTotalYears()}yr total • $currentJobs current • $categories industrie${categories == 1 ? '' : 's'}',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 color: Colors.blue[700],
               ),
             ),
@@ -362,46 +328,49 @@ class ProfileExperienceSection extends StatelessWidget {
 
   Widget _buildEmptyStateForOwner(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: Column(
         children: [
           Icon(
             Icons.work_outline,
-            size: 32,
+            size: 24,
             color: Colors.grey[400],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           const Text(
-            'Add Your Work Experience',
+            'Add Work Experience',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
-            'Share your professional journey to build credibility with employers',
+            'Share your professional journey',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 11,
               color: Colors.grey[600],
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: onAdd,
-            icon: const Icon(Icons.add, size: 18),
+            icon: const Icon(Icons.add, size: 14),
             label: const Text('Add Experience'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              textStyle: const TextStyle(fontSize: 11),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              elevation: 0,
             ),
           ),
         ],
@@ -411,24 +380,24 @@ class ProfileExperienceSection extends StatelessWidget {
 
   Widget _buildEmptyStateForVisitor() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline,
-            size: 20,
+            size: 16,
             color: Colors.grey[500],
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               'No work experience listed yet',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.grey[600],
               ),
             ),
@@ -469,8 +438,8 @@ class ProfileExperienceSection extends StatelessWidget {
     String duration = '$startMonth - $endMonth';
     if (years > 0 || remainingMonths > 0) {
       final parts = <String>[];
-      if (years > 0) parts.add('${years}yr${years == 1 ? '' : 's'}');
-      if (remainingMonths > 0) parts.add('${remainingMonths}mo${remainingMonths == 1 ? '' : 's'}');
+      if (years > 0) parts.add('${years}yr');
+      if (remainingMonths > 0) parts.add('${remainingMonths}mo');
       duration += ' • ${parts.join(' ')}';
     }
     
@@ -487,7 +456,7 @@ class ProfileExperienceSection extends StatelessWidget {
 
   IconData _getCompanyIcon(String? company) {
     if (company == null) return Icons.business;
-    final lowerCompany = company!.toLowerCase();
+    final lowerCompany = company.toLowerCase();
     if (lowerCompany.contains('government') || lowerCompany.contains('ministry')) {
       return Icons.account_balance;
     } else if (lowerCompany.contains('university') || lowerCompany.contains('school')) {
@@ -530,26 +499,6 @@ class ProfileExperienceSection extends StatelessWidget {
         return 'Freelance';
       default:
         return jobType;
-    }
-  }
-
-  String _getCategoryDisplay(String? category) {
-    if (category == null) return 'Other';
-    switch (category) {
-      case 'IT':
-        return 'Technology';
-      case 'HEALTH':
-        return 'Healthcare';
-      case 'FINANCE':
-        return 'Finance';
-      case 'CONSTRUCTION':
-        return 'Construction';
-      case 'EDUCATION':
-        return 'Education';
-      case 'OTHER':
-        return 'Other';
-      default:
-        return category;
     }
   }
 }

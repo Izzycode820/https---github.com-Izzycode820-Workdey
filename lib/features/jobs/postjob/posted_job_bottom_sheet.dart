@@ -4,175 +4,187 @@ import 'package:intl/intl.dart';
 import 'package:workdey_frontend/core/models/getjob/getjob_model.dart';
 import 'package:workdey_frontend/core/providers/location/applicants_provider.dart';
 import 'package:workdey_frontend/screens/applicants_screen.dart';
-import 'package:workdey_frontend/screens/edit_job_screen.dart';
+import 'package:workdey_frontend/screens/postjob_form.dart';
 
-class PostedJobDetailsBottomSheet extends ConsumerStatefulWidget {
+// ============================================================================
+// CLEAN POSTED JOB BOTTOM SHEET - 55-65% height, mature design, proper integration
+// ============================================================================
+
+class CleanPostedJobBottomSheet extends ConsumerStatefulWidget {
   final Job job;
 
-  const PostedJobDetailsBottomSheet({
+  const CleanPostedJobBottomSheet({
     super.key,
     required this.job,
   });
 
   @override
-  ConsumerState<PostedJobDetailsBottomSheet> createState() => _PostedJobDetailsBottomSheetState();
+  ConsumerState<CleanPostedJobBottomSheet> createState() => _CleanPostedJobBottomSheetState();
 }
 
-class _PostedJobDetailsBottomSheetState extends ConsumerState<PostedJobDetailsBottomSheet> {
+class _CleanPostedJobBottomSheetState extends ConsumerState<CleanPostedJobBottomSheet> {
   bool _showFullDescription = false;
   bool _showFullRoles = false;
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final bottomSheetHeight = screenHeight * 0.75; // Slightly taller for management options
+    final bottomSheetHeight = screenHeight * 0.6; // 60% height - perfect balance
 
     return Container(
       height: bottomSheetHeight,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         ),
       ),
-      child: Stack( // Changed from Column to Stack
-      children: [
-        Column(
-          children: [
-            // Handle bar
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            
-            // Header with management actions
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: _buildHeader(),
-            ),
-            
-            // Scrollable content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildJobStatus(),
+      child: Column(
+        children: [
+          _buildHandle(),
+          _buildHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildJobStatus(),
+                  const SizedBox(height: 20),
+                  _buildApplicationsOverview(),
+                  const SizedBox(height: 20),
+                  _buildJobInfo(),
+                  const SizedBox(height: 20),
+                  _buildDescription(),
+                  if (widget.job.rolesDescription?.isNotEmpty == true) ...[
                     const SizedBox(height: 20),
-                    _buildApplicationsOverview(),
-                    const SizedBox(height: 20),
-                    _buildJobInfo(),
-                    const SizedBox(height: 20),
-                    _buildLocationDetails(),
-                    const SizedBox(height: 20),
-                    _buildDescription(),
-                    if (widget.job.rolesDescription?.isNotEmpty == true) ...[
-                      const SizedBox(height: 20),
-                      _buildRolesDescription(),
-                    ],
-                    const SizedBox(height: 20),
-                    _buildRequirements(),
-                    const SizedBox(height: 20),
-                    _buildWorkingDays(),
-                    const SizedBox(height: 20),
-                    _buildSkills(),
-                    const SizedBox(height: 20),
-                    _buildSalaryDetails(),
-                    const SizedBox(height: 100), // Space for floating buttons
+                    _buildRolesDescription(),
                   ],
-                ),
+                  const SizedBox(height: 20),
+                  _buildRequirements(),
+                  const SizedBox(height: 20),
+                  _buildSkills(),
+                  const SizedBox(height: 20),
+                  _buildWorkingDays(),
+                  const SizedBox(height: 20),
+                  _buildSalaryDetails(),
+                  const SizedBox(height: 100), // Space for floating buttons
+                ],
               ),
             ),
-          ],
-        ),
-        
-        // ADD: Floating Action Buttons
-        _FloatingActionButtons(job: widget.job),
-      ],
-    ),
-  );
-}
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHandle() {
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
+      width: 32,
+      height: 3,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(2),
+      ),
+    );
+  }
 
   Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Text(
-                widget.job.title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  height: 1.2,
-                ),
-              ),
-            ),
-            Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[200]!, width: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditJobScreen(job: widget.job),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.edit),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.blue[50],
-                    foregroundColor: Colors.blue[700],
+                Text(
+                  widget.job.title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey[100],
+                const SizedBox(height: 4),
+                Text(
+                  '${widget.job.category} • ${widget.job.jobType}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        
-        // Job meta info chips
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            _buildInfoChip(
-              widget.job.jobType,
-              _getJobTypeColor(widget.job.jobType),
-              Icons.work,
-            ),
-            _buildInfoChip(
-              widget.job.category,
-              Colors.blue[100]!,
-              Icons.category,
-            ),
-            if (widget.job.postTime != null)
-              _buildInfoChip(
-                'Posted ${widget.job.postTime}',
-                Colors.grey[100]!,
-                Icons.schedule,
+          ),
+          Row(
+            children: [
+              _buildHeaderButton(
+                icon: Icons.edit,
+                label: 'Edit',
+                color: Colors.blue,
+                onPressed: () {
+                  Navigator.pop(context);
+                  _navigateToEditForm();
+                },
               ),
+              const SizedBox(width: 8),
+              _buildHeaderButton(
+                icon: Icons.close,
+                label: null,
+                color: Colors.grey,
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderButton({
+    required IconData icon,
+    String? label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            if (label != null) ...[
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ],
           ],
         ),
-      ],
+      ),
     );
   }
 
@@ -181,21 +193,23 @@ class _PostedJobDetailsBottomSheetState extends ConsumerState<PostedJobDetailsBo
     final daysLeft = widget.job.dueDate?.difference(DateTime.now()).inDays ?? 0;
     
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isActive ? Colors.green[50] : Colors.red[50],
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isActive ? Colors.green[200]! : Colors.red[200]!,
+          width: 0.5,
         ),
       ),
       child: Row(
         children: [
           Icon(
             isActive ? Icons.check_circle : Icons.cancel,
-            color: isActive ? Colors.green[700] : Colors.red[700],
+            color: isActive ? Colors.green[600] : Colors.red[600],
+            size: 20,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +217,8 @@ class _PostedJobDetailsBottomSheetState extends ConsumerState<PostedJobDetailsBo
                 Text(
                   isActive ? 'Job is Active' : 'Job Expired',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                     color: isActive ? Colors.green[700] : Colors.red[700],
                   ),
                 ),
@@ -214,6 +229,7 @@ class _PostedJobDetailsBottomSheetState extends ConsumerState<PostedJobDetailsBo
                           : 'Expires today'
                       : 'No longer accepting applications',
                   style: TextStyle(
+                    fontSize: 12,
                     color: isActive ? Colors.green[600] : Colors.red[600],
                   ),
                 ),
@@ -225,104 +241,130 @@ class _PostedJobDetailsBottomSheetState extends ConsumerState<PostedJobDetailsBo
     );
   }
 
-Widget _buildApplicationsOverview() {
-  return _buildSection(
-    title: 'Applications',
-    icon: Icons.people,
-    child: Consumer(
-      builder: (context, ref, child) {
-        final countsAsync = ref.watch(applicationCountsProvider(widget.job.id));
-        
-        return countsAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Text('Error loading counts: $error'),
-          data: (counts) => Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      'Total Applications',
-                      '${counts.total}',
-                      Icons.people_outline,
-                      Colors.blue,
+  Widget _buildApplicationsOverview() {
+    return _buildSection(
+      title: 'Applications',
+      icon: Icons.people,
+      child: Consumer(
+        builder: (context, ref, child) {
+          final countsAsync = ref.watch(applicationCountsProvider(widget.job.id));
+          
+          return countsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Text('Error loading applications'),
+            data: (counts) => Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        'Total',
+                        '${counts.total}',
+                        Icons.people_outline,
+                        Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'New (24h)',
+                        '${counts.newApplications}',
+                        Icons.fiber_new,
+                        Colors.orange,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        'Pending',
+                        '${counts.pending}',
+                        Icons.hourglass_empty,
+                        Colors.amber,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: _buildStatCard(
+                        'Approved',
+                        '${counts.approved}',
+                        Icons.check_circle,
+                        Colors.green,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: _buildStatCard(
+                        'Rejected',
+                        '${counts.rejected}',
+                        Icons.cancel,
+                        Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ApplicantsScreen(jobId: widget.job.id),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.people, size: 18),
+                    label: const Text('View All Applicants'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3E8728),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      'New (24h)',
-                      '${counts.newApplications}',
-                      Icons.notification_important,
-                      Colors.orange,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      'Pending',
-                      '${counts.pending}',
-                      Icons.hourglass_empty,
-                      Colors.amber,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildStatCard(
-                      'Approved',
-                      '${counts.approved}',
-                      Icons.check_circle,
-                      Colors.green,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildStatCard(
-                      'Rejected',
-                      '${counts.rejected}',
-                      Icons.cancel,
-                      Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    ),
-  );
-}
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3), width: 0.5),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          Icon(icon, color: color, size: 18),
+          const SizedBox(height: 4),
           Text(
             value,
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
               color: color,
             ),
           ),
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               color: color,
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
@@ -338,33 +380,10 @@ Widget _buildApplicationsOverview() {
       child: Column(
         children: [
           _buildInfoRow('Job Nature', widget.job.jobNature ?? 'Not specified'),
-          const SizedBox(height: 8),
           _buildInfoRow('Category', widget.job.category),
-          if (widget.job.dueDate != null) ...[
-            const SizedBox(height: 8),
-            _buildInfoRow('Application Deadline', _formatDate(widget.job.dueDate!)),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLocationDetails() {
-    return _buildSection(
-      title: 'Location',
-      icon: Icons.location_on,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildInfoRow('Location', widget.job.locationDisplayText),
-          if (widget.job.city != null) ...[
-            const SizedBox(height: 8),
-            _buildInfoRow('City', widget.job.city!),
-          ],
-          if (widget.job.district != null) ...[
-            const SizedBox(height: 8),
-            _buildInfoRow('District', widget.job.district!),
-          ],
+          _buildInfoRow('Location', _getLocationText()),
+          if (widget.job.dueDate != null)
+            _buildInfoRow('Deadline', _formatDate(widget.job.dueDate!)),
         ],
       ),
     );
@@ -401,26 +420,10 @@ Widget _buildApplicationsOverview() {
       title: 'Requirements',
       icon: Icons.checklist,
       child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+        spacing: 6,
+        runSpacing: 4,
         children: widget.job.requirements!
-            .map((req) => _buildRequirementChip(req))
-            .toList(),
-      ),
-    );
-  }
-
-  Widget _buildWorkingDays() {
-    if (widget.job.workingDays?.isEmpty != false) return const SizedBox.shrink();
-    
-    return _buildSection(
-      title: 'Working Days',
-      icon: Icons.calendar_today,
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: widget.job.workingDays!
-            .map((day) => _buildDayChip(day))
+            .map((req) => _buildChip(req, Colors.blue))
             .toList(),
       ),
     );
@@ -441,29 +444,29 @@ Widget _buildApplicationsOverview() {
           if (hasRequired) ...[
             const Text(
               'Required Skills',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: 6,
+              runSpacing: 4,
               children: widget.job.requiredSkills!
-                  .map((skill) => _buildSkillChip(skill, isRequired: true))
+                  .map((skill) => _buildChip(skill, Colors.red))
                   .toList(),
             ),
           ],
-          if (hasRequired && hasOptional) const SizedBox(height: 16),
+          if (hasRequired && hasOptional) const SizedBox(height: 12),
           if (hasOptional) ...[
             const Text(
               'Nice to Have',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: 6,
+              runSpacing: 4,
               children: widget.job.optionalSkills!
-                  .map((skill) => _buildSkillChip(skill, isRequired: false))
+                  .map((skill) => _buildChip(skill, Colors.green))
                   .toList(),
             ),
           ],
@@ -472,16 +475,31 @@ Widget _buildApplicationsOverview() {
     );
   }
 
+  Widget _buildWorkingDays() {
+    if (widget.job.workingDays?.isEmpty != false) return const SizedBox.shrink();
+    
+    return _buildSection(
+      title: 'Working Days',
+      icon: Icons.calendar_today,
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 4,
+        children: widget.job.workingDays!
+            .map((day) => _buildChip(day, Colors.orange))
+            .toList(),
+      ),
+    );
+  }
+
   Widget _buildSalaryDetails() {
     if (widget.job.jobType != 'PRO' && widget.job.jobType != 'LOC') {
-      // Show compensation info for non-paid jobs
       if (widget.job.typeSpecific['compensation_toggle'] == true) {
         return _buildSection(
           title: 'Compensation',
           icon: Icons.card_giftcard,
           child: Text(
             widget.job.typeSpecific['bonus_supplementary']?['details'] ?? 'Other benefits included',
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 14),
           ),
         );
       }
@@ -497,30 +515,31 @@ Widget _buildApplicationsOverview() {
       title: 'Salary Details',
       icon: Icons.attach_money,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.green[50],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green[200]!),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.green[200]!, width: 0.5),
         ),
         child: Row(
           children: [
-            Icon(Icons.payments, color: Colors.green[700], size: 32),
-            const SizedBox(width: 16),
+            Icon(Icons.payments, color: Colors.green[600], size: 24),
+            const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'FCFA ${NumberFormat().format(salary)}',
                   style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                     color: Colors.green[700],
                   ),
                 ),
                 Text(
                   'Per ${_getSalaryPeriodText(period)}',
                   style: TextStyle(
+                    fontSize: 12,
                     color: Colors.green[600],
                   ),
                 ),
@@ -532,7 +551,7 @@ Widget _buildApplicationsOverview() {
     );
   }
 
-  // Helper widgets (same as before but adapted for posted jobs)
+  // Helper widgets
   Widget _buildSection({
     required String title,
     required IconData icon,
@@ -543,18 +562,18 @@ Widget _buildApplicationsOverview() {
       children: [
         Row(
           children: [
-            Icon(icon, size: 20, color: Colors.grey[600]),
-            const SizedBox(width: 8),
+            Icon(icon, size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 6),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         child,
       ],
     );
@@ -569,19 +588,23 @@ Widget _buildApplicationsOverview() {
       children: [
         Text(
           text,
-          style: const TextStyle(fontSize: 16, height: 1.5),
+          style: const TextStyle(
+            fontSize: 14,
+            height: 1.4,
+          ),
           maxLines: isExpanded ? null : maxLines,
           overflow: isExpanded ? null : TextOverflow.ellipsis,
         ),
         if (shouldShowExpand) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           GestureDetector(
             onTap: onToggle,
             child: Text(
               isExpanded ? 'Show Less' : 'Read More',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
+              style: const TextStyle(
+                color: Color(0xFF3E8728),
                 fontWeight: FontWeight.w600,
+                fontSize: 13,
               ),
             ),
           ),
@@ -591,47 +614,29 @@ Widget _buildApplicationsOverview() {
   }
 
   Widget _buildInfoRow(String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoChip(String label, Color backgroundColor, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: Colors.grey[700]),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
             ),
           ),
         ],
@@ -639,172 +644,59 @@ Widget _buildApplicationsOverview() {
     );
   }
 
-  Widget _buildRequirementChip(String requirement) {
+  Widget _buildChip(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue[200]!),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.3), width: 0.5),
       ),
       child: Text(
-        requirement,
+        text,
         style: TextStyle(
-          fontSize: 12,
-          color: Colors.blue[700],
+          fontSize: 11,
+          color: color,
           fontWeight: FontWeight.w500,
         ),
       ),
     );
   }
 
-  Widget _buildDayChip(String day) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.orange[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.orange[200]!),
-      ),
-      child: Text(
-        day,
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.orange[700],
-          fontWeight: FontWeight.w500,
-        ),
+  // Helper methods
+  String _getLocationText() {
+    final parts = <String>[];
+    if (widget.job.district?.isNotEmpty == true) parts.add(widget.job.district!);
+    if (widget.job.city?.isNotEmpty == true) parts.add(widget.job.city!);
+    if (parts.isEmpty && widget.job.location?.isNotEmpty == true) {
+      parts.add(widget.job.location!);
+    }
+    return parts.isNotEmpty ? parts.join(', ') : 'Location not specified';
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  String _getSalaryPeriodText(String? period) {
+    switch (period) {
+      case 'd': return 'Day';
+      case 'w': return 'Week';
+      case 'm': return 'Month';
+      default: return 'Period';
+    }
+  }
+
+  void _navigateToEditForm() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CleanJobForm(existingJob: widget.job),
       ),
     );
   }
-
-  Widget _buildSkillChip(String skill, {required bool isRequired}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: isRequired ? Colors.red[50] : Colors.green[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isRequired ? Colors.red[200]! : Colors.green[200]!,
-       ),
-     ),
-     child: Row(
-       mainAxisSize: MainAxisSize.min,
-       children: [
-         Icon(
-           isRequired ? Icons.star : Icons.add,
-           size: 12,
-           color: isRequired ? Colors.red[700] : Colors.green[700],
-         ),
-         const SizedBox(width: 4),
-         Text(
-           skill,
-           style: TextStyle(
-             fontSize: 12,
-             color: isRequired ? Colors.red[700] : Colors.green[700],
-             fontWeight: FontWeight.w500,
-           ),
-         ),
-       ],
-     ),
-   );
- }
-
- String _formatDate(DateTime date) {
-   final months = [
-     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-   ];
-   return '${date.day} ${months[date.month - 1]} ${date.year}';
- }
-
- String _getSalaryPeriodText(String? period) {
-   switch (period) {
-     case 'd': return 'Day';
-     case 'w': return 'Week';
-     case 'm': return 'Month';
-     default: return 'Period';
-   }
- }
-
- Color _getJobTypeColor(String type) {
-   switch (type.toUpperCase()) {
-     case 'PRO':
-       return Colors.blue[100]!;
-     case 'INT':
-       return Colors.purple[100]!;
-     case 'VOL':
-       return Colors.orange[100]!;
-     case 'LOC':
-       return Colors.teal[100]!;
-     default:
-       return Colors.grey[100]!;
-   }
- }
-}
-
-// Add floating action buttons at the bottom
-class _FloatingActionButtons extends StatelessWidget {
- final Job job;
-
- const _FloatingActionButtons({required this.job});
-
- @override
- Widget build(BuildContext context) {
-   return Positioned(
-     bottom: 16,
-     left: 16,
-     right: 16,
-     child: Row(
-       children: [
-         Expanded(
-           child: ElevatedButton.icon(
-             onPressed: () {
-               Navigator.pop(context);
-               Navigator.push(
-                 context,
-                 MaterialPageRoute(
-                   builder: (context) => ApplicantsScreen(jobId: job.id),
-                 ),
-               );
-             },
-             icon: const Icon(Icons.people),
-             label: const Text('View Applicants'),
-             style: ElevatedButton.styleFrom(
-               backgroundColor: Colors.blue[600],
-               foregroundColor: Colors.white,
-               padding: const EdgeInsets.symmetric(vertical: 12),
-               shape: RoundedRectangleBorder(
-                 borderRadius: BorderRadius.circular(12),
-               ),
-             ),
-           ),
-         ),
-         const SizedBox(width: 12),
-         Expanded(
-           child: ElevatedButton.icon(
-             onPressed: () {
-               Navigator.pop(context);
-               Navigator.push(
-                 context,
-                 MaterialPageRoute(
-                   builder: (context) => EditJobScreen(job: job),
-                 ),
-               );
-             },
-             icon: const Icon(Icons.edit),
-             label: const Text('Edit Job'),
-             style: ElevatedButton.styleFrom(
-               backgroundColor: const Color(0xFF3E8728),
-               foregroundColor: Colors.white,
-               padding: const EdgeInsets.symmetric(vertical: 12),
-               shape: RoundedRectangleBorder(
-                 borderRadius: BorderRadius.circular(12),
-               ),
-             ),
-           ),
-         ),
-       ],
-     ),
-   );
- }
 }

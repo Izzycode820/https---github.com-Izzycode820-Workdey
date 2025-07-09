@@ -1,4 +1,4 @@
-// lib/features/profile/widgets/profile_skills_section.dart
+// lib/features/profile/widgets/skills_section.dart
 import 'package:flutter/material.dart';
 import 'package:workdey_frontend/core/models/profile/skills/skill_model.dart';
 
@@ -20,78 +20,69 @@ class ProfileSkillsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Section Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Skills',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF3E8728).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${skills.length}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3E8728),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (isOwnProfile)
-                  IconButton(
-                    icon: const Icon(Icons.add, size: 20),
-                    onPressed: onAdd,
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.grey[100],
-                      foregroundColor: const Color(0xFF3E8728),
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Skills',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
-              ],
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Skills Content
-            if (skills.isNotEmpty)
-              _buildSkillsContent(context)
-            else if (isOwnProfile)
-              _buildEmptyStateForOwner(context)
-            else
-              _buildEmptyStateForVisitor(),
-          ],
-        ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3E8728).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${skills.length}',
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF3E8728),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (isOwnProfile)
+                InkWell(
+                  onTap: onAdd,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.add,
+                      size: 16,
+                      color: const Color(0xFF3E8728),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Skills Content
+          if (skills.isNotEmpty)
+            _buildSkillsContent(context)
+          else if (isOwnProfile)
+            _buildEmptyStateForOwner(context)
+          else
+            _buildEmptyStateForVisitor(),
+        ],
       ),
     );
   }
@@ -107,20 +98,20 @@ class ProfileSkillsSection extends StatelessWidget {
       children: [
         // Advanced Skills
         if (advancedSkills.isNotEmpty) ...[
-          _buildSkillLevelSection('Expert Level', advancedSkills, Colors.green),
-          const SizedBox(height: 16),
+          _buildSkillLevelSection('Expert', advancedSkills, Colors.green),
+          const SizedBox(height: 12),
         ],
         
         // Intermediate Skills
         if (intermediateSkills.isNotEmpty) ...[
           _buildSkillLevelSection('Intermediate', intermediateSkills, Colors.blue),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
         ],
         
         // Beginner Skills
         if (beginnerSkills.isNotEmpty) ...[
           _buildSkillLevelSection('Learning', beginnerSkills, Colors.orange),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
         ],
         
         // Skills Summary
@@ -137,36 +128,36 @@ class ProfileSkillsSection extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: 4,
-              height: 16,
+              width: 3,
+              height: 12,
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               title,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: color,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
             Text(
               '(${skillList.length})',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 color: Colors.grey[600],
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 6,
+          runSpacing: 6,
           children: skillList.map((skill) => _buildSkillChip(skill, color)).toList(),
         ),
       ],
@@ -176,12 +167,12 @@ class ProfileSkillsSection extends StatelessWidget {
   Widget _buildSkillChip(Skill skill, Color color) {
     return InkWell(
       onTap: isOwnProfile ? () => onEdit?.call(skill) : null,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color.withOpacity(0.3)),
         ),
         child: Row(
@@ -190,33 +181,33 @@ class ProfileSkillsSection extends StatelessWidget {
             // Skill Icon based on proficiency
             Icon(
               _getSkillIcon(skill.proficiency),
-              size: 14,
+              size: 10,
               color: color,
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 4),
             Text(
               skill.name,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w500,
                 color: color,
               ),
             ),
             // Willing to learn indicator
             if (skill.isWillingToLearn == true) ...[
-              const SizedBox(width: 4),
+              const SizedBox(width: 3),
               Icon(
                 Icons.trending_up,
-                size: 12,
+                size: 8,
                 color: Colors.amber[700],
               ),
             ],
             // Edit indicator for own profile
             if (isOwnProfile) ...[
-              const SizedBox(width: 4),
+              const SizedBox(width: 3),
               Icon(
                 Icons.edit,
-                size: 10,
+                size: 8,
                 color: color.withOpacity(0.7),
               ),
             ],
@@ -231,25 +222,25 @@ class ProfileSkillsSection extends StatelessWidget {
     final learningSkills = skills.where((s) => s.isWillingToLearn == true).length;
     
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: Row(
         children: [
           Icon(
             Icons.analytics_outlined,
-            size: 16,
+            size: 12,
             color: Colors.grey[600],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Expanded(
             child: Text(
-              '$topSkills expert skills • $learningSkills skills actively learning',
+              '$topSkills expert • $learningSkills learning',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 color: Colors.grey[700],
               ),
             ),
@@ -261,46 +252,49 @@ class ProfileSkillsSection extends StatelessWidget {
 
   Widget _buildEmptyStateForOwner(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: Column(
         children: [
           Icon(
             Icons.star_outline,
-            size: 32,
+            size: 24,
             color: Colors.grey[400],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           const Text(
-            'Showcase Your Skills',
+            'Add Your Skills',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
-            'Add skills to help employers find you and understand your expertise',
+            'Add skills to help employers find you',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 11,
               color: Colors.grey[600],
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: onAdd,
-            icon: const Icon(Icons.add, size: 18),
+            icon: const Icon(Icons.add, size: 14),
             label: const Text('Add Skills'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF3E8728),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              textStyle: const TextStyle(fontSize: 11),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              elevation: 0,
             ),
           ),
         ],
@@ -310,24 +304,24 @@ class ProfileSkillsSection extends StatelessWidget {
 
   Widget _buildEmptyStateForVisitor() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline,
-            size: 20,
+            size: 16,
             color: Colors.grey[500],
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               'No skills listed yet',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.grey[600],
               ),
             ),

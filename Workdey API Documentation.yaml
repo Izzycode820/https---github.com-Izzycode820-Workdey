@@ -1,0 +1,5879 @@
+openapi: 3.0.3
+info:
+  title: Workdey API Documentation
+  version: 1.0.0
+  description: API endpoints for Workdey Platform
+paths:
+  /api/auth/forgot-password/:
+    post:
+      operationId: api_auth_forgot_password_create
+      description: Handles POST requests for password reset emails
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Email'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Email'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Email'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+          description: ''
+  /api/auth/login/:
+    post:
+      operationId: api_auth_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+  /api/auth/logout/:
+    post:
+      operationId: api_auth_logout_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/auth/refresh/:
+    post:
+      operationId: api_auth_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: api_auth_register_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegister'
+          description: ''
+  /api/auth/reset-password/:
+    post:
+      operationId: api_auth_reset_password_create
+      description: Handles POST requests for actual password reset
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordToken'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordToken'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordToken'
+          description: ''
+  /api/auth/users/upload_picture/:
+    post:
+      operationId: api_auth_users_upload_picture_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/profiles/educations/:
+    get:
+      operationId: api_profiles_educations_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEducationList'
+          description: ''
+    post:
+      operationId: api_profiles_educations_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Education'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Education'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Education'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+          description: ''
+  /api/profiles/educations/{id}/:
+    get:
+      operationId: api_profiles_educations_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+          description: ''
+    put:
+      operationId: api_profiles_educations_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Education'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Education'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Education'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+          description: ''
+    patch:
+      operationId: api_profiles_educations_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEducation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEducation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEducation'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+          description: ''
+    delete:
+      operationId: api_profiles_educations_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/experiences/:
+    get:
+      operationId: api_profiles_experiences_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedExperienceList'
+          description: ''
+    post:
+      operationId: api_profiles_experiences_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Experience'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Experience'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Experience'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+          description: ''
+  /api/profiles/experiences/{id}/:
+    get:
+      operationId: api_profiles_experiences_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+          description: ''
+    put:
+      operationId: api_profiles_experiences_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Experience'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Experience'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Experience'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+          description: ''
+    patch:
+      operationId: api_profiles_experiences_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedExperience'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedExperience'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedExperience'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+          description: ''
+    delete:
+      operationId: api_profiles_experiences_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/profiles/:
+    get:
+      operationId: api_profiles_profiles_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserProfileList'
+          description: ''
+    post:
+      operationId: api_profiles_profiles_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/profiles/profiles/{id}/:
+    get:
+      operationId: api_profiles_profiles_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_profiles_profiles_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: api_profiles_profiles_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    delete:
+      operationId: api_profiles_profiles_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/profiles/me/:
+    get:
+      operationId: api_profiles_profiles_me_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: api_profiles_profiles_me_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/profiles/reviews/:
+    get:
+      operationId: api_profiles_reviews_list
+      description: Complete review management system
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReviewDisplayList'
+          description: ''
+    post:
+      operationId: api_profiles_reviews_create
+      description: Complete review management system
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewCreate'
+          description: ''
+  /api/profiles/reviews/{id}/:
+    get:
+      operationId: api_profiles_reviews_retrieve
+      description: Complete review management system
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this review.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+    put:
+      operationId: api_profiles_reviews_update
+      description: Complete review management system
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewCreate'
+          description: ''
+    patch:
+      operationId: api_profiles_reviews_partial_update
+      description: Complete review management system
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReviewCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReviewCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReviewCreate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewCreate'
+          description: ''
+    delete:
+      operationId: api_profiles_reviews_destroy
+      description: Complete review management system
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this review.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/reviews/{id}/flag/:
+    post:
+      operationId: api_profiles_reviews_flag_create
+      description: Flag inappropriate review
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/{id}/reply/:
+    post:
+      operationId: api_profiles_reviews_reply_create
+      description: Reply to a review (only reviewed user can reply)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this review.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/create-job-review/:
+    post:
+      operationId: api_profiles_reviews_create_job_review_create
+      description: Create review for completed job
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/create-service-review/:
+    post:
+      operationId: api_profiles_reviews_create_service_review_create
+      description: Create review for completed service
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/create_job_review/:
+    post:
+      operationId: api_profiles_reviews_create_job_review_create_2
+      description: Create review for completed job
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/create_service_review/:
+    post:
+      operationId: api_profiles_reviews_create_service_review_create_2
+      description: Create review for completed service
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewDisplay'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/for-user/:
+    get:
+      operationId: api_profiles_reviews_for_user_retrieve
+      description: Get reviews for a specific user
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/for_user/:
+    get:
+      operationId: api_profiles_reviews_for_user_retrieve_2
+      description: Get reviews for a specific user
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/my-given/:
+    get:
+      operationId: api_profiles_reviews_my_given_retrieve
+      description: Reviews I've written about others
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/my-received/:
+    get:
+      operationId: api_profiles_reviews_my_received_retrieve
+      description: Reviews others have written about me
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/my_reviews_given/:
+    get:
+      operationId: api_profiles_reviews_my_reviews_given_retrieve
+      description: Reviews I've written about others
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/reviews/my_reviews_received/:
+    get:
+      operationId: api_profiles_reviews_my_reviews_received_retrieve
+      description: Reviews others have written about me
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDisplay'
+          description: ''
+  /api/profiles/skills/:
+    get:
+      operationId: api_profiles_skills_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSkillList'
+          description: ''
+    post:
+      operationId: api_profiles_skills_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Skill'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Skill'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Skill'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+          description: ''
+  /api/profiles/skills/{id}/:
+    get:
+      operationId: api_profiles_skills_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+          description: ''
+    put:
+      operationId: api_profiles_skills_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Skill'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Skill'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Skill'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+          description: ''
+    patch:
+      operationId: api_profiles_skills_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSkill'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSkill'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSkill'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+          description: ''
+    delete:
+      operationId: api_profiles_skills_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/trust-analytics/:
+    get:
+      operationId: api_profiles_trust_analytics_retrieve
+      description: Community trust analytics
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/profiles/trust-profile/{user_id}/:
+    get:
+      operationId: api_profiles_trust_profile_retrieve
+      description: Get user profile with complete trust information
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTrustProfile'
+          description: ''
+  /api/profiles/trust-profile/me/:
+    get:
+      operationId: api_profiles_trust_profile_me_retrieve
+      description: Get user profile with complete trust information
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTrustProfile'
+          description: ''
+  /api/profiles/trust-scores/:
+    get:
+      operationId: api_profiles_trust_scores_list
+      description: View trust scores and metrics
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTrustScoreList'
+          description: ''
+  /api/profiles/trust-scores/{id}/:
+    get:
+      operationId: api_profiles_trust_scores_retrieve
+      description: View trust scores and metrics
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this trust score.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScore'
+          description: ''
+  /api/profiles/trust-scores/for-user/:
+    get:
+      operationId: api_profiles_trust_scores_for_user_retrieve
+      description: Get trust score for specific user
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScore'
+          description: ''
+  /api/profiles/trust-scores/for_user/:
+    get:
+      operationId: api_profiles_trust_scores_for_user_retrieve_2
+      description: Get trust score for specific user
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScore'
+          description: ''
+  /api/profiles/trust-scores/leaderboard/:
+    get:
+      operationId: api_profiles_trust_scores_leaderboard_retrieve
+      description: Get top-rated users in community
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScore'
+          description: ''
+  /api/profiles/trust-scores/my-score/:
+    get:
+      operationId: api_profiles_trust_scores_my_score_retrieve
+      description: Get current user's trust score
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScore'
+          description: ''
+  /api/profiles/trust-scores/my_score/:
+    get:
+      operationId: api_profiles_trust_scores_my_score_retrieve_2
+      description: Get current user's trust score
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScore'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/applications/{id}/apply/:
+    post:
+      operationId: api_v1_applications_apply_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/applications/{id}/status/:
+    patch:
+      operationId: api_v1_applications_status_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/applications/my_applications/:
+    get:
+      operationId: api_v1_applications_my_applications_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/documents/:
+    get:
+      operationId: api_v1_documents_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/gps/nearby_jobs_gps/:
+    get:
+      operationId: api_v1_gps_nearby_jobs_gps_retrieve
+      description: Get nearby jobs using GPS location
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/gps/smart_nearby/:
+    get:
+      operationId: api_v1_gps_smart_nearby_retrieve
+      description: Get nearby jobs using smart matching (GPS + Zones + AI scoring)
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/gps/update_location/:
+    post:
+      operationId: api_v1_gps_update_location_create
+      description: Update user's current GPS location
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/job-alerts/:
+    get:
+      operationId: api_v1_job_alerts_list
+      description: Manage job alerts for location-based notifications
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobAlertList'
+          description: ''
+    post:
+      operationId: api_v1_job_alerts_create
+      description: Manage job alerts for location-based notifications
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobAlert'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobAlert'
+          description: ''
+  /api/v1/job-alerts/{id}/:
+    get:
+      operationId: api_v1_job_alerts_retrieve
+      description: Manage job alerts for location-based notifications
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobAlert'
+          description: ''
+    put:
+      operationId: api_v1_job_alerts_update
+      description: Manage job alerts for location-based notifications
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobAlert'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobAlert'
+          description: ''
+    patch:
+      operationId: api_v1_job_alerts_partial_update
+      description: Manage job alerts for location-based notifications
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedJobAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedJobAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedJobAlert'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobAlert'
+          description: ''
+    delete:
+      operationId: api_v1_job_alerts_destroy
+      description: Manage job alerts for location-based notifications
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/job-completions/:
+    get:
+      operationId: api_v1_job_completions_list
+      description: Handle job completion workflow
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobCompletionList'
+          description: ''
+    post:
+      operationId: api_v1_job_completions_create
+      description: Handle job completion workflow
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+  /api/v1/job-completions/{id}/:
+    get:
+      operationId: api_v1_job_completions_retrieve
+      description: Handle job completion workflow
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+    put:
+      operationId: api_v1_job_completions_update
+      description: Handle job completion workflow
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+    patch:
+      operationId: api_v1_job_completions_partial_update
+      description: Handle job completion workflow
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedJobCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedJobCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedJobCompletion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+    delete:
+      operationId: api_v1_job_completions_destroy
+      description: Handle job completion workflow
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/job-completions/{id}/confirm/:
+    post:
+      operationId: api_v1_job_completions_confirm_create
+      description: Confirm job completion
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+  /api/v1/job-completions/mark-complete/:
+    post:
+      operationId: api_v1_job_completions_mark_complete_create
+      description: Mark a job as complete (initiate completion process)
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+  /api/v1/job-completions/mark_complete/:
+    post:
+      operationId: api_v1_job_completions_mark_complete_create_2
+      description: Mark a job as complete (initiate completion process)
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobCompletion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+  /api/v1/job-completions/pending/:
+    get:
+      operationId: api_v1_job_completions_pending_retrieve
+      description: Get jobs waiting for completion confirmation
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+  /api/v1/job-completions/pending_confirmations/:
+    get:
+      operationId: api_v1_job_completions_pending_confirmations_retrieve
+      description: Get jobs waiting for completion confirmation
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompletion'
+          description: ''
+  /api/v1/job-search/:
+    get:
+      operationId: api_v1_job_search_list
+      description: |-
+        Job search endpoint with filters for:
+        - Text search (title, description, poster names)
+        - Job type (PRO, INT, VOL, LOC)
+        - Category (IT, HEALTH, etc.)
+        - Location
+        - Salary range
+        - Date posted
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - CONSTRUCTION
+          - DESIGN
+          - EDUCATION
+          - FINANCE
+          - HEALTH
+          - IT
+          - OTHER
+        description: |-
+          * `IT` - Information Technology
+          * `HEALTH` - Healthcare
+          * `FINANCE` - Finance
+          * `CONSTRUCTION` - Construction
+          * `EDUCATION` - Education
+          * `DESIGN` - Design
+          * `OTHER` - Other
+      - in: query
+        name: city
+        schema:
+          type: string
+      - in: query
+        name: city__icontains
+        schema:
+          type: string
+      - in: query
+        name: created_at__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: district
+        schema:
+          type: string
+      - in: query
+        name: district__icontains
+        schema:
+          type: string
+      - in: query
+        name: job_nature
+        schema:
+          type: string
+      - in: query
+        name: job_nature__icontains
+        schema:
+          type: string
+      - in: query
+        name: job_type
+        schema:
+          type: string
+          enum:
+          - INT
+          - LOC
+          - PRO
+          - VOL
+        description: |-
+          * `PRO` - Professional
+          * `INT` - Internship
+          * `VOL` - Volunteer
+          * `LOC` - Local
+      - in: query
+        name: location
+        schema:
+          type: string
+      - in: query
+        name: location__icontains
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobCardList'
+          description: ''
+  /api/v1/jobs/:
+    get:
+      operationId: api_v1_jobs_list
+      description: |-
+        Complete job management endpoint with:
+        - Verification requirements
+        - Job posting/application functionality
+        - Saved jobs bookmarking
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobCardList'
+          description: ''
+    post:
+      operationId: api_v1_jobs_create
+      description: |-
+        Complete job management endpoint with:
+        - Verification requirements
+        - Job posting/application functionality
+        - Saved jobs bookmarking
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPost'
+          description: ''
+  /api/v1/jobs/{id}/:
+    get:
+      operationId: api_v1_jobs_retrieve
+      description: |-
+        Complete job management endpoint with:
+        - Verification requirements
+        - Job posting/application functionality
+        - Saved jobs bookmarking
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDetail'
+          description: ''
+    put:
+      operationId: api_v1_jobs_update
+      description: |-
+        Complete job management endpoint with:
+        - Verification requirements
+        - Job posting/application functionality
+        - Saved jobs bookmarking
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobPost'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPost'
+          description: ''
+    patch:
+      operationId: api_v1_jobs_partial_update
+      description: |-
+        Complete job management endpoint with:
+        - Verification requirements
+        - Job posting/application functionality
+        - Saved jobs bookmarking
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedJobPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedJobPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedJobPost'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPost'
+          description: ''
+    delete:
+      operationId: api_v1_jobs_destroy
+      description: |-
+        Complete job management endpoint with:
+        - Verification requirements
+        - Job posting/application functionality
+        - Saved jobs bookmarking
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/jobs/{id}/applicants/:
+    get:
+      operationId: api_v1_jobs_applicants_retrieve
+      description: |-
+        Complete job management endpoint with:
+        - Verification requirements
+        - Job posting/application functionality
+        - Saved jobs bookmarking
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCard'
+          description: ''
+  /api/v1/jobs/{id}/apply/:
+    post:
+      operationId: api_v1_jobs_apply_create
+      description: Apply to job with verification check
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCard'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobCard'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobCard'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCard'
+          description: ''
+  /api/v1/jobs/{id}/save/:
+    post:
+      operationId: api_v1_jobs_save_create
+      description: Toggle saved job status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCard'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobCard'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobCard'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCard'
+          description: ''
+    delete:
+      operationId: api_v1_jobs_save_destroy
+      description: Toggle saved job status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/location-preferences/:
+    get:
+      operationId: api_v1_location_preferences_list
+      description: Manage user's location preferences
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserLocationPreferenceList'
+          description: ''
+    post:
+      operationId: api_v1_location_preferences_create
+      description: Manage user's location preferences
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLocationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLocationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLocationPreference'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+  /api/v1/location-preferences/{id}/:
+    get:
+      operationId: api_v1_location_preferences_retrieve
+      description: Manage user's location preferences
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+    put:
+      operationId: api_v1_location_preferences_update
+      description: Manage user's location preferences
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLocationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLocationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLocationPreference'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+    patch:
+      operationId: api_v1_location_preferences_partial_update
+      description: Manage user's location preferences
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+    delete:
+      operationId: api_v1_location_preferences_destroy
+      description: Manage user's location preferences
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/location-preferences/location_status/:
+    get:
+      operationId: api_v1_location_preferences_location_status_retrieve
+      description: Get comprehensive location status
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+  /api/v1/location-preferences/me/:
+    get:
+      operationId: api_v1_location_preferences_me_retrieve
+      description: Get/update current user's location preferences
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+    patch:
+      operationId: api_v1_location_preferences_me_partial_update
+      description: Get/update current user's location preferences
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+  /api/v1/location-preferences/nearby_jobs/:
+    get:
+      operationId: api_v1_location_preferences_nearby_jobs_retrieve
+      description: Get jobs within user's reach
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+  /api/v1/location/nearby-gps/:
+    get:
+      operationId: api_v1_location_nearby_gps_retrieve
+      description: Get nearby jobs using GPS location
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/location/nearby-jobs/:
+    get:
+      operationId: api_v1_location_nearby_jobs_retrieve
+      description: Get jobs within user's reach
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+  /api/v1/location/preferences/:
+    get:
+      operationId: api_v1_location_preferences_retrieve_2
+      description: Get/update current user's location preferences
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+    patch:
+      operationId: api_v1_location_preferences_partial_update_2
+      description: Get/update current user's location preferences
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLocationPreference'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+  /api/v1/location/smart-nearby/:
+    get:
+      operationId: api_v1_location_smart_nearby_retrieve
+      description: Get nearby jobs using smart matching (GPS + Zones + AI scoring)
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/location/status/:
+    get:
+      operationId: api_v1_location_status_retrieve
+      description: Get comprehensive location status
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLocationPreference'
+          description: ''
+  /api/v1/location/update-gps/:
+    post:
+      operationId: api_v1_location_update_gps_create
+      description: Update user's current GPS location
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/me/jobs/:
+    get:
+      operationId: api_v1_me_jobs_list
+      description: |-
+        Secure endpoint for fetching ONLY the current user's posted jobs
+        Doesn't accept any posted_by_me parameter - always filters by auth user
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobCardList'
+          description: ''
+  /api/v1/me/workers/:
+    get:
+      operationId: api_v1_me_workers_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkerCardList'
+          description: ''
+  /api/v1/notifications/:
+    get:
+      operationId: api_v1_notifications_list
+      description: Complete notification management
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+    post:
+      operationId: api_v1_notifications_create
+      description: Complete notification management
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/{id}/:
+    get:
+      operationId: api_v1_notifications_retrieve
+      description: Complete notification management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    put:
+      operationId: api_v1_notifications_update
+      description: Update notification (mainly for marking as read)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationUpdate'
+          description: ''
+    patch:
+      operationId: api_v1_notifications_partial_update
+      description: Complete notification management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationUpdate'
+          description: ''
+    delete:
+      operationId: api_v1_notifications_destroy
+      description: Complete notification management
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/notifications/bulk_action/:
+    post:
+      operationId: api_v1_notifications_bulk_action_create
+      description: Perform bulk actions on notifications
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/by_type/:
+    get:
+      operationId: api_v1_notifications_by_type_retrieve
+      description: Get notifications filtered by type
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/mark_all_read/:
+    post:
+      operationId: api_v1_notifications_mark_all_read_create
+      description: Mark all notifications as read
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/simple/:
+    get:
+      operationId: api_v1_notifications_simple_list
+      description: Simple notification list view for basic usage
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/v1/notifications/stats/:
+    get:
+      operationId: api_v1_notifications_stats_retrieve
+      description: Get notification statistics for user
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/unread/:
+    get:
+      operationId: api_v1_notifications_unread_retrieve
+      description: Get only unread notifications
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/unread_count/:
+    get:
+      operationId: api_v1_notifications_unread_count_retrieve
+      description: Get count of unread notifications
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/saved-jobs/:
+    get:
+      operationId: api_v1_saved_jobs_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobCardList'
+          description: ''
+  /api/v1/saved-workers/:
+    get:
+      operationId: api_v1_saved_workers_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkerCardList'
+          description: ''
+  /api/v1/service-completions/:
+    get:
+      operationId: api_v1_service_completions_list
+      description: Handle service completion for worker profiles
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedServiceCompletionList'
+          description: ''
+    post:
+      operationId: api_v1_service_completions_create
+      description: Handle service completion for worker profiles
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCompletion'
+          description: ''
+  /api/v1/service-completions/{id}/:
+    get:
+      operationId: api_v1_service_completions_retrieve
+      description: Handle service completion for worker profiles
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCompletion'
+          description: ''
+    put:
+      operationId: api_v1_service_completions_update
+      description: Handle service completion for worker profiles
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCompletion'
+          description: ''
+    patch:
+      operationId: api_v1_service_completions_partial_update
+      description: Handle service completion for worker profiles
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceCompletion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCompletion'
+          description: ''
+    delete:
+      operationId: api_v1_service_completions_destroy
+      description: Handle service completion for worker profiles
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/service-completions/{id}/confirm/:
+    post:
+      operationId: api_v1_service_completions_confirm_create
+      description: Confirm service completion
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCompletion'
+          description: ''
+  /api/v1/service-completions/record/:
+    post:
+      operationId: api_v1_service_completions_record_create
+      description: Record a completed service
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCompletion'
+          description: ''
+  /api/v1/service-completions/record_service/:
+    post:
+      operationId: api_v1_service_completions_record_service_create
+      description: Record a completed service
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCompletion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCompletion'
+          description: ''
+  /api/v1/status/:
+    get:
+      operationId: api_v1_status_retrieve
+      description: API endpoint that returns verification status for the authenticated
+        user
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/submit_kyc/:
+    post:
+      operationId: api_v1_submit_kyc_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/verify_email/:
+    post:
+      operationId: api_v1_verify_email_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/verify_phone/:
+    post:
+      operationId: api_v1_verify_phone_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/worker-search/:
+    get:
+      operationId: api_v1_worker_search_list
+      parameters:
+      - in: query
+        name: availability
+        schema:
+          type: string
+          enum:
+          - CN
+          - FL
+          - FT
+          - PT
+        description: |-
+          * `FT` - Full-time
+          * `PT` - Part-time
+          * `CN` - Contract
+          * `FL` - Freelance
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - CONSTRUCTION
+          - DESIGN
+          - EDUCATION
+          - FINANCE
+          - HEALTH
+          - IT
+          - OTHER
+        description: |-
+          Primary professional category for worker classification
+
+          * `IT` - Information Technology
+          * `HEALTH` - Healthcare
+          * `FINANCE` - Finance
+          * `CONSTRUCTION` - Construction
+          * `EDUCATION` - Education
+          * `DESIGN` - Design
+          * `OTHER` - Other
+      - in: query
+        name: category__icontains
+        schema:
+          type: string
+      - in: query
+        name: experience_years__gte
+        schema:
+          type: integer
+      - in: query
+        name: experience_years__lte
+        schema:
+          type: integer
+      - in: query
+        name: location
+        schema:
+          type: string
+      - in: query
+        name: location__icontains
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkerCardList'
+          description: ''
+  /api/v1/workers/:
+    get:
+      operationId: api_v1_workers_list
+      description: Worker profile management endpoint
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - CONSTRUCTION
+          - DESIGN
+          - EDUCATION
+          - FINANCE
+          - HEALTH
+          - IT
+          - OTHER
+        description: |-
+          Primary professional category for worker classification
+
+          * `IT` - Information Technology
+          * `HEALTH` - Healthcare
+          * `FINANCE` - Finance
+          * `CONSTRUCTION` - Construction
+          * `EDUCATION` - Education
+          * `DESIGN` - Design
+          * `OTHER` - Other
+      - in: query
+        name: location__icontains
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkerCardList'
+          description: ''
+    post:
+      operationId: api_v1_workers_create
+      description: Worker profile management endpoint
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkerProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkerProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerProfile'
+          description: ''
+  /api/v1/workers/{id}/:
+    get:
+      operationId: api_v1_workers_retrieve
+      description: Worker profile management endpoint
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerProfile'
+          description: ''
+    put:
+      operationId: api_v1_workers_update
+      description: Worker profile management endpoint
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkerProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkerProfileUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerProfileUpdate'
+          description: ''
+    patch:
+      operationId: api_v1_workers_partial_update
+      description: Worker profile management endpoint
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkerProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkerProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkerProfileUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerProfileUpdate'
+          description: ''
+    delete:
+      operationId: api_v1_workers_destroy
+      description: Worker profile management endpoint
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/workers/{id}/save/:
+    post:
+      operationId: api_v1_workers_save_create
+      description: Worker profile management endpoint
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkerProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkerProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerProfile'
+          description: ''
+    delete:
+      operationId: api_v1_workers_save_destroy
+      description: Worker profile management endpoint
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/zones/:
+    get:
+      operationId: api_v1_zones_list
+      description: Browse available zones and search
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLocationZoneList'
+          description: ''
+  /api/v1/zones/{id}/:
+    get:
+      operationId: api_v1_zones_retrieve
+      description: Browse available zones and search
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this location zone.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationZone'
+          description: ''
+  /api/v1/zones/popular/:
+    get:
+      operationId: api_v1_zones_popular_retrieve
+      description: Get popular zones for quick selection
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationZone'
+          description: ''
+  /api/v1/zones/suggest/:
+    post:
+      operationId: api_v1_zones_suggest_create
+      description: Suggest zones based on location string
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationZone'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LocationZone'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LocationZone'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationZone'
+          description: ''
+components:
+  schemas:
+    AvailabilityEnum:
+      enum:
+      - FT
+      - PT
+      - CN
+      - FL
+      type: string
+      description: |-
+        * `FT` - Full-time
+        * `PT` - Part-time
+        * `CN` - Contract
+        * `FL` - Freelance
+    CategoryEnum:
+      enum:
+      - IT
+      - HEALTH
+      - FINANCE
+      - CONSTRUCTION
+      - EDUCATION
+      - DESIGN
+      - OTHER
+      type: string
+      description: |-
+        * `IT` - Information Technology
+        * `HEALTH` - Healthcare
+        * `FINANCE` - Finance
+        * `CONSTRUCTION` - Construction
+        * `EDUCATION` - Education
+        * `DESIGN` - Design
+        * `OTHER` - Other
+    Education:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        institution:
+          type: string
+          maxLength: 100
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+        field_of_study:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        is_current:
+          type: boolean
+      required:
+      - id
+      - institution
+      - level
+      - start_date
+    Email:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    Experience:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 100
+        category:
+          type: string
+          maxLength: 50
+        company:
+          type: string
+          maxLength: 100
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        is_current:
+          type: boolean
+        job_type:
+          $ref: '#/components/schemas/ExperienceJobTypeEnum'
+        description:
+          type: string
+      required:
+      - category
+      - id
+      - job_type
+      - start_date
+      - title
+    ExperienceJobTypeEnum:
+      enum:
+      - full-time
+      - part-time
+      - contract
+      - freelance
+      - internship
+      - volunteer
+      type: string
+      description: |-
+        * `full-time` - Full-time
+        * `part-time` - Part-time
+        * `contract` - Contract
+        * `freelance` - Freelance
+        * `internship` - Internship
+        * `volunteer` - Volunteer
+    JobAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        keywords: {}
+        job_types: {}
+        min_salary:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        max_salary:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        zone_ids:
+          type: array
+          items:
+            type: integer
+          writeOnly: true
+        include_reachable_zones:
+          type: boolean
+        is_active:
+          type: boolean
+        notify_immediately:
+          type: boolean
+        daily_digest:
+          type: boolean
+      required:
+      - id
+      - zones
+    JobCard:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        job_type:
+          $ref: '#/components/schemas/JobTypeDe7Enum'
+        title:
+          type: string
+          maxLength: 100
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        poster:
+          type: integer
+          readOnly: true
+        location:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        job_nature:
+          type: string
+          maxLength: 50
+        working_days: {}
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        requirements: {}
+        description:
+          type: string
+        roles_description:
+          type: string
+        type_specific: {}
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        location_details:
+          type: string
+          readOnly: true
+        location_display:
+          type: string
+          readOnly: true
+        location_info:
+          type: string
+          readOnly: true
+        post_time:
+          type: string
+          readOnly: true
+        salary_display:
+          type: string
+          readOnly: true
+        verification_badges:
+          type: string
+          readOnly: true
+        has_applied:
+          type: string
+          readOnly: true
+        is_saved:
+          type: string
+          readOnly: true
+        expires_in:
+          type: string
+          readOnly: true
+        poster_picture:
+          type: string
+          readOnly: true
+        poster_name:
+          type: string
+          readOnly: true
+        city:
+          type: string
+        district:
+          type: string
+        required_skills:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        optional_skills:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        transport_info:
+          type: string
+          readOnly: true
+        distance_info:
+          type: string
+          readOnly: true
+        gps_distance:
+          type: string
+          readOnly: true
+        location_accuracy:
+          type: string
+          readOnly: true
+      required:
+      - category
+      - created_at
+      - description
+      - distance_info
+      - expires_in
+      - gps_distance
+      - has_applied
+      - id
+      - is_saved
+      - job_type
+      - location
+      - location_accuracy
+      - location_details
+      - location_display
+      - location_info
+      - optional_skills
+      - post_time
+      - poster
+      - poster_name
+      - poster_picture
+      - required_skills
+      - salary_display
+      - title
+      - transport_info
+      - updated_at
+      - verification_badges
+      - zone
+    JobCompletion:
+      type: object
+      description: Handle job completion workflow
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        employer_confirmed:
+          type: boolean
+          readOnly: true
+        worker_confirmed:
+          type: boolean
+          readOnly: true
+        employer_confirmed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        worker_confirmed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        actual_start_date:
+          type: string
+          format: date
+          nullable: true
+        actual_end_date:
+          type: string
+          format: date
+          nullable: true
+        final_payment:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Final agreed payment in FCFA
+        completion_notes:
+          type: string
+          description: Additional completion details
+        is_mutually_confirmed:
+          type: boolean
+          readOnly: true
+        can_confirm:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - can_confirm
+      - created_at
+      - employer_confirmed
+      - employer_confirmed_at
+      - id
+      - is_mutually_confirmed
+      - worker_confirmed
+      - worker_confirmed_at
+    JobDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        job_type:
+          $ref: '#/components/schemas/JobTypeDe7Enum'
+        title:
+          type: string
+          maxLength: 100
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        poster:
+          type: integer
+          readOnly: true
+        location:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        job_nature:
+          type: string
+          maxLength: 50
+        working_days: {}
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        requirements: {}
+        description:
+          type: string
+        roles_description:
+          type: string
+        type_specific: {}
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        location_details:
+          type: string
+          readOnly: true
+        location_display:
+          type: string
+          readOnly: true
+        location_info:
+          type: string
+          readOnly: true
+        post_time:
+          type: string
+          readOnly: true
+        salary_display:
+          type: string
+          readOnly: true
+        verification_badges:
+          type: string
+          readOnly: true
+        has_applied:
+          type: string
+          readOnly: true
+        is_saved:
+          type: string
+          readOnly: true
+        expires_in:
+          type: string
+          readOnly: true
+        poster_picture:
+          type: string
+          readOnly: true
+        poster_name:
+          type: string
+          readOnly: true
+        city:
+          type: string
+        district:
+          type: string
+        required_skills:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        optional_skills:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        transport_info:
+          type: string
+          readOnly: true
+        distance_info:
+          type: string
+          readOnly: true
+        gps_distance:
+          type: string
+          readOnly: true
+        location_accuracy:
+          type: string
+          readOnly: true
+        bonus_supplementary:
+          type: string
+          readOnly: true
+      required:
+      - bonus_supplementary
+      - category
+      - created_at
+      - description
+      - distance_info
+      - expires_in
+      - gps_distance
+      - has_applied
+      - id
+      - is_saved
+      - job_type
+      - location
+      - location_accuracy
+      - location_details
+      - location_display
+      - location_info
+      - optional_skills
+      - post_time
+      - poster
+      - poster_name
+      - poster_picture
+      - required_skills
+      - salary_display
+      - title
+      - transport_info
+      - updated_at
+      - verification_badges
+      - zone
+    JobPost:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        job_type:
+          $ref: '#/components/schemas/JobTypeDe7Enum'
+        title:
+          type: string
+          maxLength: 100
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        location:
+          type: string
+          maxLength: 100
+        job_nature:
+          type: string
+          maxLength: 50
+        working_days:
+          type: array
+          items:
+            type: string
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        requirements:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        roles_description:
+          type: string
+        type_specific:
+          $ref: '#/components/schemas/JobTypeSpecific'
+        city:
+          type: string
+        district:
+          type: string
+        required_skills:
+          type: array
+          items:
+            type: string
+          default: []
+        optional_skills:
+          type: array
+          items:
+            type: string
+          default: []
+        zone_id:
+          type: integer
+          writeOnly: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,8})?$
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,8})?$
+        auto_detect_zone:
+          type: boolean
+          writeOnly: true
+          default: true
+        suggested_zones:
+          type: string
+          readOnly: true
+      required:
+      - category
+      - description
+      - id
+      - job_type
+      - location
+      - suggested_zones
+      - title
+      - type_specific
+    JobTypeDe7Enum:
+      enum:
+      - PRO
+      - INT
+      - VOL
+      - LOC
+      type: string
+      description: |-
+        * `PRO` - Professional
+        * `INT` - Internship
+        * `VOL` - Volunteer
+        * `LOC` - Local
+    JobTypeSpecific:
+      type: object
+      properties:
+        salary:
+          type: integer
+          minimum: 0
+          description: Required for PRO/LOC jobs
+        salary_period:
+          allOf:
+          - $ref: '#/components/schemas/SalaryPeriodEnum'
+          description: |-
+            Required for PRO/LOC jobs
+
+            * `d` - Daily
+            * `w` - Weekly
+            * `m` - Monthly
+        compensation_toggle:
+          type: boolean
+        bonus_supplementary: {}
+    LevelEnum:
+      enum:
+      - secondary
+      - high
+      - undergraduate
+      - graduate
+      - other
+      type: string
+      description: |-
+        * `secondary` - Secondary School
+        * `high` - High School
+        * `undergraduate` - Undergraduate
+        * `graduate` - Graduate
+        * `other` - Other
+    LocationZone:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        city:
+          type: string
+          maxLength: 100
+        district:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        is_popular:
+          type: boolean
+        full_name:
+          type: string
+          readOnly: true
+      required:
+      - city
+      - full_name
+      - id
+      - name
+    Login:
+      type: object
+      properties:
+        password:
+          type: string
+          writeOnly: true
+        email:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 100
+        message:
+          type: string
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        is_read:
+          type: boolean
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        time_ago:
+          type: string
+          readOnly: true
+        action_url:
+          type: string
+          readOnly: true
+        related_object:
+          type: string
+          readOnly: true
+        extra_data:
+          description: Additional notification context
+      required:
+      - action_url
+      - created_at
+      - id
+      - message
+      - notification_type
+      - related_object
+      - time_ago
+      - title
+    NotificationTypeEnum:
+      enum:
+      - job_applied
+      - job_status_changed
+      - job_completed
+      - job_completion_confirmed
+      - review_received
+      - review_opportunity
+      - trust_level_upgrade
+      - new_job_match
+      - service_completed
+      - service_requested
+      - worker_saved
+      - job_saved
+      - general
+      type: string
+      description: |-
+        * `job_applied` - Job Application
+        * `job_status_changed` - Application Status Changed
+        * `job_completed` - Job Completion
+        * `job_completion_confirmed` - Job Completion Confirmed
+        * `review_received` - Review Received
+        * `review_opportunity` - Can Leave Review
+        * `trust_level_upgrade` - Trust Level Upgraded
+        * `new_job_match` - New Job Match
+        * `service_completed` - Service Completed
+        * `service_requested` - Service Requested
+        * `worker_saved` - Worker Profile Saved
+        * `job_saved` - Job Saved
+        * `general` - General Notification
+    NotificationUpdate:
+      type: object
+      description: For updating notification read status
+      properties:
+        is_read:
+          type: boolean
+    PaginatedEducationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Education'
+    PaginatedExperienceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Experience'
+    PaginatedJobAlertList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobAlert'
+    PaginatedJobCardList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobCard'
+    PaginatedJobCompletionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobCompletion'
+    PaginatedLocationZoneList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationZone'
+    PaginatedNotificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    PaginatedReviewDisplayList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewDisplay'
+    PaginatedServiceCompletionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCompletion'
+    PaginatedSkillList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skill'
+    PaginatedTrustScoreList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrustScore'
+    PaginatedUserLocationPreferenceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserLocationPreference'
+    PaginatedUserProfileList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserProfile'
+    PaginatedWorkerCardList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkerCard'
+    PasswordToken:
+      type: object
+      properties:
+        password:
+          type: string
+        token:
+          type: string
+      required:
+      - password
+      - token
+    PatchedEducation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        institution:
+          type: string
+          maxLength: 100
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+        field_of_study:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        is_current:
+          type: boolean
+    PatchedExperience:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 100
+        category:
+          type: string
+          maxLength: 50
+        company:
+          type: string
+          maxLength: 100
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        is_current:
+          type: boolean
+        job_type:
+          $ref: '#/components/schemas/ExperienceJobTypeEnum'
+        description:
+          type: string
+    PatchedJobAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        keywords: {}
+        job_types: {}
+        min_salary:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        max_salary:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        zone_ids:
+          type: array
+          items:
+            type: integer
+          writeOnly: true
+        include_reachable_zones:
+          type: boolean
+        is_active:
+          type: boolean
+        notify_immediately:
+          type: boolean
+        daily_digest:
+          type: boolean
+    PatchedJobCompletion:
+      type: object
+      description: Handle job completion workflow
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        employer_confirmed:
+          type: boolean
+          readOnly: true
+        worker_confirmed:
+          type: boolean
+          readOnly: true
+        employer_confirmed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        worker_confirmed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        actual_start_date:
+          type: string
+          format: date
+          nullable: true
+        actual_end_date:
+          type: string
+          format: date
+          nullable: true
+        final_payment:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Final agreed payment in FCFA
+        completion_notes:
+          type: string
+          description: Additional completion details
+        is_mutually_confirmed:
+          type: boolean
+          readOnly: true
+        can_confirm:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedJobPost:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        job_type:
+          $ref: '#/components/schemas/JobTypeDe7Enum'
+        title:
+          type: string
+          maxLength: 100
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        location:
+          type: string
+          maxLength: 100
+        job_nature:
+          type: string
+          maxLength: 50
+        working_days:
+          type: array
+          items:
+            type: string
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        requirements:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        roles_description:
+          type: string
+        type_specific:
+          $ref: '#/components/schemas/JobTypeSpecific'
+        city:
+          type: string
+        district:
+          type: string
+        required_skills:
+          type: array
+          items:
+            type: string
+          default: []
+        optional_skills:
+          type: array
+          items:
+            type: string
+          default: []
+        zone_id:
+          type: integer
+          writeOnly: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,8})?$
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,8})?$
+        auto_detect_zone:
+          type: boolean
+          writeOnly: true
+          default: true
+        suggested_zones:
+          type: string
+          readOnly: true
+    PatchedNotificationUpdate:
+      type: object
+      description: For updating notification read status
+      properties:
+        is_read:
+          type: boolean
+    PatchedReviewCreate:
+      type: object
+      description: For creating new reviews
+      properties:
+        review_type:
+          $ref: '#/components/schemas/ReviewTypeEnum'
+        overall_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+        comment:
+          type: string
+          description: Constructive feedback focusing on skills and improvement
+          maxLength: 1000
+        category_ratings:
+          description: '{''technical_skills'': 4, ''communication'': 5, ''reliability'':
+            3}'
+        work_complexity:
+          $ref: '#/components/schemas/WorkComplexityEnum'
+        would_work_again:
+          type: boolean
+        job:
+          type: integer
+          nullable: true
+        worker_profile:
+          type: integer
+          nullable: true
+        application:
+          type: integer
+          nullable: true
+    PatchedServiceCompletion:
+      type: object
+      description: Handle service completion for worker profiles
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        service_description:
+          type: string
+          description: What service was provided
+        service_date:
+          type: string
+          format: date
+        payment_amount:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Payment in FCFA
+        client_confirmed:
+          type: boolean
+          readOnly: true
+        worker_confirmed:
+          type: boolean
+          readOnly: true
+        service_notes:
+          type: string
+        is_confirmed:
+          type: boolean
+          readOnly: true
+        can_confirm:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedSkill:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+        proficiency:
+          $ref: '#/components/schemas/ProficiencyEnum'
+        is_willing_to_learn:
+          type: boolean
+    PatchedUserLocationPreference:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        home_zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        work_zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        school_zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        max_travel_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        max_transport_cost:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        preferred_transport: {}
+        notify_nearby_jobs:
+          type: boolean
+        home_zone_id:
+          type: integer
+          writeOnly: true
+        work_zone_id:
+          type: integer
+          writeOnly: true
+        school_zone_id:
+          type: integer
+          writeOnly: true
+        reachable_zones:
+          type: string
+          readOnly: true
+    PatchedUserProfile:
+      type: object
+      properties:
+        user:
+          allOf:
+          - $ref: '#/components/schemas/SimpleUser'
+          readOnly: true
+        bio:
+          type: string
+          maxLength: 500
+        location:
+          type: string
+          maxLength: 100
+        transport:
+          type: string
+          nullable: true
+        availability: {}
+        willing_to_learn:
+          type: boolean
+        rating:
+          type: number
+          format: double
+          default: 0.0
+        jobs_completed:
+          type: integer
+          default: 0
+        skills:
+          type: string
+          readOnly: true
+        experiences:
+          type: string
+          readOnly: true
+        educations:
+          type: string
+          readOnly: true
+        reviews:
+          type: string
+          readOnly: true
+        verification_badges: {}
+    PatchedWorkerProfileUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Professional title (e.g. Senior Developer)
+          maxLength: 100
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        location:
+          type: string
+          maxLength: 100
+        skills: {}
+        bio:
+          type: string
+        availability:
+          $ref: '#/components/schemas/AvailabilityEnum'
+        portfolio_link:
+          type: string
+          format: uri
+          maxLength: 200
+    ProficiencyEnum:
+      enum:
+      - beginner
+      - intermediate
+      - advanced
+      type: string
+      description: |-
+        * `beginner` - Beginner
+        * `intermediate` - Intermediate
+        * `advanced` - Advanced
+    ReviewCreate:
+      type: object
+      description: For creating new reviews
+      properties:
+        review_type:
+          $ref: '#/components/schemas/ReviewTypeEnum'
+        overall_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+        comment:
+          type: string
+          description: Constructive feedback focusing on skills and improvement
+          maxLength: 1000
+        category_ratings:
+          description: '{''technical_skills'': 4, ''communication'': 5, ''reliability'':
+            3}'
+        work_complexity:
+          $ref: '#/components/schemas/WorkComplexityEnum'
+        would_work_again:
+          type: boolean
+        job:
+          type: integer
+          nullable: true
+        worker_profile:
+          type: integer
+          nullable: true
+        application:
+          type: integer
+          nullable: true
+      required:
+      - comment
+      - overall_rating
+      - review_type
+    ReviewDisplay:
+      type: object
+      description: For displaying reviews to users
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        review_type:
+          $ref: '#/components/schemas/ReviewTypeEnum'
+        overall_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+        comment:
+          type: string
+          description: Constructive feedback focusing on skills and improvement
+          maxLength: 1000
+        category_ratings:
+          description: '{''technical_skills'': 4, ''communication'': 5, ''reliability'':
+            3}'
+        work_complexity:
+          $ref: '#/components/schemas/WorkComplexityEnum'
+        complexity_display:
+          type: string
+          readOnly: true
+        would_work_again:
+          type: boolean
+        reply:
+          allOf:
+          - $ref: '#/components/schemas/ReviewReply'
+          readOnly: true
+        time_ago:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - comment
+      - complexity_display
+      - created_at
+      - id
+      - overall_rating
+      - reply
+      - review_type
+      - time_ago
+    ReviewReply:
+      type: object
+      properties:
+        reply_text:
+          type: string
+          description: Professional response showing growth mindset
+          maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - reply_text
+    ReviewTypeEnum:
+      enum:
+      - JOB_EMP_WORKER
+      - JOB_WORKER_EMP
+      - SERVICE_CLIENT
+      - COMMUNITY
+      type: string
+      description: |-
+        * `JOB_EMP_WORKER` - Job: Employer to Worker
+        * `JOB_WORKER_EMP` - Job: Worker to Employer
+        * `SERVICE_CLIENT` - Service: Client to Worker
+        * `COMMUNITY` - Community Endorsement
+    SalaryPeriodEnum:
+      enum:
+      - d
+      - w
+      - m
+      type: string
+      description: |-
+        * `d` - Daily
+        * `w` - Weekly
+        * `m` - Monthly
+    ServiceCompletion:
+      type: object
+      description: Handle service completion for worker profiles
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        service_description:
+          type: string
+          description: What service was provided
+        service_date:
+          type: string
+          format: date
+        payment_amount:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Payment in FCFA
+        client_confirmed:
+          type: boolean
+          readOnly: true
+        worker_confirmed:
+          type: boolean
+          readOnly: true
+        service_notes:
+          type: string
+        is_confirmed:
+          type: boolean
+          readOnly: true
+        can_confirm:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - can_confirm
+      - client_confirmed
+      - created_at
+      - id
+      - is_confirmed
+      - service_date
+      - service_description
+      - worker_confirmed
+    SimpleUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+      required:
+      - email
+      - id
+    Skill:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+        proficiency:
+          $ref: '#/components/schemas/ProficiencyEnum'
+        is_willing_to_learn:
+          type: boolean
+      required:
+      - id
+      - name
+      - proficiency
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    TrustLevelEnum:
+      enum:
+      - NEWCOMER
+      - BUILDING
+      - TRUSTED
+      - EXPERT
+      type: string
+      description: |-
+        * `NEWCOMER` - Newcomer (0-3 jobs)
+        * `BUILDING` - Building Trust (4-10 jobs)
+        * `TRUSTED` - Trusted Local (11+ jobs)
+        * `EXPERT` - Community Expert (25+ jobs)
+    TrustScore:
+      type: object
+      description: Display user's trust metrics
+      properties:
+        overall_score:
+          type: number
+          format: double
+          maximum: 5
+          minimum: 0
+        total_reviews:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        completed_jobs:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        completed_services:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        job_performance_score:
+          type: number
+          format: double
+        service_quality_score:
+          type: number
+          format: double
+        reliability_score:
+          type: number
+          format: double
+        trust_level:
+          $ref: '#/components/schemas/TrustLevelEnum'
+        trust_level_display:
+          type: string
+          readOnly: true
+        recent_reviews:
+          type: string
+          readOnly: true
+        last_calculated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - last_calculated
+      - recent_reviews
+      - trust_level_display
+    UserLocationPreference:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        home_zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        work_zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        school_zone:
+          allOf:
+          - $ref: '#/components/schemas/LocationZone'
+          readOnly: true
+        max_travel_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        max_transport_cost:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        preferred_transport: {}
+        notify_nearby_jobs:
+          type: boolean
+        home_zone_id:
+          type: integer
+          writeOnly: true
+        work_zone_id:
+          type: integer
+          writeOnly: true
+        school_zone_id:
+          type: integer
+          writeOnly: true
+        reachable_zones:
+          type: string
+          readOnly: true
+      required:
+      - home_zone
+      - id
+      - reachable_zones
+      - school_zone
+      - work_zone
+    UserProfile:
+      type: object
+      properties:
+        user:
+          allOf:
+          - $ref: '#/components/schemas/SimpleUser'
+          readOnly: true
+        bio:
+          type: string
+          maxLength: 500
+        location:
+          type: string
+          maxLength: 100
+        transport:
+          type: string
+          nullable: true
+        availability: {}
+        willing_to_learn:
+          type: boolean
+        rating:
+          type: number
+          format: double
+          default: 0.0
+        jobs_completed:
+          type: integer
+          default: 0
+        skills:
+          type: string
+          readOnly: true
+        experiences:
+          type: string
+          readOnly: true
+        educations:
+          type: string
+          readOnly: true
+        reviews:
+          type: string
+          readOnly: true
+        verification_badges: {}
+      required:
+      - educations
+      - experiences
+      - reviews
+      - skills
+      - user
+    UserRegister:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        phone:
+          type: string
+          title: Phone number
+          maxLength: 17
+        password:
+          type: string
+          writeOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - password
+      - phone
+    UserTrustProfile:
+      type: object
+      description: Enhanced user profile with trust information
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        verification_level:
+          allOf:
+          - $ref: '#/components/schemas/VerificationLevelEnum'
+          readOnly: true
+        verification_badges:
+          readOnly: true
+          description: Track verification status
+        trust_score:
+          allOf:
+          - $ref: '#/components/schemas/TrustScore'
+          readOnly: true
+        recent_reviews:
+          type: string
+          readOnly: true
+        review_summary:
+          type: string
+          readOnly: true
+      required:
+      - email
+      - id
+      - recent_reviews
+      - review_summary
+      - trust_score
+      - verification_badges
+      - verification_level
+    VerificationLevelEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      type: integer
+      description: |-
+        * `1` - Unverified
+        * `2` - Partial
+        * `3` - Full
+    WorkComplexityEnum:
+      enum:
+      - SIMPLE
+      - MODERATE
+      - COMPLEX
+      type: string
+      description: |-
+        * `SIMPLE` - Simple Task
+        * `MODERATE` - Moderate Task
+        * `COMPLEX` - Complex Task
+    WorkerCard:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          description: Professional title (e.g. Senior Developer)
+          maxLength: 100
+        name:
+          type: string
+          readOnly: true
+        profile_picture:
+          type: string
+          readOnly: true
+        location:
+          type: string
+          maxLength: 100
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          description: |-
+            Primary professional category for worker classification
+
+            * `IT` - Information Technology
+            * `HEALTH` - Healthcare
+            * `FINANCE` - Finance
+            * `CONSTRUCTION` - Construction
+            * `EDUCATION` - Education
+            * `DESIGN` - Design
+            * `OTHER` - Other
+        skills:
+          type: string
+          readOnly: true
+        availability:
+          $ref: '#/components/schemas/AvailabilityEnum'
+        experience_years:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        verification_badges:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        post_time:
+          type: string
+          readOnly: true
+        is_saved:
+          type: string
+          readOnly: true
+        category_display:
+          type: string
+          readOnly: true
+      required:
+      - category
+      - category_display
+      - created_at
+      - id
+      - is_saved
+      - location
+      - name
+      - post_time
+      - profile_picture
+      - skills
+      - title
+      - verification_badges
+    WorkerProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          description: Professional title (e.g. Senior Developer)
+          maxLength: 100
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          description: |-
+            Required. Determines how workers are filtered and discovered.
+
+            * `IT` - Information Technology
+            * `HEALTH` - Healthcare
+            * `FINANCE` - Finance
+            * `CONSTRUCTION` - Construction
+            * `EDUCATION` - Education
+            * `DESIGN` - Design
+            * `OTHER` - Other
+        location:
+          type: string
+          maxLength: 100
+        skills:
+          type: array
+          items:
+            type: string
+          maxItems: 20
+        bio:
+          type: string
+        availability:
+          $ref: '#/components/schemas/AvailabilityEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        experience_years:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        portfolio_link:
+          type: string
+          format: uri
+          maxLength: 200
+      required:
+      - category
+      - created_at
+      - id
+      - location
+      - title
+      - updated_at
+      - user
+    WorkerProfileUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Professional title (e.g. Senior Developer)
+          maxLength: 100
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        location:
+          type: string
+          maxLength: 100
+        skills: {}
+        bio:
+          type: string
+        availability:
+          $ref: '#/components/schemas/AvailabilityEnum'
+        portfolio_link:
+          type: string
+          format: uri
+          maxLength: 200
+      required:
+      - location
+      - title
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

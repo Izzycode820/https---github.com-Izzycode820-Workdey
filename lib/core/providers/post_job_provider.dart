@@ -8,111 +8,319 @@ import 'package:workdey_frontend/core/models/postjob/post_job_model.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
 import 'package:workdey_frontend/core/services/post_job_service.dart';
 
-//Post job form
-final postJobNotifierProvider = StateNotifierProvider<PostJobNotifier, PostJob>((ref) {
-    return PostJobNotifier(ref.read(postJobServiceProvider),
-    ref,
-    );
-});
+// ============================================================================
+// CLEAN JOB FORM STATE - No more primitive manual updates
+// ============================================================================
 
-class PostJobNotifier extends StateNotifier<PostJob> {
-  final PostJobService _postJobService;
+@immutable
+class JobFormState {
+  final PostJob job;
+  final FormMode mode;
+  final bool isLoading;
+  final bool isValid;
+  final Map<String, String> errors;
+  final int? editingJobId;
+
+  const JobFormState({
+    required this.job,
+    required this.mode,
+    this.isLoading = false,
+    this.isValid = false,
+    this.errors = const {},
+    this.editingJobId,
+  });
+
+  JobFormState copyWith({
+    PostJob? job,
+    FormMode? mode,
+    bool? isLoading,
+    bool? isValid,
+    Map<String, String>? errors,
+    int? editingJobId,
+  }) {
+    return JobFormState(
+      job: job ?? this.job,
+      mode: mode ?? this.mode,
+      isLoading: isLoading ?? this.isLoading,
+      isValid: isValid ?? this.isValid,
+      errors: errors ?? this.errors,
+      editingJobId: editingJobId ?? this.editingJobId,
+    );
+  }
+
+  // Clean initialization from existing job (no primitive extensions)
+  factory JobFormState.fromExistingJob(Job existingJob) {
+    return JobFormState(
+      job: PostJob(
+        id: existingJob.id,
+        jobType: existingJob.jobType,
+        title: existingJob.title,
+        category: existingJob.category,
+        location: existingJob.location,
+        city: existingJob.city,
+        district: existingJob.district,
+        job_nature: existingJob.jobNature,
+        description: existingJob.description,
+        rolesDescription: existingJob.rolesDescription,
+        requirements: existingJob.requirements ?? [],
+        workingDays: existingJob.workingDays ?? [],
+        dueDate: existingJob.dueDate?.toIso8601String().split('T')[0],
+        typeSpecific: Map<String, dynamic>.from(existingJob.typeSpecific),
+        requiredSkills: existingJob.requiredSkills ?? [],
+        optionalSkills: existingJob.optionalSkills ?? [],
+      ),
+      mode: FormMode.edit,
+      editingJobId: existingJob.id,
+    );
+  }
+
+  // Clean default state for new job
+  factory JobFormState.newJob() {
+    return JobFormState(
+      job: PostJob(
+        jobType: 'PRO',
+        title: '',
+        category: 'IT',
+        location: '',
+        city: '',
+        district: '',
+        job_nature: 'Full time',
+        description: '',
+        typeSpecific: {
+          'salary_period': 'm',
+          'compensation_toggle': false,
+        },
+        requiredSkills: [],
+        optionalSkills: [],
+      ),
+      mode: FormMode.create,
+    );
+  }
+}
+
+// ============================================================================
+// CLEAN JOB FORM NOTIFIER - No more primitive manual field updates
+// ============================================================================
+
+class JobFormNotifier extends StateNotifier<JobFormState> {
+  final PostJobService _service;
   final Ref _ref;
-  
-  PostJobNotifier(this._postJobService, this._ref) : super(PostJob(
-    jobType: 'LOC',
-    title: '',
-    job_nature: 'Full time',
-    category: 'IT',
-    location: '',
-    city: '',
-    district: '',
-    description: '',
-    typeSpecific: {'salary_period': 'm', 'compensation_toggle': false},
-    requiredSkills: [],
-    optionalSkills: [],
-  ));
 
- void updateJobType(String type) {
-  final newTypeSpecific = Map<String, dynamic>.from(state.typeSpecific);
-  
-  if (type == 'PRO' || type == 'LOC') {
-    newTypeSpecific.remove('compensation_toggle');
-    newTypeSpecific['salary'] = newTypeSpecific['salary'] ?? null;
-    newTypeSpecific['salary_period'] = newTypeSpecific['salary_period'] ?? 'd';
-  } else {
-    newTypeSpecific.remove('salary');
-    newTypeSpecific.remove('salary_period');
-    newTypeSpecific['compensation_toggle'] = newTypeSpecific['compensation_toggle'] ?? false;
+  JobFormNotifier(this._service, this._ref) : super(JobFormState.newJob());
+
+  // Clean initialization methods
+  void initializeForCreate() {
+    state = JobFormState.newJob();
   }
-  
-  state = state.copyWith(jobType: type, typeSpecific: newTypeSpecific);
-}
 
-  void updateField(String field, dynamic value) {
+  void initializeForEdit(Job existingJob) {
+    state = JobFormState.fromExistingJob(existingJob);
+  }
+
+  // Clean job type update with automatic field management
+  void updateJobType(String newType) {
+    final updatedTypeSpecific = <String, dynamic>{};
+    
+    // Smart type-specific field management
+    switch (newType) {
+      case 'PRO':
+      case 'LOC':
+        updatedTypeSpecific.addAll({
+          'salary': state.job.typeSpecific['salary'],
+          'salary_period': state.job.typeSpecific['salary_period'] ?? 'm',
+        });
+        break;
+      case 'INT':
+      case 'VOL':
+        updatedTypeSpecific.addAll({
+          'compensation_toggle': state.job.typeSpecific['compensation_toggle'] ?? false,
+          if (state.job.typeSpecific['compensation_toggle'] == true)
+            'bonus_supplementary': state.job.typeSpecific['bonus_supplementary'],
+        });
+        break;
+    }
+
+    _updateJob(state.job.copyWith(
+      jobType: newType,
+      typeSpecific: updatedTypeSpecific,
+    ));
+  }
+
+  // Clean unified update method - no more primitive field-by-field updates
+  void updateJobData({
+    String? title,
+    String? category,
+    String? location,
+    String? city,
+    String? district,
+    String? jobNature,
+    String? description,
+    String? rolesDescription,
+    List<String>? requirements,
+    List<String>? workingDays,
+    String? dueDate,
+    List<String>? requiredSkills,
+    List<String>? optionalSkills,
+    Map<String, dynamic>? typeSpecific,
+  }) {
+    _updateJob(state.job.copyWith(
+      title: title ?? state.job.title,
+      category: category ?? state.job.category,
+      location: location ?? state.job.location,
+      city: city ?? state.job.city,
+      district: district ?? state.job.district,
+      job_nature: jobNature ?? state.job.job_nature,
+      description: description ?? state.job.description,
+      rolesDescription: rolesDescription ?? state.job.rolesDescription,
+      requirements: requirements ?? state.job.requirements,
+      workingDays: workingDays ?? state.job.workingDays,
+      dueDate: dueDate ?? state.job.dueDate,
+      requiredSkills: requiredSkills ?? state.job.requiredSkills,
+      optionalSkills: optionalSkills ?? state.job.optionalSkills,
+      typeSpecific: typeSpecific ?? state.job.typeSpecific,
+    ));
+  }
+
+  // Clean type-specific updates
+  void updateTypeSpecificField(String key, dynamic value) {
+    final updatedTypeSpecific = Map<String, dynamic>.from(state.job.typeSpecific);
+    updatedTypeSpecific[key] = value;
+    
+    _updateJob(state.job.copyWith(typeSpecific: updatedTypeSpecific));
+  }
+
+  // Clean skill management
+  void addRequiredSkill(String skill) {
+    if (skill.trim().isEmpty || state.job.requiredSkills.contains(skill.trim())) return;
+    
+    final updatedSkills = [...state.job.requiredSkills, skill.trim()];
+    _updateJob(state.job.copyWith(requiredSkills: updatedSkills));
+  }
+
+  void removeRequiredSkill(String skill) {
+    final updatedSkills = state.job.requiredSkills.where((s) => s != skill).toList();
+    _updateJob(state.job.copyWith(requiredSkills: updatedSkills));
+  }
+
+  void addOptionalSkill(String skill) {
+    if (skill.trim().isEmpty || state.job.optionalSkills.contains(skill.trim())) return;
+    
+    final updatedSkills = [...state.job.optionalSkills, skill.trim()];
+    _updateJob(state.job.copyWith(optionalSkills: updatedSkills));
+  }
+
+  void removeOptionalSkill(String skill) {
+    final updatedSkills = state.job.optionalSkills.where((s) => s != skill).toList();
+    _updateJob(state.job.copyWith(optionalSkills: updatedSkills));
+  }
+
+  void addRequirement(String requirement) {
+    if (requirement.trim().isEmpty || state.job.requirements.contains(requirement.trim())) return;
+    
+    final updatedRequirements = [...state.job.requirements, requirement.trim()];
+    _updateJob(state.job.copyWith(requirements: updatedRequirements));
+  }
+
+  void removeRequirement(String requirement) {
+    final updatedRequirements = state.job.requirements.where((r) => r != requirement).toList();
+    _updateJob(state.job.copyWith(requirements: updatedRequirements));
+  }
+
+  // Clean validation
+  void _updateJob(PostJob updatedJob) {
+    final errors = _validateJob(updatedJob);
+    final isValid = errors.isEmpty;
+    
     state = state.copyWith(
-      title: field == 'title' ? value : state.title,
-      category: field == 'category' ? value : state.category,
-      location: field == 'location' ? value : state.location,
-      city: field == 'city' ? value : state.city,  // Add this
-      district: field == 'district' ? value : state.district,
-      description: field == 'description' ? value : state.description,
-      rolesDescription: field == 'rolesDescription' ? value : state.rolesDescription,
-      requirements: field == 'requirements' ? value : state.requirements,
-      workingDays: field == 'workingDays' ? value : state.workingDays,
-      dueDate: field == 'dueDate' ? value : state.dueDate,
-      job_nature: field == 'job_nature' ? value : state.job_nature,
-      requiredSkills: field == 'requiredSkills' ? value : state.requiredSkills,
-      optionalSkills: field == 'optionalSkills' ? value : state.optionalSkills,
+      job: updatedJob,
+      errors: errors,
+      isValid: isValid,
     );
   }
 
-  void updateTypeSpecific(String key, dynamic value) {
-    final newTypeSpecific = Map<String, dynamic>.from(state.typeSpecific);
-    newTypeSpecific[key] = value;
-    state = state.copyWith(typeSpecific: newTypeSpecific);
-  }
-
-  Future<bool> submitJob({required FormMode mode, int? jobId}) async {
-  final errors = state.validate();
-  if (errors != null) throw Exception(errors.values.join(', '));
-  
-  try {
-    // Clean the type_specific based on job type
-    final cleanedTypeSpecific = Map<String, dynamic>.from(state.typeSpecific);
+  Map<String, String> _validateJob(PostJob job) {
+    final errors = <String, String>{};
     
-    if (state.jobType == 'INT' || state.jobType == 'VOL') {
-      cleanedTypeSpecific.remove('salary');
-      cleanedTypeSpecific.remove('salary_period');
-    } else {
-      cleanedTypeSpecific.remove('compensation_toggle');
+    if (job.title.trim().isEmpty) {
+      errors['title'] = 'Job title is required';
     }
-
-    final cleanedState = state.copyWith(typeSpecific: cleanedTypeSpecific);
-
-    if (mode == FormMode.edit) {
-      await _postJobService.updateJob(jobId!, state);
-    } else {
-      await _postJobService.postJob(cleanedState);
+    
+    if (job.category.trim().isEmpty) {
+      errors['category'] = 'Category is required';
     }
-    _ref.read(postedJobsProvider.notifier).refreshJobs();
-    return true;
-  } on DioException catch (e) {
-    throw Exception(e.response?.data['error'] ?? 'Submission failed');
+    
+    if (job.description.trim().isEmpty) {
+      errors['description'] = 'Description is required';
+    }
+    
+    if (job.dueDate?.isEmpty ?? true) {
+      errors['dueDate'] = 'Due date is required';
+    }
+    
+    if ((job.city?.isEmpty ?? true) && (job.location?.isEmpty ?? true)) {
+      errors['location'] = 'Location is required';
+    }
+    
+    if (job.requiredSkills.isEmpty) {
+      errors['requiredSkills'] = 'At least one required skill is needed';
+    }
+    
+    // Validate salary for paid jobs
+    if (job.jobType == 'PRO' || job.jobType == 'LOC') {
+      final salary = job.typeSpecific['salary'];
+      if (salary == null || (salary is num && salary <= 0)) {
+        errors['salary'] = 'Valid salary is required for paid jobs';
+      }
+    }
+    
+    return errors;
+  }
+
+  // Clean submission
+  Future<bool> submitJob() async {
+    if (!state.isValid) {
+      return false;
+    }
+    
+    state = state.copyWith(isLoading: true);
+    
+    try {
+      if (state.mode == FormMode.edit && state.editingJobId != null) {
+        await _service.updateJob(state.editingJobId!, state.job);
+      } else {
+        await _service.postJob(state.job);
+      }
+      
+      // Refresh the posted jobs list
+      _ref.read(postedJobsProvider.notifier).refreshJobs();
+      
+      state = state.copyWith(isLoading: false);
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errors: {'submit': e.toString().replaceAll('Exception: ', '')},
+      );
+      return false;
+    }
+  }
+
+  // Clean reset
+  void reset() {
+    state = JobFormState.newJob();
   }
 }
-}
 
-final postedJobsProvider = StateNotifierProvider<PostedJobsNotifier, AsyncValue<PaginatedResponse<Job>>>((ref) {
-  return PostedJobsNotifier(ref.read(postJobServiceProvider));
-});
+// ============================================================================
+// CLEAN POSTED JOBS PROVIDER - No changes needed, already clean
+// ============================================================================
 
 class PostedJobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>>> {
   final PostJobService _service;
   int _currentPage = 1;
   bool _hasMore = true;
 
-    PostedJobsNotifier(this._service) : super(const AsyncValue.loading()) {
+  PostedJobsNotifier(this._service) : super(const AsyncValue.loading()) {
     loadInitialJobs();
   }
 
@@ -160,12 +368,11 @@ class PostedJobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>
         ),
       );
     } catch (e, stack) {
-    debugPrint('Error loading next page: $e');
-    // On error, revert to previous state but keep hasMore false
-    _hasMore = false;
-    state = AsyncValue<PaginatedResponse<Job>>.error(e, stack).copyWithPrevious(state);
+      debugPrint('Error loading next page: $e');
+      _hasMore = false;
+      state = AsyncValue<PaginatedResponse<Job>>.error(e, stack).copyWithPrevious(state);
+    }
   }
-}
 
   Future<void> refreshJobs() async {
     await loadInitialJobs(forceRefresh: true);
@@ -190,3 +397,15 @@ class PostedJobsNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Job>
     }
   }
 }
+
+// ============================================================================
+// CLEAN PROVIDERS - No more primitive dependencies
+// ============================================================================
+
+final jobFormNotifierProvider = StateNotifierProvider<JobFormNotifier, JobFormState>((ref) {
+  return JobFormNotifier(ref.read(postJobServiceProvider), ref);
+});
+
+final postedJobsProvider = StateNotifierProvider<PostedJobsNotifier, AsyncValue<PaginatedResponse<Job>>>((ref) {
+  return PostedJobsNotifier(ref.read(postJobServiceProvider));
+});

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:workdey_frontend/core/interceptors/auth_interceptor.dart';
 import 'package:workdey_frontend/core/interceptors/job_interceptor.dart';
-import 'package:workdey_frontend/core/models/applicant/applicant_model.dart';
 import 'package:workdey_frontend/core/providers/filter_provider.dart';
 import 'package:workdey_frontend/core/providers/job_search_provider.dart';
 import 'package:workdey_frontend/core/providers/location/applicants_provider.dart';
@@ -20,6 +19,8 @@ import 'package:workdey_frontend/core/services/post_job_service.dart';
 import 'package:workdey_frontend/core/services/signup_service.dart';
 import 'package:workdey_frontend/core/storage/local_cache.dart';
 import 'package:workdey_frontend/core/storage/local_cache_impl.dart';
+
+export 'activity_state_provider.dart';
 
 
 
@@ -131,9 +132,9 @@ final applicantServiceProvider = Provider<ApplicantService>((ref) {
 });
 
 //11. applicant provider
-final jobApplicantsProvider = FutureProvider.family<List<Application>, int>((ref, jobId) {
-  return ref.read(applicantServiceProvider).getJobApplicants(jobId);
-});
+// final jobApplicantsProvider = FutureProvider.family<List<Application>, int>((ref, jobId) {
+//   return ref.read(applicantServiceProvider).getJobApplicants(jobId);
+// });
 
 //12. signup service provider
 final signupServiceProvider = Provider<SignupService>((ref) {
@@ -224,6 +225,8 @@ final applicationCountsProvider = FutureProvider.family<ApplicationCounts, int>(
   }
 });
 
-final applicationsProvider = FutureProvider.family<List<Application>, int>((ref, jobId) {
-  return ref.read(applicantServiceProvider).getJobApplicants(jobId);
-});
+
+// final applicationsProvider = FutureProvider.family<List<Application>, int>((ref, jobId) {
+//   return ref.read(applicantServiceProvider).getJobApplicants(jobId);
+// });
+

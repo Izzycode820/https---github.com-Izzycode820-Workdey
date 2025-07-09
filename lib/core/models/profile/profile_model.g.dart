@@ -32,7 +32,7 @@ _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
           ? null
           : TrustScore.fromJson(json['trust_score'] as Map<String, dynamic>),
       recentReviews: (json['recent_reviews'] as List<dynamic>?)
-          ?.map((e) => Review.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => DetailedReview.fromJson(e as Map<String, dynamic>))
           .toList(),
       reviewSummary: json['review_summary'] == null
           ? null
@@ -48,7 +48,7 @@ _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
           .map((e) => Education.fromJson(e as Map<String, dynamic>))
           .toList(),
       reviews: (json['reviews'] as List<dynamic>)
-          .map((e) => Review.fromJson(e as Map<String, dynamic>))
+          .map((e) => ProfileReview.fromJson(e as Map<String, dynamic>))
           .toList(),
       profileCompleteness: (json['profile_completeness'] as num?)?.toInt(),
       languagesSpoken: (json['languages_spoken'] as List<dynamic>?)

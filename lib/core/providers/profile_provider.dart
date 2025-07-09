@@ -10,7 +10,7 @@ import 'package:workdey_frontend/core/models/profile/skills/skill_model.dart';
 import 'package:workdey_frontend/core/models/paginated_response/paginated_response.dart';
 import 'package:workdey_frontend/core/models/trustscore/trust_score_model.dart';
 import 'package:workdey_frontend/core/providers/providers.dart';
-import 'package:workdey_frontend/core/services/profile_service.dart';
+import 'package:workdey_frontend/core/services/profiles/profile_service.dart';
 
 // ========== SERVICE PROVIDER ==========
 final profileServiceProvider = Provider<ProfileService>((ref) {
@@ -328,57 +328,6 @@ class TrustScoreNotifier extends StateNotifier<AsyncValue<TrustScore>> {
   }
 
   Future<void> refresh() => loadTrustScore();
-}
-
-// ========== REVIEWS PROVIDER ==========
-final reviewsReceivedProvider = StateNotifierProvider<ReviewsReceivedNotifier, AsyncValue<PaginatedResponse<Review>>>((ref) {
-  return ReviewsReceivedNotifier(ref.read(profileServiceProvider));
-});
-
-class ReviewsReceivedNotifier extends StateNotifier<AsyncValue<PaginatedResponse<Review>>> {
-  final ProfileService _profileService;
-  int _currentPage = 1;
-
-  ReviewsReceivedNotifier(this._profileService) : super(const AsyncValue.loading()) {
-    loadReviews();
-  }
-
-  Future<void> loadReviews({bool forceRefresh = false}) async {
-    try {
-      if (forceRefresh) _currentPage = 1;
-      
-      state = const AsyncValue.loading();
-      final reviews = await _profileService.getReviewsReceived(page: _currentPage);
-      state = AsyncValue.data(reviews);
-    } catch (e, st) {
-      debugPrint('❌ Reviews loading error: $e');
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> loadMore() async {
-    final currentData = state.value;
-    if (currentData == null || currentData.next == null) return;
-
-    try {
-      _currentPage++;
-      final newReviews = await _profileService.getReviewsReceived(page: _currentPage);
-      
-      state = AsyncValue.data(
-        PaginatedResponse<Review>(
-          count: newReviews.count,
-          results: [...currentData.results, ...newReviews.results],
-          next: newReviews.next,
-          previous: newReviews.previous,
-        ),
-      );
-    } catch (e, st) {
-      debugPrint('❌ Load more reviews error: $e');
-      _currentPage--; // Revert page increment on error
-    }
-  }
-
-  Future<void> refresh() => loadReviews(forceRefresh: true);
 }
 
 // ========== PUBLIC PROFILE PROVIDER ==========

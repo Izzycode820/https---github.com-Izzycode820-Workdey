@@ -31,8 +31,8 @@ class BottomNavBar extends ConsumerWidget {
           label: 'Workers'
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.bookmark),
-          label: 'Saved',
+          icon: Icon(Icons.dashboard),
+          label: 'Activities',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
